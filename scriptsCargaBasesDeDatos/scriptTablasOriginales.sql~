@@ -20,7 +20,7 @@ create table vehicle_trajectories_training(intersection_id char(1),
 tollgate_id char(1),
 vehicle_id varchar(30),
 starting_time timestamp,
-travel_seq varchar(400),
+travel_seq varchar(500),
 travel_time float);
 
 COPY vehicle_trajectories_training  from '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/trajectories_table 5_training.csv' WITH CSV HEADER;

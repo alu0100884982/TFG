@@ -25,3 +25,12 @@ travel_time float);
 
 COPY vehicle_trajectories_training  from '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/trajectories_table 5_training.csv' WITH CSV HEADER;
 
+create table traffic_volume_tollgates_training(time timestamp,
+tollgate_id char(1),
+direction char(1),
+vehicle_model int CONSTRAINT vehicle_model_value CHECK (vehicle_model BETWEEN 0 AND 7),
+has_etc char(1) CONSTRAINT has_etc_value CHECK (has_etc IN ('0','1')),
+vehicle_type char(1));
+
+COPY traffic_volume_tollgates_training  from '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/volume_table 6_training.csv' WITH CSV HEADER;
+

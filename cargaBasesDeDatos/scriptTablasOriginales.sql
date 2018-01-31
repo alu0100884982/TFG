@@ -34,3 +34,16 @@ vehicle_type char(1));
 
 COPY traffic_volume_tollgates_training  from '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/volume_table 6_training.csv' WITH CSV HEADER;
 
+create table weather_data (date_ date, 
+hour int,
+pressure float,
+sea_pressure float,
+wind_direction float,
+wind_speed float,
+temperature float,
+rel_humidity float,
+precipitation float);
+
+COPY weather_data from '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/weather (table 7)_training.csv' WITH CSV HEADER;
+
+

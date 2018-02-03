@@ -51,11 +51,9 @@ DECLARE
    conjunto_links link_object[] DEFAULT '{}';
    campo varchar(100);
    array_componentes_campo varchar(40) ARRAY;
-   contador int := 0;
 BEGIN
    OPEN curs1;
    LOOP
-        contador := contador + 1;
         FETCH curs1 INTO t_row;
         EXIT WHEN t_row IS NULL;
         FOREACH campo IN ARRAY t_row.travel_seq
@@ -76,4 +74,85 @@ END first_block $$;
 
 ALTER TABLE vehicle_trajectories_training_modified ALTER travel_seq type link_object[] using travel_seq::link_object[];
 
+
+CREATE TABLE traffic_volume_tollgates_training_modified(time timestamp,
+tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
+direction smallint CONSTRAINT has_direction_value CHECK (direction IN (0,1)),
+vehicle_model int CONSTRAINT vehicle_model_value CHECK (vehicle_model BETWEEN 0 AND 7),
+has_etc boolean CONSTRAINT has_etc_value CHECK (has_etc IN ('0','1')),
+vehicle_type char(1));
+
+COPY traffic_volume_tollgates_training_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/volume_table 6_training.csv' WITH CSV HEADER;
+ALTER TABLE traffic_volume_tollgates_training_modified DROP COLUMN vehicle_model, DROP COLUMN vehicle_type;
+
+CREATE TABLE weather_data_modified (date_ date, 
+hour int,
+pressure float,
+sea_pressure float,
+wind_direction float,
+wind_speed float,
+temperature float,
+rel_humidity float,
+precipitation float);
+
+COPY weather_data_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/weather (table 7)_training.csv' WITH CSV HEADER;
+
+CREATE TABLE travel_time_intersection_to_tollgate_modified (intersection_id char(1),
+tollgate_id smallint,
+time_window varchar(50),
+avg_travel_time float);
+
+COPY travel_time_intersection_to_tollgate_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/trajectories_table5_training_20min_avg_travel_time.csv' WITH CSV HEADER;
+
+DO $$
+<<second_block>>
+DECLARE
+   t_row travel_time_intersection_to_tollgate_modified%rowtype;
+   curs2 CURSOR FOR SELECT * FROM travel_time_intersection_to_tollgate_modified FOR UPDATE;
+   interval_timestamps timestamp ARRAY[2];
+   
+BEGIN
+   OPEN curs2;
+   LOOP
+        FETCH curs2 INTO t_row;
+        t_row.time_window = regexp_replace( t_row.time_window, '\)|\[', '', 'g');
+        interval_timestamps := STRING_TO_ARRAY(t_row.time_window, ',');
+        EXIT WHEN t_row IS NULL;
+        UPDATE travel_time_intersection_to_tollgate_modified SET time_window = interval_timestamps
+                WHERE CURRENT OF curs2;
+   END LOOP;
+   CLOSE curs2;
+END second_block $$;
+
+
+ALTER TABLE travel_time_intersection_to_tollgate_modified ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];
+
+CREATE TABLE traffic_volume_tollgates_modified (tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
+time_window varchar(50),
+direction smallint CONSTRAINT has_direction_value CHECK (direction IN (0,1)),
+volume int);
+
+COPY traffic_volume_tollgates_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/volume_table 6_training_20min_avg_volume.csv' WITH CSV HEADER;
+
+DO $$
+<<third_block>>
+DECLARE
+   t_row traffic_volume_tollgates_modified%rowtype;
+   curs3 CURSOR FOR SELECT * FROM traffic_volume_tollgates_modified FOR UPDATE;
+   interval_timestamps timestamp ARRAY[2];
+   
+BEGIN
+   OPEN curs3;
+   LOOP
+        FETCH curs3 INTO t_row;
+        t_row.time_window = regexp_replace( t_row.time_window, '\)|\[', '', 'g');
+        interval_timestamps := STRING_TO_ARRAY(t_row.time_window, ',');
+        EXIT WHEN t_row IS NULL;
+        UPDATE traffic_volume_tollgates_modified SET time_window = interval_timestamps
+                WHERE CURRENT OF curs3;
+   END LOOP;
+   CLOSE curs3;
+END third_block $$;
+
+ALTER TABLE  traffic_volume_tollgates_modified ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];
 

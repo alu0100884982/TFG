@@ -14,8 +14,8 @@ UPDATE road_links_modified SET out_top = STRING_TO_ARRAY(out_top, ',');
 ALTER TABLE road_links_modified ALTER in_top type smallint[] using in_top::smallint[];
 ALTER TABLE road_links_modified ALTER out_top type smallint[] using out_top::smallint[];
 
-CREATE TABLE vehicle_routes_modified(intersection_id char(1),
-tollgate_id smallint,
+CREATE TABLE vehicle_routes_modified(intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN ('A', 'B', 'C')),
+tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id IN (1,2,3)),
 link_seq varchar(49),
 PRIMARY KEY (intersection_id, tollgate_id));
 
@@ -23,8 +23,8 @@ COPY vehicle_routes_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOrigi
 UPDATE vehicle_routes_modified SET link_seq = STRING_TO_ARRAY(link_seq, ',');
 ALTER TABLE vehicle_routes_modified ALTER link_seq type smallint[] using link_seq::smallint[];
 
-CREATE TABLE vehicle_trajectories_training_modified(intersection_id char(1),
-tollgate_id smallint,
+CREATE TABLE vehicle_trajectories_training_modified(intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN ('A', 'B', 'C')),
+tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id IN (1,2,3)),
 vehicle_id int,
 starting_time timestamp,
 travel_seq varchar(402),
@@ -97,8 +97,8 @@ precipitation float);
 
 COPY weather_data_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/weather (table 7)_training.csv' WITH CSV HEADER;
 
-CREATE TABLE travel_time_intersection_to_tollgate_modified (intersection_id char(1),
-tollgate_id smallint,
+CREATE TABLE travel_time_intersection_to_tollgate_modified (intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN ('A', 'B', 'C')),
+tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
 time_window varchar(50),
 avg_travel_time float);
 

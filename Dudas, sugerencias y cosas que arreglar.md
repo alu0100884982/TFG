@@ -11,6 +11,6 @@ FROM vehicle_trajectories_training_modified
 WHERE intersection_id = 'C' AND tollgate_id = 1 AND travel_seq[6].id = '121';
 ```
 # SUGERENCIAS
-
+* Se ha dejado al final el volumen de tráfico *out* y el *in* como columnas separadas ya que interesa saber el mismo por separado.
 
 # COSAS QUE ARREGLAR

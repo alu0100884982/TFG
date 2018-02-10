@@ -86,13 +86,13 @@ COPY traffic_volume_tollgates_training_modified FROM '/home/javisunami/Escritori
 ALTER TABLE traffic_volume_tollgates_training_modified DROP COLUMN vehicle_model, DROP COLUMN vehicle_type;
 
 CREATE TABLE weather_data_modified (date_ date, 
-hour int,
+hour int CONSTRAINT correct_hour CHECK (hour BETWEEN 0 AND 23),
 pressure float,
 sea_pressure float,
-wind_direction float,
+wind_direction float CONSTRAINT degrees CHECK (wind_direction BETWEEN 1 AND 360),
 wind_speed float,
 temperature float,
-rel_humidity float,
+rel_humidity float CONTRAINT correct_humidity CHECK (rel_humidity BETWEEN 0 AND 100),
 precipitation float);
 
 COPY weather_data_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/weather (table 7)_training.csv' WITH CSV HEADER;

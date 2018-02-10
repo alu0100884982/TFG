@@ -33,6 +33,6 @@ Las tareas a realizar actualmente son las siguientes:
 Las tareas realizadas hasta el momento son las siguientes:
 * **Corrección de la tabla _weather_data_modified_**. Se ha procedido a eliminar aquellas filas en las que había un valor _999017_ en la columna _wind_direction_ puesto que tiene que haber un valor entre 0 y 360 grados.
 * **Interpretación de la topología de la red de carreteras**. Al ser confuso la comparación entre la imagen de la topología de la red de carreteras que se nos proporciona y los datos suministrados en las tablas, nos centraremos en el esquema que representan los datos contenidos en las tablas a la hora de realizar las predicciones. El sentido de circulación que se infiere a partir de los datos es las mencionadas en las tareas de predicción que se deben realizar en la competición:
-** ​Intersección A a las barreras de peaje 2 & 3.
-** Intersección B a las barreras de peaje 1 & 3.
-** Intersección C a las barreras de peaje 1 & 3.
+  * Intersección A a las barreras de peaje 2 & 3.
+  * Intersección B a las barreras de peaje 1 & 3.
+  * Intersección C a las barreras de peaje 1 & 3.

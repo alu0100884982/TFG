@@ -19,7 +19,7 @@ Las tareas realizadas hasta el momento son las siguientes :
 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
-* **Añadir al manual de PostgreSQL los principales comandos y sentencias utilizadas**.Tenemos que añadir los principales comandos y sentencias de PostgreSQL que hemos usado para realizar la carga de la base de datos.
+* **Añadir al manual de PostgreSQL los principales meta-comandos y sentencias utilizadas**.Tenemos que añadir los principales comandos y sentencias de PostgreSQL que hemos usado para realizar la carga de la base de datos.
 * **Interpretar las rutas de la topología de la red de carreteras proporcionadas con el esquema**. Tenemos que comparar la topología de la red de carreteras que se nos ha proporcionado en la competición con el esquema de las rutas que realmente nos proporcionan en los datos suministrados. Además hay que comprobar que el número de carriles de cada una de las rutas es el correcto, así como la dirección de conducción de las mismas.
 
 * **Realizar gráficas para visualizar mejor los datos proporcionados**. Construir diferentes gráficas para tener una mejor visión de los datos que se nos han proporcionado (gráficas relacionadas con el tiempo meteorológico, con el tráfico, etc.) así como comprobar que las mismas son gráficas lógicas (por ejemplo, que en los dias lluviosos el volumen de tráfico y el tiempo medio de viaje es mayor que en días no lluviosos).
@@ -36,3 +36,5 @@ Las tareas realizadas hasta el momento son las siguientes:
   * Intersección A a las barreras de peaje 2 & 3.
   * Intersección B a las barreras de peaje 1 & 3.
   * Intersección C a las barreras de peaje 1 & 3.
+* **Adición al manual de PostgreSQL los principales meta-comandos y sentencias utilizadas**. Se han añadido los principales meta-comandas y sentencias utilizadas hasta ahora para manejar una base de datos PostgreSQL.
+

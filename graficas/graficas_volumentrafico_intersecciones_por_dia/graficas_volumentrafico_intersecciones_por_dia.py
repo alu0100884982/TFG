@@ -16,6 +16,8 @@ FROM traffic_volume_tollgates_modified
 ORDER BY tollgate_id, time_window;""")
 rows = cur.fetchall()
 dates = sorted(set([row[1][1].date().strftime('%Y-%m-%d') for row in rows]))
+dates.pop()
+print(dates)
 tollgates = [1,2,3]
 directions = [0,1]
 keys = {}
@@ -43,21 +45,23 @@ with PdfPages('graficas_pdf.pdf') as pdf:
            fig = plt.figure()
            ax1 = fig.add_subplot(121)
            ax2 = fig.add_subplot(122)
+           axes = [ax1,ax2]
            for tollgate in tollgates:
                hours = [element[0].strftime("%H.%M") for element in keys[(tollgate, date, 0)]]
                values = [element[1] for element in keys[(tollgate, date, 0)]]
                ax1.plot(hours, values, label = str(tollgate))
-               hours = [element[0].strftime("%H.%M") for element in keys[(tollgate, date, 1)]]
-               values = [element[1] for element in keys[(tollgate, date, 1)]]
-               ax2.plot(hours, values, label = str(tollgate))
-               plt.show()
-               plt.close()       
-   #          plt.legend(prop=fontP)
-    #         plt.title(date)
-    #         plt.xlabel('Hours')
-     #        plt.ylabel('Average Travel Time (seconds)')
-     #        plt.ylim(0, 1100)
-     #        plt.draw();
-       #      pdf.savefig()
-       
-      #       plt.close()
+               if(tollgate != 2) :
+                 hours = [element[0].strftime("%H.%M") for element in keys[(tollgate, date, 1)]]
+                 values = [element[1] for element in keys[(tollgate, date, 1)]]
+                 ax2.plot(hours, values, label = str(tollgate))    
+           for axe in axes:
+                 axe.legend(prop=fontP)
+                 axe.set_xlabel('Hours')
+                 axe.set_ylabel('Traffic volume')
+                 axe.set_ylim(0,300)
+                 axe.set_xlim(0,24)
+           ax1.set_title("Traffic_volume (entry)")
+           ax2.set_title("Traffic_volume (exit)")
+           plt.suptitle(date)
+           pdf.savefig()
+           plt.close()

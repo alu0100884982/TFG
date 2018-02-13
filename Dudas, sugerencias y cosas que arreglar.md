@@ -6,6 +6,9 @@ SELECT *
 FROM vehicle_trajectories_training_modified 
 WHERE intersection_id = 'C' AND tollgate_id = 1 AND travel_seq[6].id = '121';
 ```
+* En la tabla donde se visualiza el volumen de tráfico en ventanas de 20 minutos sólo nos proporcionan los días desde el _2016-09-19_ hasta el _2016-10-17_. Hay que tener en cuenta esto a la hora de realizar las predicciones.
+* En la tabla **traffic_volume_tollgates_training_modified** se proporciona el atributo **has_etc**, que es importante para un vehículo pasar por la barrera de peaje sin tener que parar a pagar. Sin embargo, este atributo no se si es realmente de utilidad.
+* A la hora de predecir es necesario quitar los _outliers_, pero no se si esos _outliers_ son los picos en las gráficas.
 # SUGERENCIAS
 * Se ha dejado al final el volumen de tráfico *out* y el *in* como columnas separadas ya que interesa saber el mismo por separado.
 

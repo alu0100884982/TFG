@@ -38,3 +38,11 @@ Las tareas realizadas hasta el momento son las siguientes:
   * Intersección C a las barreras de peaje 1 & 3.
 * **Adición al manual de PostgreSQL los principales meta-comandos y sentencias utilizadas**. Se han añadido los principales meta-comandas y sentencias utilizadas hasta ahora para manejar una base de datos PostgreSQL.
 * **Realización de gráficas**. Se ha procedido a construir una gráfica por cada uno de los días de entrenamiento en las que se refleja la evolución del tiempo promedio de viaje en cada una de las rutas por horas. Además, por cada día se ha realizado una gráfica en las que se refleja los diferentes datos meteorológicos por hora. Tambíen se ha realizado una gráfica por cada uno de los días en las que se refleja el volumen de tráfico de entrada en todas las intersecciones y el de salida (menos la barrera de peaje 2 que solo permite dirección de entrada) por horas.
+* **Creación de una nueva base de datos para la primera fase de tests del modelo de predicción**. Se ha procedido a crear una nueva base de datos para insertar las tablas relacionadas con la primera fase de testeo del modelo de predicción que se realice. Para ello, se ha añadido la tabla que contiene, por cada una de las rutas, los intervalos de tiempo marcados en verde en la documentación de la competición (los intervalos de tiempo que están justo antes de los intervalos de tiempo a predecir) y se ha añadido la tabla resultado del tiempo promedio de viaje que debe crearse una vez se aplique el modelo de predicción.
+
+### Tareas pendientes
+Las tareas a realizar actualmente son las siguientes:
+* **Meter la documentación de la nueva base de datos en el documento de carga de la base de datos**.
+* **Corregir script de primeras predicciones**.
+
+

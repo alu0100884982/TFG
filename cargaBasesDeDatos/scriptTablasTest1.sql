@@ -5,34 +5,28 @@ avg_travel_time float);
 
 COPY travel_time_intersection_to_tollgate_test1 FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/testing_phase1/test1_20min_avg_travel_time.csv' WITH CSV HEADER;
 
-CREATE OR REPLACE FUNCTION string_to_timestamp(_tbl regclass) 
-  RETURNS void AS $$
-  DECLARE
-   rec record;
-   curs2 refcursor; 
+DO $$
+<<second_block>>
+DECLARE
+   t_row travel_time_intersection_to_tollgate_test1%rowtype;
+   curs2 CURSOR FOR SELECT * FROM travel_time_intersection_to_tollgate_test1 FOR UPDATE;
    interval_timestamps timestamp ARRAY[2];
    
 BEGIN
-   OPEN curs2 FOR EXECUTE('SELECT * FROM ' || _tbl || ' FOR UPDATE');
+   OPEN curs2;
    LOOP
-        FETCH curs2 INTO rec;
-        rec.time_window = regexp_replace( rec.time_window, '\)|\[', '', 'g');
-        interval_timestamps := STRING_TO_ARRAY(rec.time_window, ',');
-        EXIT WHEN rec IS NULL;
-        EXECUTE('UPDATE ' ||_tbl || ' SET time_window  = ' || CAST(interval_timestamps AS varchar(50))  ||
-                ' WHERE CURRENT OF ' || curs2);
+        FETCH curs2 INTO t_row;
+        t_row.time_window = regexp_replace( t_row.time_window, '\)|\[', '', 'g');
+        interval_timestamps := STRING_TO_ARRAY(t_row.time_window, ',');
+        EXIT WHEN t_row IS NULL;
+        UPDATE travel_time_intersection_to_tollgate_test1 SET time_window = interval_timestamps
+                WHERE CURRENT OF curs2;
    END LOOP;
    CLOSE curs2;
-  END;
-    $$ LANGUAGE plpgsql;
+END second_block $$;
 
 
-DO $$ 
-<<previous_intervals>>
-BEGIN 
-        PERFORM string_to_timestamp('travel_time_intersection_to_tollgate_test1');
-END previous_intervals $$;
-
+ALTER TABLE travel_time_intersection_to_tollgate_test1 ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];
 
 /**************************************************************************************************************************************************/
 CREATE TABLE tabla_resultado_average_travel_time(intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN ('A', 'B', 'C')),

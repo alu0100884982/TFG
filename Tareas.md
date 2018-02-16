@@ -55,6 +55,7 @@ Las tareas a realizar actualmente son las siguientes:
 ### Tareas realizadas
 Las tareas realizadas hasta el momento son las siguientes:
 * **Corregida tabla de datos meteorológicos**. Se han cambiado los valores erróneos en lugar de eliminar las filas que contenían esos valores erróneos con el objetivo de no perder información.
+* **Añadida carga de la tabla resultado de las predicciones del volumen de tráfico de la primera fase de pruebas**. Se ha añadido al script de la carga de la base de datos de la primera fase de pruebas el código que carga la tabla resultado de las predicciones del volumen de tráfico de la primera fase de pruebas.
 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:

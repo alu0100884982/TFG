@@ -5,32 +5,39 @@ avg_travel_time float);
 
 COPY travel_time_intersection_to_tollgate_test1 FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/testing_phase1/test1_20min_avg_travel_time.csv' WITH CSV HEADER;
 
-DO $$
-<<second_block>>
-DECLARE
-   t_row travel_time_intersection_to_tollgate_test1%rowtype;
-   curs2 CURSOR FOR SELECT * FROM travel_time_intersection_to_tollgate_test1 FOR UPDATE;
+CREATE OR REPLACE FUNCTION string_to_timestamp(_tbl regclass) 
+  RETURNS void AS $$
+  DECLARE
+   rec record;
+   curs2 refcursor; 
    interval_timestamps timestamp ARRAY[2];
    
 BEGIN
-   OPEN curs2;
+   OPEN curs2 FOR EXECUTE('SELECT * FROM ' || _tbl || ' FOR UPDATE');
    LOOP
-        FETCH curs2 INTO t_row;
-        t_row.time_window = regexp_replace( t_row.time_window, '\)|\[', '', 'g');
-        interval_timestamps := STRING_TO_ARRAY(t_row.time_window, ',');
-        EXIT WHEN t_row IS NULL;
-        UPDATE travel_time_intersection_to_tollgate_test1 SET time_window = interval_timestamps
-                WHERE CURRENT OF curs2;
+        FETCH curs2 INTO rec;
+        rec.time_window = regexp_replace( rec.time_window, '\)|\[', '', 'g');
+        interval_timestamps := STRING_TO_ARRAY(rec.time_window, ',');
+        EXIT WHEN rec IS NULL;
+        EXECUTE('UPDATE ' ||_tbl || ' SET time_window  = ' || CAST(interval_timestamps AS varchar(50))  ||
+                ' WHERE CURRENT OF ' || curs2);
    END LOOP;
    CLOSE curs2;
-END second_block $$;
+  END;
+    $$ LANGUAGE plpgsql;
 
 
-ALTER TABLE travel_time_intersection_to_tollgate_test1 ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];
+DO $$ 
+<<previous_intervals>>
+BEGIN 
+        PERFORM string_to_timestamp('travel_time_intersection_to_tollgate_test1');
+END previous_intervals $$;
 
+
+/**************************************************************************************************************************************************/
 CREATE TABLE tabla_resultado_average_travel_time(intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN ('A', 'B', 'C')),
 tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
-time_window varchar(50),
+time_window timestamp ARRAY[2],
 avg_travel_time float);
 
 CREATE TYPE route AS (
@@ -39,7 +46,7 @@ CREATE TYPE route AS (
 );
 
 DO $$
-<<another_block>>
+<<time_travel_block>>
 DECLARE
     rutas  route[6];
     fecha_inicial_1 timestamp DEFAULT '2016-10-18 08:00:00';
@@ -87,6 +94,56 @@ BEGIN
           fecha_final_2 := fecha_final_2 + '1 day';
         END LOOP;
       END LOOP;
-END another_block $$;
+END time_travel_block $$;
+
+
+/****************************************************************************************************************************************/
+CREATE TABLE tabla_resultado_traffic_volume (tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
+time_window timestamp ARRAY[2],
+direction smallint CONSTRAINT has_direction_value CHECK (direction IN (0,1)),
+volume int);
+
+CREATE OR REPLACE FUNCTION insert_rows(fecha_inicial timestamp, fecha_final timestamp) 
+    RETURNS void AS $$
+    DECLARE
+            tollgates integer[3] DEFAULT '{1,2,3}';
+            directions integer[2] DEFAULT '{0,1}';
+            tollgate_id integer;
+            direction integer;
+            aux timestamp;
+            contador integer;
+    BEGIN
+      FOREACH tollgate_id IN ARRAY tollgates 
+      LOOP
+        FOREACH direction IN ARRAY directions
+        LOOP
+          aux := fecha_inicial;
+          WHILE aux != fecha_final LOOP
+             FOR contador in 1..7 LOOP
+                 INSERT INTO  tabla_resultado_traffic_volume VALUES(tollgate_id, ARRAY[aux, aux + '20 minute'],direction,NULL);
+                  aux :=  aux + '1 day';
+             END LOOP;
+             aux := aux + '-7 days';
+             aux := aux + '20 minute';
+          END LOOP;
+       END LOOP;
+      END LOOP;
+    END;
+    $$ LANGUAGE plpgsql;
+
+
+DO $$
+<<another_block2>>
+DECLARE
+    fecha_inicial_1 timestamp DEFAULT '2016-10-18 08:00:00';
+    fecha_final_1 timestamp DEFAULT '2016-10-18 10:00:00';
+    fecha_inicial_2 timestamp DEFAULT '2016-10-18 17:00:00';
+    fecha_final_2 timestamp DEFAULT '2016-10-18 19:00:00' ;
+    
+BEGIN
+      PERFORM insert_rows(fecha_inicial_1, fecha_final_1);
+      PERFORM insert_rows(fecha_inicial_2, fecha_final_2);
+END another_block2 $$;
+
 
 

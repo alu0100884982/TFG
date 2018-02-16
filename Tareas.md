@@ -44,7 +44,7 @@ Las tareas realizadas hasta el momento son las siguientes:
 Las tareas a realizar actualmente son las siguientes:
 * **Meter la documentación de la nueva base de datos en el documento de carga de la base de datos**.
 * **Corregir script de primeras predicciones**.
-* **Volver a cargar la tabla de tiempo meteorológico pero, en vez de eliminar las filas con valores erróneos, sustituir los valores erróneos por valores aproximados**. Esto se realiza con el objetivo de no eliminar días de la tabla puesto que cada una de las filas de la tabla de meteorología representa el tiempo meteorológico de cada uno de los días de entrenamiento.
+* **Volver a cargar la tabla de tiempo meteorológico pero, en vez de eliminar las filas con valores erróneos, sustituir los valores erróneos por valores aproximados**. Esto se realiza con el objetivo de no eliminar días de la tabla.
 * **Realizar gráficas que contengan tanto el volumen de tráfico como el tiempo promedio de viaje por días**. Se pretende realizar esto con el objetivo de tener otra visualización más global de los datos.
 * **Realizar vistas propuestas en la reunión con el objetivo de construir modelos de predicción**. El objetivo es crear diferentes vistas y documentar las vistas realizadas junto con las predicciones que han tenido lugar sobre esas vistas.
 * __Añadir en los scripts proporcionados por la competición la proporción de vehículos que tienen el atributo *has_etc*__ puesto que este atributo puede ser relevante a la hora de realizar los modelos de predicción.
@@ -54,6 +54,7 @@ Las tareas a realizar actualmente son las siguientes:
 ## Próxima reunión
 ### Tareas realizadas
 Las tareas realizadas hasta el momento son las siguientes:
+* **Corregida tabla de datos meteorológicos**. Se han cambiado los valores erróneos en lugar de eliminar las filas que contenían esos valores erróneos con el objetivo de no perder información.
 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:

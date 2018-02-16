@@ -28,7 +28,7 @@ Las tareas a realizar actualmente son las siguientes:
 
 * **Realizar primeras predicciones**. Hay que realizar las primeras predicciones sobre los datos. Para ello, es necesario que realicemos un primer análisis sobre los datos más relevantes a la hora de realizar las predicciones.
 
-## Próxima reunión
+## Reunión 15 de febrero de 2018
 ### Tareas realizadas
 Las tareas realizadas hasta el momento son las siguientes:
 * **Corrección de la tabla _weather_data_modified_**. Se ha procedido a eliminar aquellas filas en las que había un valor _999017_ en la columna _wind_direction_ puesto que tiene que haber un valor entre 0 y 360 grados.
@@ -39,10 +39,21 @@ Las tareas realizadas hasta el momento son las siguientes:
 * **Adición al manual de PostgreSQL los principales meta-comandos y sentencias utilizadas**. Se han añadido los principales meta-comandas y sentencias utilizadas hasta ahora para manejar una base de datos PostgreSQL.
 * **Realización de gráficas**. Se ha procedido a construir una gráfica por cada uno de los días de entrenamiento en las que se refleja la evolución del tiempo promedio de viaje en cada una de las rutas por horas. Además, por cada día se ha realizado una gráfica en las que se refleja los diferentes datos meteorológicos por hora. Tambíen se ha realizado una gráfica por cada uno de los días en las que se refleja el volumen de tráfico de entrada en todas las intersecciones y el de salida (menos la barrera de peaje 2 que solo permite dirección de entrada) por horas.
 * **Creación de una nueva base de datos para la primera fase de tests del modelo de predicción**. Se ha procedido a crear una nueva base de datos para insertar las tablas relacionadas con la primera fase de testeo del modelo de predicción que se realice. Para ello, se ha añadido la tabla que contiene, por cada una de las rutas, los intervalos de tiempo marcados en verde en la documentación de la competición (los intervalos de tiempo que están justo antes de los intervalos de tiempo a predecir) y se ha añadido la tabla resultado del tiempo promedio de viaje que debe crearse una vez se aplique el modelo de predicción.
-
+* **Creación de un script que crea 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
 * **Meter la documentación de la nueva base de datos en el documento de carga de la base de datos**.
 * **Corregir script de primeras predicciones**.
+* **Volver a cargar la tabla de tiempo meteorológico pero, en vez de eliminar las filas con valores erróneos, sustituir los valores erróneos por valores aproximados**. Esto se realiza con el objetivo de no eliminar días de la tabla puesto que cada una de las filas de la tabla de meteorología representa el tiempo meteorológico de cada uno de los días de entrenamiento.
+* **Realizar gráficas que contengan tanto el volumen de tráfico como el tiempo promedio de viaje por días**. Se pretende realizar esto con el objetivo de tener otra visualización más global de los datos.
+* **Realizar vistas propuestas en la reunión con el objetivo de construir modelos de predicción**. El objetivo es crear diferentes vistas y documentar las vistas realizadas junto con las predicciones que han tenido lugar sobre esas vistas.
+* __Añadir en los scripts proporcionados por la competición la proporción de vehículos que tienen el atributo *has_etc*__ puesto que este atributo puede ser relevante a la hora de realizar los modelos de predicción.
+* **Crear un documento genérico de documentación del proyecto**.
+* **Realizar el script que construye la tabla resultado de la primera fase de pruebas para la predicción del volumen de tráfico en las barreras de peaje**.
 
+## Próxima reunión
+### Tareas realizadas
+Las tareas realizadas hasta el momento son las siguientes:
 
+### Tareas pendientes
+Las tareas a realizar actualmente son las siguientes:

@@ -6,6 +6,8 @@ Calculate volume for each 20-minute time window.
 """
 import math
 from datetime import datetime,timedelta
+import numpy as np
+
 
 file_suffix = '.csv'
 path = ''  # set the data directory
@@ -28,7 +30,7 @@ def avgVolume(in_file):
         each_pass = vol_data[i].replace('"', '').split(',')
         tollgate_id = each_pass[1]
         direction = each_pass[2]
-
+        has_etc = each_pass[4]
         pass_time = each_pass[0]
         pass_time = datetime.strptime(pass_time, "%Y-%m-%d %H:%M:%S")
         time_window_minute = int(math.floor(pass_time.minute / 20) * 20)
@@ -41,13 +43,15 @@ def avgVolume(in_file):
         if tollgate_id not in volumes[start_time_window]:
             volumes[start_time_window][tollgate_id] = {}
         if direction not in volumes[start_time_window][tollgate_id]:
-            volumes[start_time_window][tollgate_id][direction] = 1
+            volumes[start_time_window][tollgate_id][direction] = np.array([1,1])
         else:
-            volumes[start_time_window][tollgate_id][direction] += 1
+            volumes[start_time_window][tollgate_id][direction][0] +=1;
+            if has_etc == '1' :
+                volumes[start_time_window][tollgate_id][direction][1] +=1;
 
     # Step 3: format output for tollgate and direction per time window
     fw = open(out_file_name, 'w')
-    fw.writelines(','.join(['"tollgate_id"', '"time_window"', '"direction"', '"volume"']) + '\n')
+    fw.writelines(','.join(['"tollgate_id"', '"time_window"', '"direction"', '"volume"', '"proportion_hasetc_vehicles"']) + '\n')
     time_windows = list(volumes.keys())
     time_windows.sort()
     for time_window_start in time_windows:
@@ -57,14 +61,15 @@ def avgVolume(in_file):
                out_line = ','.join(['"' + str(tollgate_id) + '"', 
 			                     '"[' + str(time_window_start) + ',' + str(time_window_end) + ')"',
                                  '"' + str(direction) + '"',
-                                 '"' + str(volumes[time_window_start][tollgate_id][direction]) + '"',
+                                 '"' + str(volumes[time_window_start][tollgate_id][direction][0]) +
+                                '"', '"' + str(volumes[time_window_start][tollgate_id][direction][1]),
                                ]) + '\n'
                fw.writelines(out_line)
     fw.close()
 
 def main():
 
-    in_file = 'volume(table 6)_test1'
+    in_file = 'volume_table 6_training'
     avgVolume(in_file)
 
 if __name__ == '__main__':

@@ -51,7 +51,7 @@ Las tareas a realizar actualmente son las siguientes:
 * **Crear un documento genérico de documentación del proyecto**.
 * **Realizar el script que construye la tabla resultado de la primera fase de pruebas para la predicción del volumen de tráfico en las barreras de peaje**.
 * **Añadir nuevas sentencias utilizadas al manual de PostgreSQL**
-
+* **Añadir documentación de la estructura de las carpetas del repositorio de Github junto con la información de lo que es cada cosa**
 
 ## Próxima reunión
 ### Tareas realizadas

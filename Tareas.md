@@ -50,6 +50,8 @@ Las tareas a realizar actualmente son las siguientes:
 * __Añadir en los scripts proporcionados por la competición la proporción de vehículos que tienen el atributo *has_etc*__ puesto que este atributo puede ser relevante a la hora de realizar los modelos de predicción.
 * **Crear un documento genérico de documentación del proyecto**.
 * **Realizar el script que construye la tabla resultado de la primera fase de pruebas para la predicción del volumen de tráfico en las barreras de peaje**.
+* **Añadir nuevas sentencias utilizadas al manual de PostgreSQL**
+
 
 ## Próxima reunión
 ### Tareas realizadas

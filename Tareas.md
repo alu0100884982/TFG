@@ -58,6 +58,8 @@ Las tareas a realizar actualmente son las siguientes:
 Las tareas realizadas hasta el momento son las siguientes:
 * **Corregida tabla de datos meteorológicos**. Se han cambiado los valores erróneos en lugar de eliminar las filas que contenían esos valores erróneos con el objetivo de no perder información.
 * **Añadida carga de la tabla resultado de las predicciones del volumen de tráfico de la primera fase de pruebas**. Se ha añadido al script de la carga de la base de datos de la primera fase de pruebas el código que carga la tabla resultado de las predicciones del volumen de tráfico de la primera fase de pruebas.
+* **Realizadas las gráficas de tiempo promedio de viaje y de volumen de tráfico por días**. Se ha procedido a realizar tanto para el tiempo promedio de viaje (en cada una de las rutas) como para el volumen de tráfico (en las barreras de peaje) las gráficas por día. Los valores de cada día es la media de los valores de ese día (tanto del tiempo promedio de viaje como del volumen de tráfico).
+* **Metida la documentación de la base de datos de la primera fase de pruebas de la competición**. Se ha introducido en la documentación de la carga de la base de datos los esquemas de las tablas construidas en la base de datos de la primera fase de pruebas de la competición.
 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:

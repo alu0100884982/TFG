@@ -66,3 +66,6 @@ Las tareas realizadas hasta el momento son las siguientes:
 * **Añadida tabla de volúmenes de tráfico en las barreras de peaje en la base de datos _tfgtest1_**. Se ha añadido la tabla que contiene los volúmenes de tráfico en cada una de las barreras de peaje tanto en la dirección de entrada como en la de salida (menos en la barrera de peaje 2 que no hay dirección de salida) en los intervalos de 2 horas previos a los intervalos de 2 horas a predecir.
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
+* **Crear un documento genérico de documentación del proyecto**.
+* **Realizar vistas propuestas en la reunión con el objetivo de construir modelos de predicción**. El objetivo es crear diferentes vistas y documentar las vistas realizadas junto con las predicciones que han tenido lugar sobre esas vistas.
+* **Añadir documentación de la estructura de las carpetas del repositorio de Github junto con la información de lo que es cada cosa**

@@ -43,7 +43,9 @@ def avgVolume(in_file):
         if tollgate_id not in volumes[start_time_window]:
             volumes[start_time_window][tollgate_id] = {}
         if direction not in volumes[start_time_window][tollgate_id]:
-            volumes[start_time_window][tollgate_id][direction] = np.array([1,1])
+            volumes[start_time_window][tollgate_id][direction] = np.array([1,0])
+            if has_etc == '1' :
+             volumes[start_time_window][tollgate_id][direction][1] +=1;
         else:
             volumes[start_time_window][tollgate_id][direction][0] +=1;
             if has_etc == '1' :
@@ -62,14 +64,14 @@ def avgVolume(in_file):
 			                     '"[' + str(time_window_start) + ',' + str(time_window_end) + ')"',
                                  '"' + str(direction) + '"',
                                  '"' + str(volumes[time_window_start][tollgate_id][direction][0]) +
-                                '"', '"' + str(volumes[time_window_start][tollgate_id][direction][1]),
+                                '"', '"' + str(volumes[time_window_start][tollgate_id][direction][1]) + '"',
                                ]) + '\n'
                fw.writelines(out_line)
     fw.close()
 
 def main():
 
-    in_file = 'volume_table 6_training'
+    in_file = 'volume(table 6)_test1'
     avgVolume(in_file)
 
 if __name__ == '__main__':

@@ -138,6 +138,33 @@ BEGIN
       PERFORM insert_rows(fecha_inicial_1, fecha_final_1);
       PERFORM insert_rows(fecha_inicial_2, fecha_final_2);
 END another_block2 $$;
+/********************************************************************************************/
+CREATE TABLE traffic_volume_tollgates_test1 (tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
+time_window varchar(50),
+direction smallint CONSTRAINT has_direction_value CHECK (direction IN (0,1)),
+volume int,
+proportion_hasetc_vehicles int);
 
+COPY traffic_volume_tollgates_test1 FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/testing_phase1/test1_20min_avg_volume.csv' WITH CSV HEADER;
 
+DO $$
+<<third_block>>
+DECLARE
+   t_row traffic_volume_tollgates_test1%rowtype;
+   curs3 CURSOR FOR SELECT * FROM traffic_volume_tollgates_test1 FOR UPDATE;
+   interval_timestamps timestamp ARRAY[2];
+   
+BEGIN
+   OPEN curs3;
+   LOOP
+        FETCH curs3 INTO t_row;
+        t_row.time_window = regexp_replace( t_row.time_window, '\)|\[', '', 'g');
+        interval_timestamps := STRING_TO_ARRAY(t_row.time_window, ',');
+        EXIT WHEN t_row IS NULL;
+        UPDATE traffic_volume_tollgates_test1 SET time_window = interval_timestamps
+                WHERE CURRENT OF curs3;
+   END LOOP;
+   CLOSE curs3;
+END third_block $$;
 
+ALTER TABLE  traffic_volume_tollgates_test1 ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];

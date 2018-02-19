@@ -18,4 +18,4 @@ WHERE intersection_id = 'C' AND tollgate_id = 1 AND travel_seq[6].id = '121';
 
 # OBSERVACIONES
 * En los días de entrenamiento proporcionados por la competición hay precipitaciones escasas, por lo que los picos que encontramos en los datos de tiempo promedio de viaje no podemos relacionarlos con las precipitaciones.
-* A la hora de realizar las predicciones, en la carpeta *testing_phase1* se encuentra la tabla que proporciona el tiempo promedio de viaje en los intervalos de tiempo de dos horas antes de las horas a predecir. De esta forma, se podría unir estos datos a los datos de entrenamiento utilizados en el script, pero dándoles más importancia a las filas de la tabla con los intervalos de tiempo más recientes a las horas a predecir: _You could try building multiple xgboost models, with some of them being limited to more recent data, then weighting those results together. Another idea would be to make a customized evaluation metric that penalizes recent points more heavily which would give them more importance_
+* El tipo de vehículo no lo proporciona la competición, por lo que descartamos este atributo.

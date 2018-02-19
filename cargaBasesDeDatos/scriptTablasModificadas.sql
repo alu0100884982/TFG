@@ -130,7 +130,8 @@ ALTER TABLE travel_time_intersection_to_tollgate_modified ALTER time_window type
 CREATE TABLE traffic_volume_tollgates_modified (tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
 time_window varchar(50),
 direction smallint CONSTRAINT has_direction_value CHECK (direction IN (0,1)),
-volume int);
+volume int,
+proportion_hasetc_vehicles int);
 
 COPY traffic_volume_tollgates_modified FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/training/volume_table 6_training_20min_avg_volume.csv' WITH CSV HEADER;
 

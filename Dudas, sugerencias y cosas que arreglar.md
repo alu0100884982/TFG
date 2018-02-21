@@ -14,7 +14,8 @@ WHERE intersection_id = 'C' AND tollgate_id = 1 AND travel_seq[6].id = '121';
 * Se ha dejado al final el volumen de tráfico *out* y el *in* como columnas separadas ya que interesa saber el mismo por separado.
 
 # COSAS QUE ARREGLAR
-* Arreglar conjuntos de testeo puesto que estoy cogiendo la tabla que en realidad me proporciona el tiempo promedio de viaje antes de las horas a predecir.
+* Arreglar vistas de la primera aproximación para realizar las predicciones.
+* Arregar script *primera_aproximacion.sql* con el objetivo de combinar correctamente la vista con los datos meteorológicos por día y la tabla con los tiempos medios de viaje en intervalos de 20 minutos. 
 
 # OBSERVACIONES
 * En los días de entrenamiento proporcionados por la competición hay precipitaciones escasas, por lo que los picos que encontramos en los datos de tiempo promedio de viaje no podemos relacionarlos con las precipitaciones.

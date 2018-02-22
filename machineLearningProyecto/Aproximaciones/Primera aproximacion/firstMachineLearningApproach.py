@@ -46,6 +46,6 @@ X_test = travel_time_prediction.iloc[:, 0:8]
 
 #make predictions for test data
 y_pred = model.predict(X_test)
-print(y_pred)
+print(travel_time_dataframe.iloc[:, 7])
 #print(y_test - y_pred)
 

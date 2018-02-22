@@ -14,6 +14,8 @@ irando si es entre semana o fin de semana) o no y, si fuera recomendable tenerla
 
 * No sé si va a ser posible obtener si los días son laborables o no porque no sabemos de donde se cogieron los datos todavia.
 
+* Qué hacer con los valores nulos en la columna de *two_hours_previous*
+
 # SUGERENCIAS
 * Se ha dejado al final el volumen de tráfico *out* y el *in* como columnas separadas ya que interesa saber el mismo por separado.
 

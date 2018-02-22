@@ -32,6 +32,7 @@ ALTER TABLE travel_time_intersection_to_tollgate_test1 ALTER time_window type ti
 CREATE TABLE tabla_resultado_average_travel_time(intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN ('A', 'B', 'C')),
 tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
 time_window timestamp ARRAY[2],
+two_hours_previous float,
 avg_travel_time float);
 
 CREATE TYPE route AS (
@@ -168,3 +169,26 @@ BEGIN
 END third_block $$;
 
 ALTER TABLE  traffic_volume_tollgates_test1 ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];
+
+
+/****Cálculo del tiempo promedio de viaje dos horas antes en la tabla tabla_resultado_average_travel_time**/
+
+UPDATE tabla_resultado_average_travel_time t
+SET two_hours_previous = (SELECT AVG(avg_travel_time) FROM travel_time_intersection_to_tollgate_test1 s
+WHERE s.intersection_id = t.intersection_id AND s.tollgate_id = t.tollgate_id AND            
+(s.time_window[1] BETWEEN t.time_window[1] - INTERVAL '2 hours' AND t.time_window[1] - INTERVAL'20 min') AND  
+(s.time_window[2] BETWEEN t.time_window[2] - INTERVAL '2 hours' AND t.time_window[2]- INTERVAL '20 min'))
+;
+/*************************************************************/
+
+CREATE TABLE weather_data_test1 (date_ date, 
+hour int CONSTRAINT correct_hour CHECK (hour BETWEEN 0 AND 23),
+pressure float,
+sea_pressure float,
+wind_direction float CONSTRAINT degrees CHECK (wind_direction BETWEEN 0 AND 360),
+wind_speed float,
+temperature float,
+rel_humidity float CONSTRAINT correct_humidity CHECK (rel_humidity BETWEEN 0 AND 100),
+precipitation float);
+
+COPY weather_data_test1 FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/testing_phase1/weather (table 7)_test1.csv' WITH CSV HEADER;

@@ -39,21 +39,21 @@ Las tareas realizadas hasta el momento son las siguientes:
 * **Adición al manual de PostgreSQL los principales meta-comandos y sentencias utilizadas**. Se han añadido los principales meta-comandas y sentencias utilizadas hasta ahora para manejar una base de datos PostgreSQL.
 * **Realización de gráficas**. Se ha procedido a construir una gráfica por cada uno de los días de entrenamiento en las que se refleja la evolución del tiempo promedio de viaje en cada una de las rutas por horas. Además, por cada día se ha realizado una gráfica en las que se refleja los diferentes datos meteorológicos por hora. Tambíen se ha realizado una gráfica por cada uno de los días en las que se refleja el volumen de tráfico de entrada en todas las intersecciones y el de salida (menos la barrera de peaje 2 que solo permite dirección de entrada) por horas.
 * **Creación de una nueva base de datos para la primera fase de tests del modelo de predicción**. Se ha procedido a crear una nueva base de datos para insertar las tablas relacionadas con la primera fase de testeo del modelo de predicción que se realice. Para ello, se ha añadido la tabla que contiene, por cada una de las rutas, los intervalos de tiempo marcados en verde en la documentación de la competición (los intervalos de tiempo que están justo antes de los intervalos de tiempo a predecir) y se ha añadido la tabla resultado del tiempo promedio de viaje que debe crearse una vez se aplique el modelo de predicción.
-* **Creación de un script que crea 
+* **Creación de un script que crea
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
 * **Meter la documentación de la nueva base de datos en el documento de carga de la base de datos**.
 * **Corregir script de primeras predicciones**.
 * **Volver a cargar la tabla de tiempo meteorológico pero, en vez de eliminar las filas con valores erróneos, sustituir los valores erróneos por valores aproximados**. Esto se realiza con el objetivo de no eliminar días de la tabla.
 * **Realizar gráficas que contengan tanto el volumen de tráfico como el tiempo promedio de viaje por días**. Se pretende realizar esto con el objetivo de tener otra visualización más global de los datos.
-* **Realizar vistas propuestas en la reunión con el objetivo de construir modelos de predicción**. El objetivo es crear diferentes vistas y documentar las vistas realizadas junto con las predicciones que han tenido lugar sobre esas vistas.
+* **Realizar vistas propuestas en la reunión con el objetivo de construir modelos de predicción**. El objetivo es crear diferentes vistas y documentar las vistas realizadas junto con las predicciones  que han tenido lugar sobre esas vistas.
 * __Añadir en los scripts proporcionados por la competición la proporción de vehículos que tienen el atributo *has_etc*__ puesto que este atributo puede ser relevante a la hora de realizar los modelos de predicción.
 * **Crear un documento genérico de documentación del proyecto**.
 * **Realizar el script que construye la tabla resultado de la primera fase de pruebas para la predicción del volumen de tráfico en las barreras de peaje**.
 * **Añadir nuevas sentencias utilizadas al manual de PostgreSQL**
 * **Añadir documentación de la estructura de las carpetas del repositorio de Github junto con la información de lo que es cada cosa**
 
-## Próxima reunión
+## Reunión 22 de febrero de 2018
 ### Tareas realizadas
 Las tareas realizadas hasta el momento son las siguientes:
 * **Corregida tabla de datos meteorológicos**. Se han cambiado los valores erróneos en lugar de eliminar las filas que contenían esos valores erróneos con el objetivo de no perder información.
@@ -64,8 +64,23 @@ Las tareas realizadas hasta el momento son las siguientes:
 * **Modificación script _aggregate_volume.py_ para añadir el atributo proportion`_hasetc`_vehicles**. Se ha modificado el script para que, a la hora de agregar los vehículos por cada una de las ventanas de tiempo especificadas y su dirección, también se incluya la proporción de coches que utilizan el dispositivo ETC (Electronic Toll Collection) puesto que hemos considerado que es un atributo relevante para la realización de predicciones.
 
 * **Añadida tabla de volúmenes de tráfico en las barreras de peaje en la base de datos _tfgtest1_**. Se ha añadido la tabla que contiene los volúmenes de tráfico en cada una de las barreras de peaje tanto en la dirección de entrada como en la de salida (menos en la barrera de peaje 2 que no hay dirección de salida) en los intervalos de 2 horas previos a los intervalos de 2 horas a predecir.
+* **Realizadas las primeras predicciones**. Se ha procedido a crear vistas sobre las tablas de la base de datos _tfgdatosmodificados_ con el objetivo de obtener, para cada una de las rutas de la competición y para cada uno de los intervalos de tiempo de 20 minutos de los datos de entrenamiento, los datos meteorológicos del día de cada uno de los intervalos junto con el tiempo promedio de viaje y la media de los tiempos promedios de viaje de las dos horas previas al intervalo de tiempo de 20 minutos. Es decir, se ha creado una vista para cada pareja ruta-intervalo de tiempo con los datos mencionados anteriormente. Una vez realizado esto, se ha procedido a crear, en la base de datos _tfgtest1_, el atributo que indica la media de los tiempos promedios de viaje dos horas previas antes de los intervalos de tiempo de 20 minutos a predecir en la primera fase en la tabla resultado de los tiempos promedios de viaje. Por último, se ha escogido una determinada ruta con un intervalo de tiempo de 20 minutos a predecir para coger su vista creada como datos de entrenamiento del modelo de predicción y las filas de la tabla resultado del tiempo promedio de viaje de la primera fase correspondientes a esa ruta y a ese intervalo de tiempo como datos de test para realizar la predicción.
+
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
 * **Crear un documento genérico de documentación del proyecto**.
-* **Realizar vistas propuestas en la reunión con el objetivo de construir modelos de predicción**. El objetivo es crear diferentes vistas y documentar las vistas realizadas junto con las predicciones que han tenido lugar sobre esas vistas.
 * **Añadir documentación de la estructura de las carpetas del repositorio de Github junto con la información de lo que es cada cosa**
+* **Modificación de las vistas realizadas**.
+   * Hay que modificar las vistas realizadas previamente (para cada una de las rutas y los intervalos de tiempo de 20 minutos de los datos de entrenamiento). Estas modificaciones consisten en añadir, en lugar de la media de los tiempos promedios de viaje 2 horas antes de los intervalos de tiempo de 20 minutos, la media del tiempo promedio de viaje 20 minutos antes, 40 minutos antes, 60 minutos antes, 80 minutos antes, 100 minutos antes y 120 minutos antes, con el objetivo de que el modelo de predicción vea una tendencia en los datos.
+   * Además, la vista de los tiempos meteorológicos por día no es necesario puesto que es importante también tener en cuenta la hora en la que se dan las condiciones meteorológcas, por lo que hay que cambiar la forma en la que se combinan las tablas.
+   * No hace falta crear las vistas (o tablas en función de lo que más convenga) para cada una de las rutas e intervalos de tiempo de los datos de entrenamiento, sino sólo aquellas rutas e intervalos de tiempo a predecir, ya que sólo nos interesan los datos de entrenamiento correspondientes a esos valores.
+* **Crear modelos de predicción sobre la función _raiz cuadrada_**. El objetivo es crear diferentes modelos de predicción sobre la función _raiz cuadrada_ para tener una mejor visión de cómo se comportan los distintos modelos de predicción a utilizar en los datos de la competición y cómo se miden los distintos errores de valores continuos, con el objetivo de poder utilizarlos de la mejor forma posible.
+
+* **Crear modelos de predicción sobre las vistas (o tablas) creadas**. Para crear estos modelos de predicción, se ha propuesto primero utilizar el propio conjunto de entrenamiento como datos de testeo de los modelos de predicción (con pliegues, por ejemplo) y, una vez que se obtengan resultados satisfactorios, realizar el testeo con el conjunto real de testeo.
+
+## Próxima reunión
+### Tareas realizadas
+Las tareas realizadas hasta el momento son las siguientes:
+
+### Tareas pendientes
+Las tareas a realizar actualmente son las siguientes:

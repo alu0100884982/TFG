@@ -127,17 +127,6 @@ END second_block $$;
 
 ALTER TABLE travel_time_intersection_to_tollgate_modified ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];
 
-/***********************CREACIÓN DE LA COLUMNA two_hours_previous******************/
-ALTER TABLE travel_time_intersection_to_tollgate_modified
-ADD COLUMN two_hours_previous float;
-
-UPDATE travel_time_intersection_to_tollgate_modified t
-SET two_hours_previous = (SELECT AVG(avg_travel_time) FROM travel_time_intersection_to_tollgate_modified s
-WHERE s.intersection_id = t.intersection_id AND s.tollgate_id = t.tollgate_id AND            
-(s.time_window[1] BETWEEN t.time_window[1] - INTERVAL '2 hours' AND t.time_window[1] - INTERVAL'20 min') AND  
-(s.time_window[2] BETWEEN t.time_window[2] - INTERVAL '2 hours' AND t.time_window[2]- INTERVAL '20 min'))
-;
-/****************************************************************************************************/
 
 
 CREATE TABLE traffic_volume_tollgates_modified (tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),

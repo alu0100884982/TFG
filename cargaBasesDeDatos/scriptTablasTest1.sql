@@ -32,7 +32,12 @@ ALTER TABLE travel_time_intersection_to_tollgate_test1 ALTER time_window type ti
 CREATE TABLE tabla_resultado_average_travel_time(intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN ('A', 'B', 'C')),
 tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
 time_window timestamp ARRAY[2],
-two_hours_previous float,
+twenty_min_previous float,
+forty_min_previous float,
+sixty_min_previous float,
+eighty_min_previous float,
+onehundred_min_previous float,
+onehundredandtwenty_min_previous float,
 avg_travel_time float);
 
 CREATE TYPE route AS (
@@ -67,7 +72,7 @@ BEGIN
          FOR contador in 1..7 LOOP
             aux1 := fecha_inicial_1;
          WHILE aux1 != fecha_final_1 LOOP
-           INSERT INTO tabla_resultado_average_travel_time VALUES(ruta.intersection_id,ruta.tollgate_id, ARRAY[aux1, aux1 + '20 minute'],NULL);
+           INSERT INTO tabla_resultado_average_travel_time VALUES(ruta.intersection_id,ruta.tollgate_id, ARRAY[aux1, aux1 + '20 minute'],NULL, NULL,NULL,NULL,NULL,NULL,NULL);
            aux1 :=  aux1 + '20 minute';
          END LOOP;
          fecha_inicial_1 := fecha_inicial_1 + '1 day';
@@ -82,7 +87,7 @@ BEGIN
          FOR contador in 1..7 LOOP
             aux1 := fecha_inicial_2;
          WHILE aux1 != fecha_final_2 LOOP
-           INSERT INTO tabla_resultado_average_travel_time VALUES(ruta.intersection_id,ruta.tollgate_id, ARRAY[aux1, aux1 + '20 minute'],NULL);
+           INSERT INTO tabla_resultado_average_travel_time VALUES(ruta.intersection_id,ruta.tollgate_id, ARRAY[aux1, aux1 + '20 minute'],NULL, NULL,NULL,NULL,NULL,NULL,NULL);
            aux1 :=  aux1 + '20 minute';
          END LOOP;
          fecha_inicial_2 := fecha_inicial_2 + '1 day';

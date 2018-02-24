@@ -5,10 +5,6 @@ CREATE TYPE route AS (
     tollgate_id      integer
 );
 
-CREATE OR REPLACE VIEW weather_byday AS SELECT  date_, AVG(pressure) as pressure, AVG(sea_pressure) as sea_pressure, AVG(wind_direction) as wind_direction, AVG(wind_speed) as wind_speed, AVG(temperature) as temperature, AVG(rel_humidity) as rel_humidity, AVG(precipitation) as precipitation
-FROM weather_data_modified GROUP by date_
-ORDER BY date_;
-
 
 CREATE OR REPLACE FUNCTION create_view(ruta route, intervalo time_pair) 
     RETURNS void AS $$

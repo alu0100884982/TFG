@@ -51,17 +51,18 @@ CREATE OR REPLACE FUNCTION create_firstrow_route_interval(rutaintervalo tipo_fil
 CREATE OR REPLACE FUNCTION actualizar_filaactual_con_filaanterior(rutaintervalo_actual tipo_fila, rutaintervalo_anterior tipo_fila) 
     RETURNS void AS $$
     DECLARE
+        valor float;
     BEGIN
-   
-    
-    UPDATE tabla_resultado_average_travel_time AS thistable
-                     SET twenty_min_previous = othertable.avg_travel_time
-                    FROM travel_time_intersection_to_tollgate_test1 othertable
-                    WHERE othertable.time_window[1] = (rutaintervalo_actual.left_side_interval - INTERVAL '20 minute') AND othertable.time_window[2] = (rutaintervalo_actual.left_side_interval)
-                    AND othertable.intersection_id = rutaintervalo_actual.intersection AND othertable.tollgate_id = rutaintervalo_actual.tollgate AND
-                     thistable.time_window[1] = rutaintervalo_actual.left_side_interval AND  thistable.time_window[2] = (rutaintervalo_actual.left_side_interval + INTERVAL '20 minute')
-                    AND  thistable.intersection_id = rutaintervalo_actual.intersection AND  thistable.tollgate_id = rutaintervalo_actual.tollgate;
-                    
+        SELECT P.* INTO valor
+        FROM dblink('dbname=tfgdatosmodificados port=5432 host=127.0.0.1 user=javisunami password=javier123', 'SELECT AVG(avg_travel_time) FROM travel_time_intersection_to_tollgate_modified
+        WHERE intersection_id = '''|| rutaintervalo_actual.intersection|| ''' AND tollgate_id = '|| rutaintervalo_actual.tollgate || ' AND
+        time_window[1].time = '''|| (rutaintervalo_actual.left_side_interval).time||''' AND
+        time_window[2].time = ''' || (rutaintervalo_actual.left_side_interval).time + INTERVAL '20 minute'|| '''') AS P( 
+        avg_travel_time float);
+        UPDATE tabla_resultado_average_travel_time
+                     SET twenty_min_previous = valor
+                     WHERE time_window[1] = rutaintervalo_actual.left_side_interval AND  time_window[2] = (rutaintervalo_actual.left_side_interval + INTERVAL '20 minute')
+                    AND  intersection_id = rutaintervalo_actual.intersection AND  tollgate_id = rutaintervalo_actual.tollgate;     
       UPDATE tabla_resultado_average_travel_time AS actual
                      SET forty_min_previous = before.twenty_min_previous,
                          sixty_min_previous = before.forty_min_previous,

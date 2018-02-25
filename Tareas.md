@@ -81,6 +81,7 @@ Las tareas a realizar actualmente son las siguientes:
 * **Añadir documentación de db_link**.
 ## Próxima reunión
 ### Tareas realizadas
+* **Creación de las tablas interseccion-tollgate-intervalotiempo en la base de datos _tfgtest1_ de la primera aproximación de predicciones**. Se han creado las tablas de las rutas-intervalos necesarias para realizar las predicciones de los tiempos promedios de viaje.
 Las tareas realizadas hasta el momento son las siguientes:
 
 ### Tareas pendientes

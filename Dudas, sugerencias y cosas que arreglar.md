@@ -9,13 +9,7 @@ WHERE intersection_id = 'C' AND tollgate_id = 1 AND travel_seq[6].id = '121';
 irando si es entre semana o fin de semana) o no y, si fuera recomendable tenerla en cuenta, cómo la uso como variable a la hora de introducirla en el modelo.
 
 
-
-* A la hora de realizar las predicciones de la primera fase del tiempo medio de viaje, solo disponemos del tiempo promedio de viaje de los intervalos de 20 minutos que se encuentran 2 horas antes de los intervalos a predecir, por lo que para las demás vistas ( otros intervalos de 20 minutos) no podemos calcular el tiempo promedio de viaje de las 2 horas previas. -> Pocas filas de entrenamiento (por ejemplo 67)
-
-* No sé si va a ser posible obtener si los días son laborables o no porque no sabemos de donde se cogieron los datos todavia.
-
-* Qué hacer con los valores nulos en la columna de *two_hours_previous*
-
+* En la tabla resultado de predicción de tiempo promedio de viaje, a la hora de tener en cuenta el tiempo medio de viaje 20 min antes, 40 min antes, etcétera, en los intervalos de tiempo a predecir,  resulta que por ejemplo el intervalo de tiempo  {"2016-10-18 08:20:00","2016-10-18 08:40:00"} necesita, para el atributo 20 min antes, el tiempo promedio de viaje del intervalo anterior ({"2016-10-18 08:00:00","2016-10-18 08:20:00"}), pero este intervalo también está dentro de los intervalos que tengo que predecir y, por tanto, no tengo su tiempo promedio de viaje. ¿Qué debería hacer en este caso? ¿Hacer la media de todos los tiempos promedios de viaje en el intervalo de tiempo (08:00:00 - 08:20:00) en los dias anteriores en la ruta que estemos considerando?
 # SUGERENCIAS
 * Se ha dejado al final el volumen de tráfico *out* y el *in* como columnas separadas ya que interesa saber el mismo por separado.
 

@@ -69,15 +69,16 @@ Las tareas realizadas hasta el momento son las siguientes:
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
 * **Crear un documento genérico de documentación del proyecto**.
-* **Añadir documentación de la estructura de las carpetas del repositorio de Github junto con la información de lo que es cada cosa**
+* **Añadir documentación de la estructura de las carpetas del repositorio de Github junto con la información de lo que es cada cosa**.
 * **Modificación de las vistas realizadas**.
    * Hay que modificar las vistas realizadas previamente y las tablas que intervienen en su creación (para cada una de las rutas y los intervalos de tiempo de 20 minutos de los datos de entrenamiento). Estas modificaciones consisten en añadir, en lugar de la media de los tiempos promedios de viaje 2 horas antes de los intervalos de tiempo de 20 minutos, la media del tiempo promedio de viaje 20 minutos antes, 40 minutos antes, 60 minutos antes, 80 minutos antes, 100 minutos antes y 120 minutos antes, con el objetivo de que el modelo de predicción vea una tendencia en los datos. Aquí, cuando se dice por ejemplo 40 minutos antes, se refiere al intervalo entre 20 minutos y 40 minutos antes; es decir, no es acumulativo.
    * Además, la vista de los tiempos meteorológicos por día no es necesario puesto que es importante también tener en cuenta la hora en la que se dan las condiciones meteorológcas, por lo que hay que cambiar la forma en la que se combinan las tablas.
+   * También hay que añadir el tipo de día (si es laboral o es fin de semana).
    * No hace falta crear las vistas (o tablas en función de lo que más convenga) para cada una de las rutas e intervalos de tiempo de los datos de entrenamiento, sino sólo aquellas rutas e intervalos de tiempo a predecir, ya que sólo nos interesan los datos de entrenamiento correspondientes a esos valores.
 * **Crear modelos de predicción sobre la función _raiz cuadrada_**. El objetivo es crear diferentes modelos de predicción sobre la función _raiz cuadrada_ para tener una mejor visión de cómo se comportan los distintos modelos de predicción a utilizar en los datos de la competición y cómo se miden los distintos errores de valores continuos, con el objetivo de poder utilizarlos de la mejor forma posible.
 
 * **Crear modelos de predicción sobre las vistas (o tablas) creadas**. Para crear estos modelos de predicción, se ha propuesto primero utilizar el propio conjunto de entrenamiento como datos de testeo de los modelos de predicción (con pliegues, por ejemplo) y, una vez que se obtengan resultados satisfactorios, realizar el testeo con el conjunto real de testeo.
-
+* **Añadir documentación de db_link**.
 ## Próxima reunión
 ### Tareas realizadas
 Las tareas realizadas hasta el momento son las siguientes:

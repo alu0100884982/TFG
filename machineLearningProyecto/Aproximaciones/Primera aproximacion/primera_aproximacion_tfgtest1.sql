@@ -1,4 +1,5 @@
 CREATE TYPE tipo_fila AS (intersection char(1),tollgate int, left_side_interval timestamp );
+CREATE TYPE ruta AS (intersection char(1), tollgate int);
 CREATE OR REPLACE FUNCTION create_firstrow_route_interval(rutaintervalo tipo_fila) 
     RETURNS void AS $$
     DECLARE
@@ -104,6 +105,10 @@ DECLARE
   rutas_intervalos tipo_fila ARRAY;
   rutaintervalo_anterior tipo_fila;
   contador integer DEFAULT 1;
+  routes ruta ARRAY;
+  tiempos time ARRAY;
+  route ruta;
+  tiempo time;
 BEGIN 
   rutas_intervalos := ARRAY(SELECT '(' ||intersection_id || ', ' || tollgate_id || ', ' || time_window[1] || ')' FROM tabla_resultado_average_travel_time ORDER BY intersection_id, tollgate_id, time_window);
   
@@ -122,7 +127,27 @@ BEGIN
             END IF;
         END LOOP;
   END LOOP;
-      
+  
+CREATE OR REPLACE VIEW tiempo_con_intervalos_a_predecir AS SELECT *
+FROM weather_data_test1 JOIN tabla_resultado_average_travel_time
+ON date_ = time_window[1].date AND  CEIL(EXTRACT(HOUR FROM time_window[1])/3) * 3 = hour
+ORDER BY intersection_id, tollgate_id, time_window;
+
+routes := ARRAY(SELECT DISTINCT(intersection_id, tollgate_id)
+FROM tabla_resultado_average_travel_time
+ORDER BY (intersection_id, tollgate_id));
+
+tiempos := ARRAY(SELECT DISTINCT(time_window[1].time)
+FROM tabla_resultado_average_travel_time
+ORDER BY time_window[1].time);
+
+FOREACH route IN ARRAY routes LOOP
+     FOREACH tiempo IN ARRAY tiempos LOOP
+        EXECUTE('CREATE OR REPLACE VIEW  ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' AS 
+                SELECT * FROM tabla_resultado_average_travel_time  WHERE intersection_id = ''' || route.intersection|| ''' AND tollgate_id = '|| route.tollgate || 'AND time_window[1].time = ''' ||
+                tiempo || ''' ORDER BY intersection_id, tollgate_id, time_window');
+     END LOOP;
+END LOOP;
 END block $$;
 
 /**

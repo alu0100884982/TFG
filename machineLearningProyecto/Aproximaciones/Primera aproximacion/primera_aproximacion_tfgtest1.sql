@@ -74,30 +74,7 @@ CREATE OR REPLACE FUNCTION actualizar_filaactual_con_filaanterior(rutaintervalo_
                      WHERE actual.intersection_id = rutaintervalo_actual.intersection AND actual.tollgate_id = rutaintervalo_actual.tollgate AND actual.time_window[1]=                      rutaintervalo_actual.left_side_interval AND before.intersection_id = rutaintervalo_anterior.intersection AND before.tollgate_id = rutaintervalo_anterior.tollgate AND before.time_window[1] =      rutaintervalo_anterior.left_side_interval;
     END;
     $$ LANGUAGE plpgsql;
-/**
-CREATE OR REPLACE FUNCTION create_columns_intervals()    
-RETURNS void AS $$
-    DECLARE
-    BEGIN
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column twenty_min_previous float;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column forty_min_previous float;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column sixty_min_previous float;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column eighty_min_previous float;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column onehundred_min_previous float;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column onehundredtwenty_min_previous float;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        DROP column avg_travel_time;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column avg_travel_time;
-    END;
-    $$ LANGUAGE plpgsql;
-**/
+
 DO $$
 <<block>>
 DECLARE
@@ -143,24 +120,44 @@ ORDER BY time_window[1].time);
 
 FOREACH route IN ARRAY routes LOOP
      FOREACH tiempo IN ARRAY tiempos LOOP
-        EXECUTE('CREATE OR REPLACE VIEW  ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' AS 
-                SELECT * FROM tabla_resultado_average_travel_time  WHERE intersection_id = ''' || route.intersection|| ''' AND tollgate_id = '|| route.tollgate || 'AND time_window[1].time = ''' ||
+        EXECUTE('CREATE TABLE  ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' AS 
+                SELECT EXTRACT(isodow FROM time_window[1].date) AS type_day, twenty_min_previous, forty_min_previous, sixty_min_previous, eighty_min_previous, onehundred_min_previous, onehundredtwenty_min_previous pressure,sea_pressure,wind_direction,wind_speed,temperature,rel_humidity,precipitation,avg_travel_time FROM tiempo_con_intervalos_a_predecir  WHERE intersection_id = ''' || route.intersection|| ''' AND tollgate_id = '|| route.tollgate || 'AND time_window[1].time = ''' ||
                 tiempo || ''' ORDER BY intersection_id, tollgate_id, time_window');
+                
+        EXECUTE('UPDATE ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' SET type_day = 1
+                WHERE type_day BETWEEN 1 AND 5');
+        EXECUTE('UPDATE ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' SET type_day = 0
+                WHERE type_day IN (6,7)');
      END LOOP;
 END LOOP;
 END block $$;
 
-/**
-   EXECUTE('CREATE TABLE ' || rutaintervalo || '(intersection_id char(1) CONSTRAINT has_intersection_id_value CHECK (intersection_id IN (\'A\', \'B\', \'C\')),
-        tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
-        time_window timestamp ARRAY[2],
-        twenty_min_previous float,
-        forty_min_previous float,
-        sixty_min_previous float,
-        eighty_min_previous float,
-        onehundred_min_previous float,
-        onehundredandtwenty_min_previous float,
-        avg_travel_time float)';**/
+
+/** Before executing the script it is necessary to create the following columns:
+CREATE OR REPLACE FUNCTION create_columns_intervals()    
+RETURNS void AS $$
+    DECLARE
+    BEGIN
+        ALTER TABLE tabla_resultado_average_travel_time 
+        ADD column twenty_min_previous float;
+        ALTER TABLE tabla_resultado_average_travel_time 
+        ADD column forty_min_previous float;
+        ALTER TABLE tabla_resultado_average_travel_time 
+        ADD column sixty_min_previous float;
+        ALTER TABLE tabla_resultado_average_travel_time 
+        ADD column eighty_min_previous float;
+        ALTER TABLE tabla_resultado_average_travel_time 
+        ADD column onehundred_min_previous float;
+        ALTER TABLE tabla_resultado_average_travel_time 
+        ADD column onehundredtwenty_min_previous float;
+        ALTER TABLE tabla_resultado_average_travel_time 
+        DROP column avg_travel_time;
+        ALTER TABLE tabla_resultado_average_travel_time 
+        ADD column avg_travel_time;
+    END;
+    $$ LANGUAGE plpgsql;
+
+ **/
 
 
 

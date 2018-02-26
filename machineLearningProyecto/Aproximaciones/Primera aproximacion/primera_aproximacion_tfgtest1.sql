@@ -58,7 +58,7 @@ CREATE OR REPLACE FUNCTION actualizar_filaactual_con_filaanterior(rutaintervalo_
         FROM dblink('dbname=tfgdatosmodificados port=5432 host=127.0.0.1 user=javisunami password=javier123', 'SELECT AVG(avg_travel_time) FROM travel_time_intersection_to_tollgate_modified
         WHERE intersection_id = '''|| rutaintervalo_actual.intersection|| ''' AND tollgate_id = '|| rutaintervalo_actual.tollgate || ' AND
         time_window[1].time = '''|| (rutaintervalo_actual.left_side_interval).time||''' AND
-        time_window[2].time = ''' || (rutaintervalo_actual.left_side_interval).time + INTERVAL '20 minute'|| '''') AS P( 
+        time_window[2].time = ''' || (rutaintervalo_actual.left_side_interval).time + INTERVAL '20 minute'|| ''' AND EXTRACT(isodow FROM time_window[1].date) = ' || EXTRACT(isodow FROM (rutaintervalo_actual.left_side_interval).date)) AS P( 
         avg_travel_time float);
         UPDATE tabla_resultado_average_travel_time
                      SET twenty_min_previous = valor

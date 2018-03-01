@@ -7,14 +7,9 @@ RETURNS void AS $$
         valor float;
         tiempo1 time;
         tiempo2 time;
-    BEGIN
-        valor := null;
+    BEGINq
         tiempo1 = (rutaintervalo.left_side_interval).time - CAST(valores[2] AS int) * INTERVAL '1 minute';
         tiempo2 = (rutaintervalo.left_side_interval).time - CAST(valores[2] AS int) * INTERVAL '1 minute' + INTERVAL '20 minute';
-        RAISE NOTICE '%',  ('SELECT AVG(avg_travel_time) FROM travel_time_intersection_to_tollgate_modified
-        WHERE intersection_id = '''|| rutaintervalo.intersection|| ''' AND tollgate_id = '|| rutaintervalo.tollgate || ' AND
-        time_window[1].time = '''|| tiempo1|| ''' AND
-        time_window[2].time = ''' || tiempo2 || ''' AND EXTRACT(isodow FROM time_window[1].date) = '     ||      EXTRACT(isodow FROM (rutaintervalo.left_side_interval).date));
         
         EXECUTE('SELECT ' || valores[1] || ' FROM travel_time_intersection_to_tollgate_modified  WHERE time_window[1] = ''' ||(rutaintervalo.left_side_interval)||''' AND time_window[2] = ''' ||         (rutaintervalo.left_side_interval + INTERVAL '20 minute') || ''' AND intersection_id = ''' || rutaintervalo.intersection || ''' AND tollgate_id = ' || rutaintervalo.tollgate) INTO valor; 
         IF (valor IS NULL) THEN
@@ -167,5 +162,37 @@ ORDER BY intersection_id, tollgate_id, time_window);
             END IF;
         END LOOP;
    END LOOP;
+   
+CREATE OR REPLACE VIEW tiempo_con_intervalos AS SELECT *
+FROM weather_data_modified JOIN (SELECT *
+FROM travel_time_intersection_to_tollgate_modified 
+WHERE (time_window[1].time BETWEEN TIME '08:00:00' AND TIME '09:40:00')  OR (time_window[1].time BETWEEN TIME '17:00:00' AND TIME '18:40:00')
+ORDER BY intersection_id, tollgate_id, time_window
+) t ON date_ = time_window[1].date AND CEIL(EXTRACT(HOUR FROM time_window[1])/3) * 3 = hour
+ORDER BY intersection_id, tollgate_id, time_window;
+
+routes := ARRAY(SELECT DISTINCT(intersection_id, tollgate_id)
+FROM travel_time_intersection_to_tollgate_modified
+WHERE (time_window[1].time BETWEEN TIME '08:00:00' AND TIME '09:40:00') OR (time_window[1].time BETWEEN TIME '17:00:00' AND TIME '18:40:00')
+ORDER BY (intersection_id, tollgate_id));
+
+tiempos := ARRAY(SELECT DISTINCT(time_window[1].time)
+FROM travel_time_intersection_to_tollgate_modified
+WHERE (time_window[1].time BETWEEN TIME '08:00:00' AND TIME '09:40:00') OR (time_window[1].time BETWEEN TIME '17:00:00' AND TIME '18:40:00')
+ORDER BY time_window[1].time);
+
+FOREACH route IN ARRAY routes LOOP
+     FOREACH tiempo IN ARRAY tiempos LOOP
+        EXECUTE('CREATE TABLE  ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' AS 
+                SELECT EXTRACT(isodow FROM time_window[1].date) AS type_day, twenty_min_previous, forty_min_previous, sixty_min_previous, eighty_min_previous, onehundred_min_previous, onehundredtwenty_min_previous, pressure,sea_pressure,wind_direction,wind_speed,temperature,rel_humidity,precipitation,avg_travel_time FROM tiempo_con_intervalos  WHERE intersection_id = ''' || route.intersection|| ''' AND tollgate_id = '|| route.tollgate || 'AND time_window[1].time = ''' ||
+                tiempo || ''' ORDER BY intersection_id, tollgate_id, time_window');
+                
+        EXECUTE('UPDATE ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' SET type_day = 1
+                WHERE type_day BETWEEN 1 AND 5');
+        EXECUTE('UPDATE ' || route.intersection ||'_' ||route.tollgate || '_' ||EXTRACT(HOUR FROM tiempo) || '_' ||EXTRACT(MINUTE FROM tiempo) || ' SET type_day = 0
+                WHERE type_day IN (6,7)');
+     END LOOP;
+END LOOP;
+
 END block $$;
 

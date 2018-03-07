@@ -90,27 +90,24 @@ print("Error SVM: ", error5);
 print("y_pred : ", y_pred)
 print("y_test :", y_test);
 
+MAPE = 0
+for i in range(0,len(y_pred)):
+        MAPE += abs((y_test.iloc[i] - y_pred[i])/y_test.iloc[i])
+MAPE /= len(y_pred);
+print("MAPE : ", MAPE)
+#####################################################################################################################################################################################################
+cur.execute("""CREATE EXTENSION dblink""")
+cur.execute("""SELECT P.*
+FROM dblink('dbname=tfgtraining2 port=5432 host=127.0.0.1 user=javisunami password=javier123', 'SELECT * FROM travel_time_intersection_to_tollgate_training2 WHERE (time_window[1].time BETWEEN TIME ''08:00:00'' AND TIME ''09:40:00'') OR (time_window[1].time BETWEEN TIME ''17:00:00'' AND TIME ''18:40:00'') ORDER BY intersection_id, tollgate_id, time_window') 
+AS P( intersection_id char(1),
+tollgate_id smallint,
+time_window varchar(50),
+avg_travel_time float);""")
+rows = cur.fetchall()
+colnames = ['intersection_id', 'tollgate_id', 'time_window', 'avg_travel_time']
+intervals_to_predict_real_avgtraveltime = pd.DataFrame(rows, columns=colnames)
+real_avgtraveltime_values = intervals_to_predict_real_avgtraveltime.iloc[:,3]
+routes = np.array(intervals_to_predict_real_avgtraveltime.iloc[:,0:2].values.tolist())
+print(routes);
 
 
-'''
-travel_time_prediction = pd.DataFrame(rows2, columns=colnames)
-set_option( 'display.width' , 100)
-X_test = travel_time_prediction.iloc[:, 0:8]
-
-#make predictions for test data
-y_pred = model.predict(X_test)
-print(travel_time_dataframe.iloc[:, 7])
-#print(y_test - y_pred)
-
-try:
-    conn2 = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
-except:
-   print("I am unable to connect to the database")
-
-cur2 = conn2.cursor()
-cur2.execute("""select pressure, sea_pressure, wind_direction, wind_speed, temperature, rel_humidity, precipitation, two_hours_previous
-from vista_travel_time_contiempometeorologico
-where intersection_id = 'C' AND tollgate_id = '1' AND time_window[1].time = '8:00';""")
-rows2 = cur2.fetchall()
-colnames = ['pressure', 'sea_pressure', 'wind_direction', 'wind_speed', 'temperature', 'rel_humidity', 'precipitation', 'two_hours_previous']
-'''

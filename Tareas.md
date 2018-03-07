@@ -79,11 +79,18 @@ Las tareas a realizar actualmente son las siguientes:
 
 * **Crear modelos de predicción sobre las vistas (o tablas) creadas**. Para crear estos modelos de predicción, se ha propuesto primero utilizar el propio conjunto de entrenamiento como datos de testeo de los modelos de predicción (con pliegues, por ejemplo) y, una vez que se obtengan resultados satisfactorios, realizar el testeo con el conjunto real de testeo.
 * **Añadir documentación de db_link**.
-* **Introducir datos meteorológicos aproximados del dia 10/10/16 puesto que no están en la tabla de tiempo meteorológico en la base de datos _tfgdatosmodificados_ y es necesario para realizar la combinación de tablas**. 
+* **Introducir datos meteorológicos aproximados del dia 10/10/16 puesto que no están en la tabla de tiempo meteorológico en la base de datos _tfgdatosmodificados_ y es necesario para realizar la combinación de tablas**.
+* **Crear la tabla de los intervalos a predecir con sus valores de tiempo promedio de viaje reales**. Es necesario crear esta tabla para poder comprobar nuestras predicciones sobre esos intervalos. Para ello, hay que crear la base de datos de la segunda fase de la competición, agrupar el tiempo promedio de viaje en intervalos y escoger aquellos intervalos que nos interesa predecir. 
 ## Próxima reunión
 ### Tareas realizadas
-* **Creación de las tablas interseccion-tollgate-intervalotiempo en la base de datos _tfgtest1_ de la primera aproximación de predicciones**. Se han creado las tablas de las rutas-intervalos necesarias para realizar las predicciones de los tiempos promedios de viaje.
 Las tareas realizadas hasta el momento son las siguientes:
+* **Creación de las tablas interseccion-tollgate-intervalotiempo en la base de datos _tfgtest1_ de la primera aproximación de predicciones**. Se han creado las tablas de las rutas-intervalos necesarias para realizar las predicciones de los tiempos promedios de viaje.
+* **Creación de las tablas interseccion-tollgate-intervalotiempo en la base de datos _tfgdatosmodificados_ de la primera aproximación de predicciones**. Se han creado las tablas de las rutas-intervalos necesarias para realizar las predicciones de los tiempos promedios de viaje (utilizarlas para realizar el entrenamiento del modelo).
+* **Realización de primeras predicciones**. Se ha procedido a escoger diferentes modelos de regresión lineal y probarlos con los datos, de tal forma que se ha obtenido una idea de cuál es el algoritmo que mejores resultados puede dar.
+* **Datos meteorológicos aproximados del día 10/10/16 añadidos**
+* **Añadida la documentación de db_link**
+* **Creado fichero de documentación sobre la estructura de las carpetas**. Se ha comenzado a documentar la forma en la que se organizan los archivos y las carpetas del repositorio de Github.
+
 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:

@@ -81,7 +81,7 @@ Las tareas a realizar actualmente son las siguientes:
 * **Añadir documentación de db_link**.
 * **Introducir datos meteorológicos aproximados del dia 10/10/16 puesto que no están en la tabla de tiempo meteorológico en la base de datos _tfgdatosmodificados_ y es necesario para realizar la combinación de tablas**.
 * **Crear la tabla de los intervalos a predecir con sus valores de tiempo promedio de viaje reales**. Es necesario crear esta tabla para poder comprobar nuestras predicciones sobre esos intervalos. Para ello, hay que crear la base de datos de la segunda fase de la competición, agrupar el tiempo promedio de viaje en intervalos y escoger aquellos intervalos que nos interesa predecir. 
-## Próxima reunión
+## Reunión 8 de marzo de 2018
 ### Tareas realizadas
 Las tareas realizadas hasta el momento son las siguientes:
 * **Creación de las tablas interseccion-tollgate-intervalotiempo en la base de datos _tfgtest1_ de la primera aproximación de predicciones**. Se han creado las tablas de las rutas-intervalos necesarias para realizar las predicciones de los tiempos promedios de viaje.
@@ -91,7 +91,23 @@ Las tareas realizadas hasta el momento son las siguientes:
 * **Añadida la documentación de db_link**
 * **Creado fichero de documentación sobre la estructura de las carpetas**. Se ha comenzado a documentar la forma en la que se organizan los archivos y las carpetas del repositorio de Github.
 
+### Tareas pendientes
+Las tareas a realizar actualmente son las siguientes:
+* **Mejorar la organización del repositorio**. Hay que mejorar la estructura del repositorio para que sea más facil acceder a la información.
+* **Terminar el modelo del proyecto del TFG**. Añadir contenido y mejorar distintos aspectos del modelo.
+* **Documentar todos los modelos**. Realizar un estudio de los algoritmos a utilizar y documentar.
+* **Crear nuevo modelo de predicción con las columnas de los datos de 2h antes de los intervalos a predecir**. Crear una segunda aproximación de predicciones del tiempo promedio de viaje.
+* **Terminar la documentación sobre la estructura de carpetas del repositorio**. 
+* **Realizar gráficas sobre el número de instancias de cada una de las tablas creadas para entrenar en la primera aproximación de predicciones del tiempo promedio de viaje**. Se pretende realizarlas para ver en que intervalos hay más o menos instancias de entrenamiento.
+* **Realizar la documentación de la primera aproximación de predicciones sobre el tiempo promedio de viaje**.
+* **Actualizar la documentación del repositorio**.
+
+## Próxima reunión
+### Tareas realizadas
+Las tareas realizadas hasta el momento son las siguientes:
 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
+
+
 

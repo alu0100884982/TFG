@@ -14,7 +14,9 @@ from sklearn.metrics import mean_squared_error
 import lightgbm as lgb
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPRegressor
-from sklearn import svm 
+from sklearn import svm
+import datetime
+import re
 
 try:
     conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
@@ -90,13 +92,7 @@ print("Error SVM: ", error5);
 print("y_pred : ", y_pred)
 print("y_test :", y_test);
 
-MAPE = 0
 
-
-#for i in range(0,len(y_pred)):
- #       MAPE += abs((y_test.iloc[i] - y_pred[i])/y_test.iloc[i])
-#MAPE /= len(y_pred);
-#print("MAPE : ", MAPE)
 
 #####################################################################################################################################################################################################
 cur.execute("""CREATE EXTENSION dblink""")
@@ -111,10 +107,19 @@ colnames = ['intersection_id', 'tollgate_id', 'time_window', 'avg_travel_time']
 intervals_to_predict_real_avgtraveltime = pd.DataFrame(rows, columns=colnames)
 routes = np.array(intervals_to_predict_real_avgtraveltime.iloc[:,0:2].values.tolist())
 time_intervals = np.array(intervals_to_predict_real_avgtraveltime.iloc[:,2].values.tolist())
+routes = np.unique(routes, axis=0);
+aux = np.array([])
+for i,time_interval in enumerate(time_intervals):
+        time_interval = re.sub(r'[{\"}]', '', time_interval).split(',')
+        time_interval[0] = datetime.datetime.strptime(time_interval[0] , '%Y-%m-%d %H:%M:%S')
+        time_interval[1] = datetime.datetime.strptime(time_interval[1] , '%Y-%m-%d %H:%M:%S')
+        aux = np.append(aux,(datetime.time(time_interval[0].hour,time_interval[0].minute), datetime.time(time_interval[1].hour,time_interval[1].minute)));
+time_intervals = np.unique(aux);
+time_intervals = np.delete(time_intervals, -1)
+time_intervals = np.delete(time_intervals, 6)
+print("TIME_INTERVALS: ", time_intervals);
 real_avgtraveltime_values = np.array([])
 predicted_avgtraveltime_values = np.array([])
-print(np.unique(routes, axis=0));
-print(np.unique(time_intervals, axis=0));
 colnames = [ 'type_day','twenty_min_previous','forty_min_previous','sixty_min_previous','eighty_min_previous','onehundred_min_previous','onehundredtwenty_min_previous','pressure','sea_pressure','wind_direction', 'wind_speed', 'temperature', 'rel_humidity', 'precipitation','avg_travel_time']
 
 suma_rutas = 0;
@@ -123,24 +128,21 @@ for route in routes:
      for interval in time_intervals:
         conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
         cur = conn.cursor()
-        query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + time_window[0].hour + "_" + time_window[0].minute + ";"
+        query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + str(interval.hour) + "_" + str(interval.minute) + ";"
         cur.execute(query)
         rows = cur.fetchall()
-        dataframe_traveltime = pd.DataFrame(rows, columns=colnames)[:, 0:14]
-        X_train = dataframe_traveltime[:, 0:14]
-        y_train = dataframe_traveltime[:, 14]
-        
+        dataframe_traveltime = pd.DataFrame(rows, columns=colnames)
+        X_train = dataframe_traveltime.iloc[:, 0:14]
+        y_train = dataframe_traveltime.iloc[:, 14]
         
         conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
         cur = conn.cursor()
-        query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + time_window[0].hour + "_" + time_window[0].minute + ";"
+        query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + str(interval.hour) + "_" + str(interval.minute) + ";"
         cur.execute(query)
         rows = cur.fetchall()
-        dataframe_traveltime = pd.DataFrame(rows, columns=colnames)[:, 0:14]
-        X_test = dataframe_traveltime[:, 0:14]
-        y_test = dataframe_traveltime[:, 14]
-        gb_train = lgb.Dataset(X_train, y_train)
-        lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
+        dataframe_traveltime = pd.DataFrame(rows, columns=colnames)
+        X_test = dataframe_traveltime.iloc[:, 0:14]
+        y_test = dataframe_traveltime.iloc[:, 14]
         # specify your configurations as a dict
         params = {
             'task': 'train',
@@ -154,20 +156,13 @@ for route in routes:
             'bagging_freq': 5,
             'verbose': 0
         }
-        gbm = lgb.train(params,
-                        lgb_train,
-                        num_boost_round=20,
-                        valid_sets=lgb_eval,
-                        early_stopping_rounds=5)
-        for fila in X_test:
-              predicted_value =  gbm.predict(fila, num_iteration=gbm.best_iteration);
-              real_value = real_avgtraveltime_values, intervals_to_predict_real_avgtraveltime[
-              (intervals_to_predict_real_avgtraveltime["intersection_id"] == route[0]) & (intervals_to_predict_real_avgtraveltime["tollgate_id"] == route[1]) 
-              & (intervals_to_predict_real_avgtraveltime["time_window"] == interval) ]["avg_travel_time"];
-              predicted_avgtraveltime_values = np.append(predicted_avgtraveltime_values,predicted_value)
-              real_avgtraveltime_values = np.append(real_avgtraveltime_values, real_value)
-              suma_intervalos_tiempo += abs((real_value - predicted_value) / real_value);
-     suma_rutas += sumaintervalos / time_intervals.size;
-print (suma_rutas / routes.size);   
+        train_data=lgb.Dataset(X_train,label=y_train)
+        lgbm=lgb.train(params,train_data,50);
+        predicted_values = lgbm.predict(X_test)
+        print ("predicted values : ", predicted_values)
+        real_values = intervals_to_predict_real_avgtraveltime[(intervals_to_predict_real_avgtraveltime.intersection_id == route[0]) & (intervals_to_predict_real_avgtraveltime.tollgate_id == route[1]) ];
+              #suma_intervalos_tiempo += abs((real_value - predicted_value) / real_value);
+     #suma_rutas += suma_intervalos_tiempo / time_intervals.size;
+#print (suma_rutas / routes.size);   
                
 

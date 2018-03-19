@@ -71,7 +71,7 @@ CREATE OR REPLACE FUNCTION actualizar_filaactual_con_filaanterior(rutaintervalo_
                          onehundred_min_previous = before.eighty_min_previous,
                          onehundredtwenty_min_previous = before.onehundred_min_previous
                      FROM tabla_resultado_average_travel_time before
-                     WHERE actual.intersection_id = rutaintervalo_actual.intersection AND actual.tollgate_id = rutaintervalo_actual.tollgate AND actual.time_window[1]=                      rutaintervalo_actual.left_side_interval AND before.intersection_id = rutaintervalo_anterior.intersection AND before.tollgate_id = rutaintervalo_anterior.tollgate AND before.time_window[1] =      rutaintervalo_anterior.left_side_interval;
+                     WHERE actual.intersection_id = rutaintervalo_actual.intersection AND actual.tollgate_id = rutaintervalo_actual.tollgate AND actual.time_window[1]= rutaintervalo_actual.left_side_interval AND before.intersection_id = rutaintervalo_anterior.intersection AND before.tollgate_id = rutaintervalo_anterior.tollgate AND before.time_window[1] =      rutaintervalo_anterior.left_side_interval;
     END;
     $$ LANGUAGE plpgsql;
 
@@ -152,8 +152,6 @@ RETURNS void AS $$
         ADD column onehundredtwenty_min_previous float;
         ALTER TABLE tabla_resultado_average_travel_time 
         DROP column avg_travel_time;
-        ALTER TABLE tabla_resultado_average_travel_time 
-        ADD column avg_travel_time;
     END;
     $$ LANGUAGE plpgsql;
 

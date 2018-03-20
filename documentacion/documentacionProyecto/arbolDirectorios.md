@@ -66,21 +66,13 @@
 │   │       │   ├── DataTypeForEachAttribute.py
 │   │       │   ├── DataTypeForEachAttribute.py~
 │   │       │   ├── DescriptiveStatistics.py
-│   │       │   ├── DescriptiveStatistics.py~
 │   │       │   ├── DimensionsOfYourData.py
-│   │       │   ├── DimensionsOfYourData.py~
 │   │       │   ├── LoadCSVFiles_with_NumPy.py
-│   │       │   ├── LoadCSVFiles_with_NumPy.py~
 │   │       │   ├── LoadCSVFiles_with_Pandas.py
-│   │       │   ├── LoadCSVFiles_with_Pandas.py~
 │   │       │   ├── LoadCSVFiles_with_the_PythonStandardLibrary.py
-│   │       │   ├── LoadCSVFiles_with_the_PythonStandardLibrary.py~
 │   │       │   ├── LoadCSV_from_URL_using_NumPy.py
-│   │       │   ├── LoadCSV_from_URL_using_NumPy.py~
 │   │       │   ├── LoadCSV_using_Pandas_from_URL.py
-│   │       │   ├── LoadCSV_using_Pandas_from_URL.py~
 │   │       │   ├── PeekAtYourData.py
-│   │       │   └── PeekAtYourData.py~
 │   │       ├── python_pandas_tutorial.pdf
 │   │       └── ScipyLectures-simple.pdf
 │   └── documentacionProyecto
@@ -226,6 +218,7 @@
 │   │   ├── aggregate_volume.py
 │   ├── submission_sample_travelTime.csv
 │   ├── submission_sample_volume.csv
+</pre>
 
 * **cargaBasesDeDatos** -> Carpeta que contiene todo lo relacionado con la carga de las bases de datos creadas.
   * **constraints** -> Carpeta que contiene los scripts de comprobación de una serie de restricciones más elaboradas sobre las tablas de las bases de datos.
@@ -247,5 +240,65 @@
   * **scripts** -> Carpeta que contiene los scripts necesarios para agrupar tanto el tiempo promedio de viaje como el volumen de tráfico en intervalos de 20 minutos.
     * __*aggregate_travel_time.py*__ -> Script de Python proporcionado por la competición para agrupar los tiempos promedios de viaje en intervalos de 20 minutos a partir de la tabla que contiene, por rutas y por vehículo, el tiempo de viaje realizado en un intervalo de tiempo determinado.
     * __*aggregate_volume.py*__ -> Script de Python proporcionado por la competición para agrupar los volúmenes de tráfico en intervalos de 20 minutos a partir de la tabla que contiene, por fechas y tiempos, los vehículos que han pasado por las barreras de peaje y la dirección en la que lo han hecho.
-    
-     * **Carga de la base de datos con PostgreSQL.pdf** -> Documento que contiene la documentación de la carga de las bases de datos.
+  * **submission_sample_travelTime.csv** -> Fichero ejemplo que contiene la plantilla utilizada para incluir las predicciones realizadas del tiempo promedio de viaje.
+  * **submission_sample_volume.csv** -> Fichero ejemplo que contiene la plantilla utilizada para incluir las predicciones realizadas del volumen de tráfico.
+  * **testing_phase1** -> Carpeta que contiene los datos de testeo de la primera fase de la competición.
+    * __* test1_20min_avg_travel_time.csv*__ -> Fichero que agrupa el tiempo promedio de viaje por rutas e intervalos de tiempo de las 2 horas antes de los intervalos a predecir.
+    * __* test1_20min_avg_volume.csv*__ -> Fichero que agrupa el volumen de tráfico por rutas e intervalos de tiempo de las 2 horas antes de los intervalos a predecir.
+    * __*trajectories(table5)_test1.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las rutas contempladas en los datos de la competición en las dos horas previas a los intervalos a predecir junto al tiempo que tarda en recorrer cada uno de los enlaces de la ruta y el tiempo promedio del viaje realizado. Se utiliza para obtener el fichero _test1_20min_avg_travel_time.csv_.
+    * __*volume(table 6)_test1.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las barreras de peaje contempladas en la competición en las dos horas previas a los intervalos a predecir junto con la dirección en la que ha atravesado la barrera de peaje y otras características. Se utiliza para obtener el fichero _test1_20min_avg_volume.csv_.
+    * __*weather (table 7)_test1.csv*__ -> Fichero que contiene los datos meteorológicos cada 3 horas de los días a predecir.
+  * **training** -> Carpeta que contiene los datos de entrenamiento de la primera fase de la competición.
+    * __* links_table3.csv*__ -> Fichero que contiene cada uno de los enlaces que forman las rutas de la competición junto con sus características.
+    * __*routes_table4.csv*__ -> Fichero que contiene cada una de las rutas de la competición junto con la secuencia de enlaces que la forman.
+    * __*trajectories_table5_training_20min_avg_travel_time.csv*__ -> Fichero que agrupa el tiempo promedio de viaje por rutas e intervalos de tiempo de entrenamiento.
+    * __*trajectories_table 5_training.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las rutas contempladas en los datos de la competición en los intervalos de tiempo de entrenamiento junto al tiempo que tarda en recorrer cada uno de los enlaces de la ruta y el tiempo promedio del viaje realizado. Se utiliza para obtener el fichero _trajectories_table5_training_20min_avg_travel_time.csv_.
+    * __*volume_table 6_training_20min_avg_volume.csv*__ ->  Fichero que agrupa el volumen de tráfico por rutas e intervalos de tiempo de entrenamiento.
+    * __*volume_table 6_training.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las barreras de peaje contempladas en la competición en los intervalos de tiempo de entrenamiento junto con la dirección en la que ha atravesado la barrera de peaje y otras características. Se utiliza para obtener el fichero _volume_table 6_training_20min_avg_volume.csv_.
+    * __*weather (table 7)_training.csv*__ -> Fichero que contiene los datos meteorológicos cada 3 horas de los días de entrenamiento.
+* **documentacion** -> Carpeta que contiene toda la documentación del TFG.
+ * **documentacionAdicional** -> Carpeta que contiene los datos de entrenamiento de la primera fase de la competición.
+   * __*Estado del arte*__ -> Fichero que contiene los documentos escogidos para representar el estado del arte del tema tratado en el TFG.  
+      * __*ALEIXANDRE - Predicción de tráfico en las carreteras de la red de la Generalitat Valenciana.pdf*__ -> Trabajo de Fin de Grado acerca de la predicción de tráfico en las carreteras de la red de la Generalitat Valenciana.
+      * __*ForecastingTrafficTimeSeries.pdf*__ -> Artículo acerca de la predicción de tráfico.
+      * __*HowLongWillTheTrafficFlowSeries.pdf*__ -> Artículo en el que se estudia la cuestión acerca del tiempo de validez en que se mantiene eficaz una serie histórica de tiempos de flujo del tráfico para predecir el futuro.
+      * __*Short-Term-Traffic-Prediction-on-the-UK-Motorway-N_2016_Transportation-Resea.pdf*__ -> Artículo en el que se realizan estimaciones a corto plazo (15 minutos en el futuro) con la información histórica del tráfico de la red de autopistas del Reino Unido utilizando redes neuronales, de tal forma que esto permita reducir la congestión del transporte mediante la mejora de sistemas inteligentes de transporte utilizados para controlar el tráfico para que realicen decisiones proactivas sobre la red de carreteras (anticiparse al inicio de la congestión del tráfico)
+      * __*What-Drives-Mobility-Trends--Results-from-Case-Studies_2016_Transportation-R.pdf*__ -> Artículo en el que se estudian las tendencias de movilidad urbana en Paris, Santiago de Chile, Singapur y Viena con el objetivo de analizar la demanda de las diversas formas de transporte que existen en esas ciudades y establecer políticas adecuadas.
+    * __*Machine Learning*__ -> Carpeta que contiene documentación de apoyo sobre el aprendizaje
+     automático.
+     * __*machine_learning_a_bayesian_perspective.pdf*__ -> Documento sobre información de aprendizaje automático en general en general.
+     * __*machine_learning_mastery_with_python.pdf*__ -> Documento que contiene información acerca del aprendizaje automático en Python.
+     * __*machine_learning_a_bayesian_perspective.pdf*__ ->  
+      automático.
+
+      Machine Learning
+      │   │   │   ├── machine_learning_a_bayesian_perspective.pdf
+      │   │   │   ├── machine_learning_mastery_with_python.pdf
+      │   │   │   └── tips, tricks and hacks that you can use to make better predictions.pdf
+      │   │   ├── PostgreSQL
+      │   │   │   └── PostgreSQL.pdf
+      │   │   └── Python
+      │   │       ├── CheatSheets
+      │   │       │   ├── data-visualisation-infographics1.jpg
+      │   │       │   ├── LearnDataScienceInPython.jpg
+      │   │       │   ├── Pandas.png
+      │   │       │   ├── PythonForDataScience.pdf
+      │   │       │   └── Scikit-Learn.pdf
+      │   │       ├── CodigosEjemplo
+      │   │       │   ├── CorrelationsBetweenAttributes.py
+      │   │       │   ├── datasets
+      │   │       │   │   ├── pima-indians-diabetes.data.csv
+      │   │       │   │   └── pima-indians-diabetes.names
+      │   │       │   ├── DataTypeForEachAttribute.py
+      │   │       │   ├── DataTypeForEachAttribute.py~
+      │   │       │   ├── DescriptiveStatistics.py
+      │   │       │   ├── DimensionsOfYourData.py
+      │   │       │   ├── LoadCSVFiles_with_NumPy.py
+      │   │       │   ├── LoadCSVFiles_with_Pandas.py
+      │   │       │   ├── LoadCSVFiles_with_the_PythonStandardLibrary.py
+      │   │       │   ├── LoadCSV_from_URL_using_NumPy.py
+      │   │       │   ├── LoadCSV_using_Pandas_from_URL.py
+      │   │       │   ├── PeekAtYourData.py
+      │   │       ├── python_pandas_tutorial.pdf
+      │   │       └── ScipyLectures-simple.pdf
+      │   └── documentacionProyecto

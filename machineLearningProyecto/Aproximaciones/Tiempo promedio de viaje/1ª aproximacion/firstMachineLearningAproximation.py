@@ -146,7 +146,16 @@ colnames = [ 'type_day','twenty_min_previous','forty_min_previous','sixty_min_pr
 
 suma = 0;
 cuenta = 0;
-errores_predicciones = {
+errores_predicciones_intervalos = {
+		"XGBoost" : 0,
+		"Linear Regression" : 0,
+		"LightGBM" : 0,
+		"MLP" : 0,
+		"SVM" : 0,
+		"KNN" : 0
+	}
+	
+errores_predicciones_rutas = {
 		"XGBoost" : 0,
 		"Linear Regression" : 0,
 		"LightGBM" : 0,
@@ -192,7 +201,8 @@ for route in routes:
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if(y_pred.size == y_test.size):
-         errores_predicciones["XGBoost"] += mean_squared_error(y_pred, y_test)
+         errores_predicciones_intervalos["XGBoost"] += abs(((sum(y_test)/y_pred.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_pred.size))
+         print("One side : " + str(sum(y_test)/y_pred.size) + " Other side: " + str(sum(y_pred)/y_pred.size))
         model = XGBRegressor()
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
@@ -201,7 +211,7 @@ for route in routes:
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if(y_pred.size == y_test.size):
-         errores_predicciones["Linear Regression"] += mean_squared_error(y_pred, y_test)
+         errores_predicciones_intervalos["Linear Regression"] += abs(((sum(y_test)/y_pred.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_pred.size))
 
         # create dataset for lightgbm
        
@@ -214,25 +224,26 @@ for route in routes:
         mlp.fit(X_train,y_train)
         y_pred = mlp.predict(X_test)
         if(y_pred.size == y_test.size):
-         errores_predicciones["MLP"] += mean_squared_error(y_pred, y_test)
+         errores_predicciones_intervalos["MLP"] += abs(((sum(y_test)/y_pred.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_pred.size))
 
         model = svm.SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
             kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
         model.fit(X_train, y_train) 
         y_pred = model.predict(X_test)
         if(y_pred.size == y_test.size):
-         errores_predicciones["SVM"] += mean_squared_error(y_pred, y_test)
+         errores_predicciones_intervalos["SVM"] += abs(((sum(y_test)/y_pred.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_pred.size))
        
         model =KNeighborsRegressor(n_neighbors=3)
         model.fit(X_train, y_train) 
         y_pred = model.predict(X_test)
         if(y_pred.size == y_test.size):
-         errores_predicciones["KNN"] += mean_squared_error(y_pred, y_test)
+         errores_predicciones_intervalos["KNN"] += abs(((sum(y_test)/y_pred.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_pred.size))
          cuenta += 1
-        
-#suma_rutas += suma_intervalos_tiempo / time_intervals.size;
-for key, value in errores_predicciones.items():
-        errores_predicciones[key] = value/cuenta;
-print ("Error : ", errores_predicciones); 
+     for key, value in errores_predicciones_rutas.items():
+        errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)
+        errores_predicciones_intervalos[key] = 0  
+for key, value in errores_predicciones_rutas.items():
+        errores_predicciones_rutas[key] = errores_predicciones_rutas[key]/len(routes);
+print ("Error : ", errores_predicciones_rutas); 
 print("Cuenta: ", cuenta);         
 

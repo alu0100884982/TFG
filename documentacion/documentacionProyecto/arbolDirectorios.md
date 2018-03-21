@@ -64,7 +64,6 @@
 │   │       │   │   ├── pima-indians-diabetes.data.csv
 │   │       │   │   └── pima-indians-diabetes.names
 │   │       │   ├── DataTypeForEachAttribute.py
-│   │       │   ├── DataTypeForEachAttribute.py~
 │   │       │   ├── DescriptiveStatistics.py
 │   │       │   ├── DimensionsOfYourData.py
 │   │       │   ├── LoadCSVFiles_with_NumPy.py
@@ -77,7 +76,6 @@
 │   │       └── ScipyLectures-simple.pdf
 │   └── documentacionProyecto
 │       ├── arbolDirectorios.md
-│       ├── arbolDirectorios.md~
 │       ├── Información KDDCup 2017
 │       │   ├── Informacion KDDCup 2017.pdf
 │       │   └── Route_KDD.pdf
@@ -98,102 +96,63 @@
 │               ├── Task2_2ndPlace.pdf
 │               └── Task2_3rdPlace.pdf
 ├── Dudas, sugerencias y cosas que arreglar.md
-├── Dudas, sugerencias y cosas que arreglar.md~
 ├── graficas
 │   ├── grafica_con_promedio_tiempomediodeviaje_ todoslosdias
-│   │   ├── ejemplo.py~
 │   │   ├── generacion_grafica.py
-│   │   ├── generacion_grafica.py~
 │   │   └── graficas_pdf.pdf
 │   ├── grafica_con_promedio_volumentrafico_todoslosdias
 │   │   ├── generacion_grafica.py
-│   │   ├── generacion_grafica.py~
 │   │   └── graficas_pdf.pdf
 │   ├── graficas_iniciales.py
-│   ├── graficas_primera_aproximacion
-│   │   ├── firstMachineLearningAproximation.py~
+│   ├── graficas_primera_aproximacion_tiempopromedioviaje
 │   │   ├── generacion_grafica.py
-│   │   ├── generacion_grafica.py~
-│   │   ├── grafica_numero_instancias_vistas_ruta-intervalo.py~
 │   │   └── graficas_pdf.pdf
 │   ├── graficas_tiempomedioviaje_intersecciones_por_día
 │   │   ├── graficas_pdf.pdf
 │   │   ├── graficas_tiempomedioviaje_intersecciones_por_día.py
-│   │   └── graficas_tráfico_intersecciones_por_día.py~
 │   ├── graficas_tiempo_meteorologico
 │   │   ├── graficas_pdf.pdf
 │   │   ├── graficas_tiempo_meteorologico.py
-│   │   └── graficas_tiempo_meteorologico.py~
 │   └── graficas_volumentrafico_intersecciones_por_dia
 │       ├── graficas_pdf.pdf
 │       ├── graficas_volumentrafico_intersecciones_por_dia.py
-│       └── graficas_volumentrafico_intersecciones_por_dia.py~
 ├── machineLearningProyecto
-│   ├── Anotaciones.md~
 │   ├── Aproximaciones
 │   │   ├── Tiempo promedio de viaje
 │   │   │   ├── 1ª aproximacion
 │   │   │   │   ├── borrarTablas_interstollgtime_test1.sql
-│   │   │   │   ├── borrarTablas_interstollgtime_test1.sql~
-│   │   │   │   ├── firstMachineLearningApproach.py~
 │   │   │   │   ├── firstMachineLearningAproximation.py
-│   │   │   │   ├── firstMachineLearningAproximation.py~
 │   │   │   │   ├── firstMachineLearningModelsOverview.py
-│   │   │   │   ├── firstMachineLearningModelsOverview.py~
-│   │   │   │   ├── primera_aproximacion.sql~
 │   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql
-│   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql~
-│   │   │   │   ├── primera_aproximacion_tfgtes1_construccion_tablaconintervalosdoshorasantes.sql~
 │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql
-│   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql~
-│   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaresultado.sql~
 │   │   │   │   ├── primera_aproximacion_tfgtest1.sql
-│   │   │   │   ├── primera_aproximacion_tfgtest1.sql~
-│   │   │   │   └── primera_aproximacion_tfgtraining2.sql~
 │   │   │   └── 2ª aproximacion
 │   │   │       ├── secondMachineLearningApproach_LinearRegression.py
-│   │   │       └── secondMachineLearningApproach_LinearRegression.py~
 │   │   └── Volumen de tráfico
 │   │       └── Primera aproximacion
 │   │           └── nohaynada.txt
-│   ├── borrarVistas.sql~
 │   ├── codigosEjemploTecnicasMachineLearning
 │   │   ├── ARIMA
 │   │   │   ├── ARIMA_example.py
-│   │   │   ├── ARIMA_example.py~
 │   │   │   ├── createARIMAmodel_example.py
 │   │   │   ├── shampoo-sales.csv
-│   │   │   ├── shampoo-sales.csv~
 │   │   │   ├── tuningParametersARIMA_example.py
-│   │   │   └── tuningParametersARIMA_example.py~
 │   │   ├── KNN
 │   │   │   ├── iris.data
-│   │   │   ├── iris.data~
 │   │   │   ├── KNN_example.py
-│   │   │   └── KNN_example.py~
 │   │   ├── LightGBM
 │   │   │   ├── adult.csv
 │   │   │   ├── XGBoostvsLightGBM.py
-│   │   │   └── XGBoostvsLightGBM.py~
 │   │   ├── Multiple Layer Perception
 │   │   │   ├── wine_classification.py
-│   │   │   ├── wine_classification.py~
 │   │   │   └── wine_data.csv
 │   │   └── XGBoost
 │   │       ├── pima-indians-diabetes.csv
 │   │       ├── xgboost_example.py
-│   │       └── xgboost_example.py~
-│   ├── EnlacesDeInteres.md~
-│   ├── firsMachineLearningApproach.py~
-│   ├── firstMachineLearningApproach.py~
-│   ├── primera_aproximacion.sql~
 │   ├── Scripts de utilidad
 │   │   ├── borrarVistas.sql
-│   │   └── borrarVistas.sql~
-│   └── vista_1.sql~
 ├── README.md
 ├── Tareas.md
-└── Tareas.md~
 
 </pre
 ├── cargaBasesDeDatos
@@ -268,37 +227,124 @@
      automático.
      * __*machine_learning_a_bayesian_perspective.pdf*__ -> Documento sobre información de aprendizaje automático en general en general.
      * __*machine_learning_mastery_with_python.pdf*__ -> Documento que contiene información acerca del aprendizaje automático en Python.
-     * __*machine_learning_a_bayesian_perspective.pdf*__ ->  
+     * __*tips, tricks and hacks that you can use to make better predictions.pdf*__ -> Documento que contiene consejos para realizar mejores predicciones en Python.  
       automático.
-
-      Machine Learning
-      │   │   │   ├── machine_learning_a_bayesian_perspective.pdf
-      │   │   │   ├── machine_learning_mastery_with_python.pdf
-      │   │   │   └── tips, tricks and hacks that you can use to make better predictions.pdf
-      │   │   ├── PostgreSQL
-      │   │   │   └── PostgreSQL.pdf
-      │   │   └── Python
-      │   │       ├── CheatSheets
-      │   │       │   ├── data-visualisation-infographics1.jpg
-      │   │       │   ├── LearnDataScienceInPython.jpg
-      │   │       │   ├── Pandas.png
-      │   │       │   ├── PythonForDataScience.pdf
-      │   │       │   └── Scikit-Learn.pdf
-      │   │       ├── CodigosEjemplo
-      │   │       │   ├── CorrelationsBetweenAttributes.py
-      │   │       │   ├── datasets
-      │   │       │   │   ├── pima-indians-diabetes.data.csv
-      │   │       │   │   └── pima-indians-diabetes.names
-      │   │       │   ├── DataTypeForEachAttribute.py
-      │   │       │   ├── DataTypeForEachAttribute.py~
-      │   │       │   ├── DescriptiveStatistics.py
-      │   │       │   ├── DimensionsOfYourData.py
-      │   │       │   ├── LoadCSVFiles_with_NumPy.py
-      │   │       │   ├── LoadCSVFiles_with_Pandas.py
-      │   │       │   ├── LoadCSVFiles_with_the_PythonStandardLibrary.py
-      │   │       │   ├── LoadCSV_from_URL_using_NumPy.py
-      │   │       │   ├── LoadCSV_using_Pandas_from_URL.py
-      │   │       │   ├── PeekAtYourData.py
-      │   │       ├── python_pandas_tutorial.pdf
-      │   │       └── ScipyLectures-simple.pdf
-      │   └── documentacionProyecto
+    * __*PostgreSQL*__ -> Carpeta que contiene documentación de apoyo sobre PostgreSQL.
+     * __*PostgreSQL.pdf*__ -> Documento que contiene información sobre PostgreSQL.
+    * __*Python*__ -> Carpeta que contiene documentación de apoyo sobre Python.
+     * __*CheatSheets*__ -> Carpeta que contiene documentos que resumen características que tiene el lenguaje Python para aprendizaje automático.
+       * __*data-visualisation-infographics1.jpg*__ -> Imagen que contiene los distintos tipos de visualización de datos que posee Python.
+       * __*LearnDataScienceInPython.jpg*__ -> Imagen que contiene de forma resumida los pasos a seguir para aprender ciencia de datos en Python.
+       * __*Pandas.png*__ -> Imagen que contiene algunas características que ofrece la librería _Pandas_ de Python.
+       * __*PythonForDataScience.pdf*__ -> Documento que contiene los principios básicos de Python para realizar ciencia de datos.
+       * __*Scikit-Learn.pdf*__ -> Documento que contiene información acerca de los distintos algoritmos de aprendizaje automático que ofrece la librería _Scikit-Learn_ de Python.
+     * __*CódigosEjemplo*__ -> Carpeta que contiene scripts de Python que muestran pequeños ejemplos de las carecterísticas de este lenguaje para ciencia de datos.
+       * __*CorrelationsBetweenAttributes.py*__ -> Script de Python que muestra cómo averiguar la correlación entre determinados atributos.
+       * __*datasets*__ -> Conjuntos de datos utilizados en los ejemplos.
+         * __*pima-indians-diabetes.data.csv*__ -> Conjunto de datos utilizado para los ejemplos.
+         * __*ima-indians-diabetes.names*__ -> Información acerca del conjunto de datos utilizado para los ejemplos.
+       * __*DataTypeForEachAttribute.py*__ -> Script the Python que muestra el tipo de dato que tiene cada uno de los atributos cargados desde un fichero CSV.
+       * __*DescriptiveStatistics.py*__ -> Script de Python que muestra estadísticos descriptivos de los datos cargados desde un fichero CSV.
+       * __*DimensionsOfYourData.py*__ -> Script de Python que muestra las dimensiones de los datos cargados desde un fichero CSV
+       * __*LoadCSVFiles_with_NumPy.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca NumPy.
+       * __*LoadCSVFiles_with_Pandas.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca Pandas.
+       * __*LoadCSVFiles_with_the_PythonStandardLibrary.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca estándar de Python.
+       * __*LoadCSV_from_URL_using_NumPy.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con una URL utilizando la biblioteca NumPy.
+       * __*LoadCSV_using_Pandas_from_URL.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con una URL utilizando la biblioteca Pandas.
+       * __*PeekAtYourData.py*__ -> Script de Python que muestra una pequeña parte de los datos cargados desde un fichero CSV.
+     * __*python_pandas_tutorial.pdf*__ -> Documento extenso sobre la biblioteca Pandas.
+     * __*ScipyLectures-simple.pdf*__ -> Documento extenso sobre la biblioteca Scipy.
+  * **documentacionProyecto** -> Carpeta que contiene la documentación del proyecto del TFG.
+     * __*arbolDirectorios.md*__ -> Documento Markdown que contiene el árbol de directorios del repositorio donde se aloja el proyecto del TFG, así como información de cada uno de los componentes del mismo.
+     documentacionProyecto
+     * __*Información KDDCup 2017*__ -> Carpeta que contiene la información de la competición KDDCup 2017.
+      * __*Informacion KDDCup 2017.pdf*__ -> Documento que contiene la información proporcionada por la competición KDDCup 2017.
+      * __*Route_KDD.pdf*__ -> Documento que contiene un esquema de las rutas de la competición junto con los enlaces que las forman.
+     * __*Machine Learning*__ -> Carpeta que contiene la documentación del aprendizaje automático aplicado al proyecto del TFG.
+      * __*Machine Learning del proyecto.pdf*__ -> Documento que contiene la información del aprendizaje automático del proyecto del TFG.
+      * __*Machine Learning Models.pdf*__ -> Documento que contiene información sobre los distintos algoritmos de aprendizaje automático utilizados en el proyecto del TFG.
+      * __*modelo-arima.pdf*__ -> Documento que contiene información sobre el modelo de predicción de series temporales denominado _ARIMA_.
+     * __*PostgreSQL*__ -> Carpeta que contiene la documentación de las características de PostgreSQL utilizadas en el proyecto del TFG.
+      * __*Carga de la base de datos con PostgreSQL.pdf*__ -> Documento que contiene la información sobre la carga de la base de datos del proyecto del TFG.
+      * __*Manual PostgreSQL.pdf*__ -> Documento que contiene la información sobre los tipos de datos y los comandos de PostgreSQL utilizados en la carga de la base de datos del proyecto del TFG.
+     * __*PresentacionesPDFMejoresResultados*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017.
+      * __*Travel Time Prediction*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017 con respecto a la tarea de predicción del tiempo promedio de viaje.
+        * __*Task1_1stPlace.pdf*__ -> Presentación del equipo que quedó en 1er puesto.
+        * __*Task1_2ndPlace.pdf*__ -> Presentación del equipo que quedó en 2º puesto.
+        * __*Task1_3rdPlace.pdf*__ -> Presentación del equipo que quedó en 3er puesto.
+      * __*Volume Prediction*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017 con respecto a la tarea de predicción del volumen de tráfico.
+        * __*Task2_1stPlace.pdf*__ -> Presentación del equipo que quedó en 1er puesto.
+        * __*Task2_2ndPlace.pdf*__ -> Presentación del equipo que quedó en 2º puesto.
+        * __*Task2_3rdPlace.pdf*__ -> Presentación del equipo que quedó en 3er puesto.
+* **Dudas, sugerencias y cosas que arreglar.md** -> Documento Markdown en el que se contemplan dudas, sugerencias y cosas que arreglar del proyecto del TFG.
+* **graficas** -> Carpeta que contiene las gráficas del proyecto del TFG.
+  * **grafica_con_promedio_tiempomediodeviaje_ todoslosdias** -> Carpeta que contiene las gráficas del tiempo promedio de viaje de todos los días en todas las rutas.
+    * __*generacion_grafica.py*__ -> Script de Python que genera las gráficas.
+    * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
+  * **grafica_con_promedio_volumentrafico_todoslosdias** -> Carpeta que contiene las gráficas del volumen de tráfico de todos los días en todas las rutas en la dirección de entrada y salida(las rutas que permitan la salida).
+    * __*generacion_grafica.py*__ -> Script de Python que genera las gráficas.
+    * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
+  * **graficas_iniciales.py** -> Script de Python que genera una serie de gráficas iniciales sobre los datos.
+  * **graficas_primera_aproximacion_tiempopromedioviaje** -> Script de Python que genera gráficas relacionadas con la primera aproximacion del tiempo promedio de viaje.
+    ─ graficas
+    │   ├── grafica_con_promedio_tiempomediodeviaje_ todoslosdias
+    │   │   ├── generacion_grafica.py
+    │   │   └── graficas_pdf.pdf
+    │   ├── grafica_con_promedio_volumentrafico_todoslosdias
+    │   │   ├── generacion_grafica.py
+    │   │   └── graficas_pdf.pdf
+    │   ├── graficas_iniciales.py
+    │   ├── graficas_primera_aproximacion
+    │   │   ├── generacion_grafica.py
+    │   │   ├── grafica_numero_instancias_vistas_ruta-intervalo.py~
+    │   │   └── graficas_pdf.pdf
+    │   ├── graficas_tiempomedioviaje_intersecciones_por_día
+    │   │   ├── graficas_pdf.pdf
+    │   │   ├── graficas_tiempomedioviaje_intersecciones_por_día.py
+    │   │   └── graficas_tráfico_intersecciones_por_día.py~
+    │   ├── graficas_tiempo_meteorologico
+    │   │   ├── graficas_pdf.pdf
+    │   │   ├── graficas_tiempo_meteorologico.py
+    │   │   └── graficas_tiempo_meteorologico.py~
+    │   └── graficas_volumentrafico_intersecciones_por_dia
+    │       ├── graficas_pdf.pdf
+    │       ├── graficas_volumentrafico_intersecciones_por_dia.py
+    │       └── graficas_volumentrafico_intersecciones_por_dia.py~
+    ├── machineLearningProyecto
+    │   ├── Anotaciones.md~
+    │   ├── Aproximaciones
+    │   │   ├── Tiempo promedio de viaje
+    │   │   │   ├── 1ª aproximacion
+    │   │   │   │   ├── borrarTablas_interstollgtime_test1.sql
+    │   │   │   │   ├── borrarTablas_interstollgtime_test1.sql~
+    │   │   │   │   ├── firstMachineLearningApproach.py~
+    │   │   │   │   ├── firstMachineLearningAproximation.py
+    │   │   │   │   ├── firstMachineLearningAproximation.py~
+    │   │   │   │   ├── firstMachineLearningModelsOverview.py
+    │   │   │   │   ├── firstMachineLearningModelsOverview.py~
+    │   │   │   │   ├── primera_aproximacion.sql~
+    │   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql
+    │   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql~
+    │   │   │   │   ├── primera_aproximacion_tfgtes1_construccion_tablaconintervalosdoshorasantes.sql~
+    │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql
+    │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql~
+    │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaresultado.sql~
+    │   │   │   │   ├── primera_aproximacion_tfgtest1.sql
+    │   │   │   │   ├── primera_aproximacion_tfgtest1.sql~
+    │   │   │   │   └── primera_aproximacion_tfgtraining2.sql~
+    │   │   │   └── 2ª aproximacion
+    │   │   │       ├── secondMachineLearningApproach_LinearRegression.py
+    │   │   │       └── secondMachineLearningApproach_LinearRegression.py~
+    │   │   └── Volumen de tráfico
+    │   │       └── Primera aproximacion
+    │   │           └── nohaynada.txt
+    │   ├── borrarVistas.sql~
+    │   ├── codigosEjemploTecnicasMachineLearning
+    │   │   ├── ARIMA
+    │   │   │   ├── ARIMA_example.py
+    │   │   │   ├── ARIMA_example.py~
+    │   │   │   ├── createARIMAmodel_example.py
+    │   │   │   ├── shampoo-sales.csv
+    │   │   │   ├── shampoo-sales.csv~
+    │   │   │   ├── tuningParametersARIMA_example.py
+    │   │   │   └── tuningParametersARIMA_exam

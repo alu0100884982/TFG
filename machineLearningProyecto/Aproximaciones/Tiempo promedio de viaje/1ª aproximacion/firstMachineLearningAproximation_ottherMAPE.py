@@ -190,24 +190,30 @@ for route in routes:
             print("I am unable to connect to the database")
 
         cur = conn.cursor()
-        query = "select avg_travel_time from travel_time_intersection_to_tollgate_training2 where intersection_id = '" + str(route[0]) +"' AND tollgate_id = " + str(route[1]) +" AND time_window[1].time = TIME '"+ str(interval.hour) +":"+str(interval.minute)  + ":00' order by intersection_id, tollgate_id, time_window;"
+        query = "select time_window[1].date, avg_travel_time from travel_time_intersection_to_tollgate_training2 where intersection_id = '" + str(route[0]) +"' AND tollgate_id = " + str(route[1]) +" AND time_window[1].time = TIME '"+ str(interval.hour) +":"+str(interval.minute)  + ":00' order by intersection_id, tollgate_id, time_window;"
         cur.execute(query)
         rows = cur.fetchall()
-        colnames = [ 'avg_travel_time']
+        colnames = [ 'date', 'avg_travel_time']
         travel_time_dataframe = pd.DataFrame(rows, columns=colnames)
-        y_test = travel_time_dataframe.iloc[:, 0]
         model = XGBRegressor()
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
-        errores_predicciones_intervalos["XGBoost"] += abs(((sum(y_test)/y_test.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_test.size))
+        y_test_sum = 0
+        for index, fila in travel_time_dataframe.iterrows():
+                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+        y_test_sum /= len(travel_time_dataframe);
+        errores_predicciones_intervalos["XGBoost"] += y_test_sum
         model = XGBRegressor()
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
-        print("LEN : ", len(y_pred))
+        y_test_sum = 0
+        for index, fila in travel_time_dataframe.iterrows():
+                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+        y_test_sum /= len(travel_time_dataframe);
         model = linear_model.LinearRegression()
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
-        errores_predicciones_intervalos["Linear Regression"] += abs(((sum(y_test)/y_test.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_test.size))
+        errores_predicciones_intervalos["Linear Regression"] += y_test_sum
 
         # create dataset for lightgbm
        
@@ -219,18 +225,30 @@ for route in routes:
         mlp = MLPRegressor(hidden_layer_sizes=(13,13,13),max_iter=10000)
         mlp.fit(X_train,y_train)
         y_pred = mlp.predict(X_test)
-        errores_predicciones_intervalos["MLP"] += abs(((sum(y_test)/y_test.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_test.size))
+        y_test_sum = 0
+        for index, fila in travel_time_dataframe.iterrows():
+                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+        y_test_sum /= len(travel_time_dataframe);
+        errores_predicciones_intervalos["MLP"] += y_test_sum
 
         model = svm.SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
             kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
         model.fit(X_train, y_train) 
         y_pred = model.predict(X_test)
-        errores_predicciones_intervalos["SVM"] += abs(((sum(y_test)/y_test.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_test.size))
+        y_test_sum = 0
+        for index, fila in travel_time_dataframe.iterrows():
+                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+        y_test_sum /= len(travel_time_dataframe);
+        errores_predicciones_intervalos["SVM"] += y_test_sum
        
         model =KNeighborsRegressor(n_neighbors=3)
         model.fit(X_train, y_train) 
         y_pred = model.predict(X_test)
-        errores_predicciones_intervalos["KNN"] += abs(((sum(y_test)/y_test.size) - (sum(y_pred)/y_pred.size))/ (sum(y_test)/y_test.size))
+        y_test_sum = 0
+        for index, fila in travel_time_dataframe.iterrows():
+                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+        y_test_sum /= len(travel_time_dataframe);
+        errores_predicciones_intervalos["KNN"] += y_test_sum
      for key, value in errores_predicciones_rutas.items():
         errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)
         errores_predicciones_intervalos[key] = 0  

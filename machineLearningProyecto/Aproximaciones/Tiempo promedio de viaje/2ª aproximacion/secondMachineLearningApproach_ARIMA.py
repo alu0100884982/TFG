@@ -8,68 +8,114 @@ from pandas.plotting import autocorrelation_plot
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
+import numpy as np
+import datetime
 
 
-try:
-    conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
-except:
-    print("I am unable to connect to the database")
-
-cur = conn.cursor()
-cur.execute("""select time_window[1], avg_travel_time
-from travel_time_intersection_to_tollgate_modified 
-where intersection_id = 'A' AND tollgate_id = 2
-order by time_window;""")
-rows = cur.fetchall()
-df = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
-df = df[(df.avg_travel_time > 50) & (df.avg_travel_time < 150)]
-indexes = [i for i in range(len(df))]
-print(df.shape)
-dates = pd.DatetimeIndex(df['date'].values)
-plt.plot(indexes, df['avg_travel_time'].values)
-plt.xticks(indexes, dates.time, rotation="vertical")
-#plt.show()
-serie = pd.Series(df['avg_travel_time'].values, index=df['date'])
-autocorrelation_plot(serie)
-#plt.show()
-model = ARIMA(serie, order=(3,1,0))
-model_fit = model.fit(disp=0)
-print(model_fit.summary())
-# plot residual errors
-residuals = pd.DataFrame(model_fit.resid)
-residuals.plot()
-#plt.show()
 
 try:
-    conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
+   conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
 except:
-    print("I am unable to connect to the database")
+   print("I am unable to connect to the database")
 
 cur = conn.cursor()
-cur.execute("""select time_window[1]
-from travel_time_intersection_to_tollgate_training2 
-where intersection_id = 'A' AND tollgate_id = 2 AND time_window[1].time BETWEEN TIME '08:00:00' AND TIME '09:40:00'
-order by time_window;""")
+cur.execute("""SELECT * FROM travel_time_intersection_to_tollgate_training2 WHERE (time_window[1].time BETWEEN TIME '08:00:00' AND TIME '09:40:00') OR (time_window[1].time BETWEEN TIME '17:00:00' AND TIME '18:40:00') ORDER BY intersection_id, tollgate_id, time_window """)
 rows = cur.fetchall()
+colnames = ['intersection_id', 'tollgate_id', 'time_window', 'avg_travel_time']
+intervals_to_predict_real_avgtraveltime = pd.DataFrame(rows, columns=colnames)
+routes = np.array(intervals_to_predict_real_avgtraveltime.iloc[:,0:2].values.tolist())
+time_intervals = np.array(intervals_to_predict_real_avgtraveltime.iloc[:,2].values.tolist())
+routes = np.unique(routes, axis=0);
+days = np.unique([time_interval[0].strftime("%Y-%m-%d") for time_interval in time_intervals], axis=0)
+aux = np.array([])
+for time_interval in time_intervals:
+        time_interval[0] = datetime.datetime(2016, 10,18, time_interval[0].hour, time_interval[0].minute)
+        aux = np.append(aux,time_interval[0]);
+time_intervals = sorted(set(aux))
 
-X = serie.values
-size = int(len(X) * 0.66)
-train, test = X[0:size], X[size:len(X)]
-history = [x for x in train]
-predictions = list()
-for t in range(len(test)):
-	model = ARIMA(history, order=(9,0,0))
-	model_fit = model.fit(disp=0)
-	output = model_fit.forecast()
-	yhat = output[0]
-	predictions.append(yhat)
-	obs = test[t]
-	history.append(obs)
-	print('predicted=%f, expected=%f' % (yhat, obs))
-error = mean_squared_error(test, predictions)
-print('Test MSE: %.3f' % error)
-# plot
-plt.plot(test)
-plt.plot(predictions, color='red')
-plt.show()
 
+for route in routes:
+        routes_sum = 0;
+        try:
+                conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
+        except:
+               print("I am unable to connect to the database")
+        cur = conn.cursor()
+        query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_modified  where intersection_id = '" +route[0] +"' AND tollgate_id = " + route[1] + " order by time_window;"
+        cur.execute(query)
+        rows = cur.fetchall()
+        df1 = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
+        df1 = df1[(df1.avg_travel_time > 50) & (df1.avg_travel_time < 150)]
+        suma_intervalos_tiempo = 0;
+        intervals_sum = 0;
+        for interval in time_intervals:
+           count = 0;
+           y_test_sum = 0
+           for day in days:
+                print("DAY : ", day)
+                try:
+                   conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
+                except:
+                   print("I am unable to connect to the database")
+                cur = conn.cursor()
+                query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_test1 where intersection_id = '"+ str(route[0]) +"' AND tollgate_id = " + str(route[1]) + " AND (time_window[1].time BETWEEN TIME '6:00:00' AND TIME '7:40:00') AND (time_window[1].date = DATE '"+str(day)+"') order by time_window;"
+                cur.execute(query)
+                rows = cur.fetchall()
+                df2 = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
+                result_dataframe = pd.concat([df1,df2])
+
+                try:
+                   conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
+                except:
+                   print("I am unable to connect to the database")
+                query = "select time_window[1].date, avg_travel_time from travel_time_intersection_to_tollgate_training2 where intersection_id = '"+ str(route[0]) +"' AND tollgate_id = " + str(route[1]) + " AND (time_window[1].time = TIME '" + interval.strftime("%H:%M:%S") + "') AND (time_window[1].date = DATE '"+str(day)+"') order by time_window;"
+                cur = conn.cursor()
+                cur.execute(query)
+                rows2 = cur.fetchall()
+                if (len(rows2) > 0):
+                        serie = pd.Series(result_dataframe['avg_travel_time'].values, index=result_dataframe['date'])
+                        '''
+                        best_score, best_cfg = float("inf"), None
+                        for p in range(3,10):
+                          for d in range(3):
+                            for q in range(5):   
+                                 print("ORDEN : ", (p,d,q))
+                                 orderr = (p,d,q)
+                                 model = ARIMA(serie, order=orderr)
+                                 try: 
+                                         model_fit = model.fit(disp=0)
+                                         forecast = model_fit.forecast(steps=6)[0]
+                                         error = mean_squared_error(rows2, forecast)
+                                         print("ROWS2: ", rows2)
+                                         print("FORECAST: ", forecast)
+                                         mse = mean_squared_error(rows2, forecast)
+                                         if mse < best_score:
+                                                best_score, best_cfg = mse, orderr
+                                         print("ERROR: ", error)
+                                         
+                                 except:
+                                         continue
+                                         
+                        print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
+                        '''
+                        model = ARIMA(serie, order=(9,0,2))
+                        model_fit = model.fit(disp=0)
+                        forecast = model_fit.forecast(steps=6)[0]
+                        lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
+                        if (interval.hour == 8 or interval.hour == 9):
+                          rhs = datetime.datetime(2018,1,1,8,0,0)
+                        else:
+                          rhs = datetime.datetime(2018,1,1,17,0,0)
+                        print("F :", forecast)    
+                        print("EEE: ", forecast[((lhs-rhs)/1200).seconds])    
+                        y_test_sum += abs((rows2[0][1] - forecast[((lhs-rhs)/1200).seconds]) / rows2[0][1])
+                        count += 1
+           intervals_sum += y_test_sum/count;
+        routes_sum += intervals_sum /len(intervals)
+print("Error MAPE : ", (routes_sum/len(routes)))
+       
+
+
+     
+     
+     

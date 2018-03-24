@@ -1,5 +1,4 @@
 <pre>
-
 .
 ├── cargaBasesDeDatos
 │   ├── constraints
@@ -107,6 +106,10 @@
 │   ├── graficas_primera_aproximacion_tiempopromedioviaje
 │   │   ├── generacion_grafica.py
 │   │   └── graficas_pdf.pdf
+│   ├── graficas_segunda_aproximacion_tiempopromedioviaje
+│   │   ├── generacion_grafica.py
+│   │   ├── graficas_pdf.pdf
+│   │   └── graficas_pdf_unahora_diasentrenamiento.pdf
 │   ├── graficas_tiempomedioviaje_intersecciones_por_día
 │   │   ├── graficas_pdf.pdf
 │   │   ├── graficas_tiempomedioviaje_intersecciones_por_día.py
@@ -121,13 +124,15 @@
 │   │   ├── Tiempo promedio de viaje
 │   │   │   ├── 1ª aproximacion
 │   │   │   │   ├── borrarTablas_interstollgtime_test1.sql
-│   │   │   │   ├── firstMachineLearningAproximation.py
 │   │   │   │   ├── firstMachineLearningAproximation_otherMAPE.py
+│   │   │   │   ├── firstMachineLearningAproximation.py
 │   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql
 │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql
+│   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaresultado.sql~
 │   │   │   │   ├── primera_aproximacion_tfgtest1.sql
 │   │   │   └── 2ª aproximacion
 │   │   │       ├── secondMachineLearningApproach_ARIMA.py
+│   │   │       ├── secondMachineLearningApproach_ARIMA_trainingdatatest.py
 │   │   └── Volumen de tráfico
 │   │       └── Primera aproximacion
 │   │           └── nohaynada.txt
@@ -152,7 +157,6 @@
 │   │   ├── borrarVistas.sql
 ├── README.md
 ├── Tareas.md
-
 </pre>
 
 
@@ -264,6 +268,10 @@
   * **graficas_primera_aproximacion_tiempopromedioviaje** -> Carpeta que contiene gráficas relacionadas con la primera aproximación del tiempo promedio de viaje.
     * __*generacion_grafica.py*__ -> Script de Python que genera las gráficas.
     * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
+  * **graficas_segunda_aproximacion_tiempopromedioviaje** -> Carpeta que contiene gráficas relacionadas con la segunda aproximación del tiempo promedio de viaje.
+    * __*generacion_grafica.py*__ -> Script de Python que genera las gráficas.
+    * __*graficas_pdf.pdf*__ -> ocumento que contiene las gráficas que representan el tiempo promedio de viaje en una serie de días en una ruta determinada.
+    * __*graficas_pdf_unahora_diasentrenamiento.pdf*__ -> Documento que contiene las gráficas que representan el tiempo promedio de viaje en todos los días de entrenamiento en una hora específica.
   * **graficas_tiempomedioviaje_intersecciones_por_día** -> Carpeta que contiene gráficas del tiempo promedio de viaje por día de entrenamiento en cada una de las intersecciones por horas.
     * __*graficas_tiempomedioviaje_intersecciones_por_día.py*__ -> Script de Python que genera las gráficas.
     * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
@@ -284,7 +292,8 @@
         * __*primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql*__ ->  Script de PostgreSQL que permite añadir unas columnas necesarias a la tabla que almacena el tiempo promedio de viaje de los intervalos de 2 horas antes de los intervalos (este script se realizó por si era necesario para las predicciones).
         * __*primera_aproximacion_tfgtest1.sql*__ -> Script de PostgreSQL que permite añadir unas columnas necesarias a una serie de tablas y generar las tablas necesarias sobre los datos de testeo para poder realizar las predicciones.
       * __*2ª aproximacion*__ -> Carpeta que contiene la segunda aproximación de predicciones del tiempo promedio de viaje.
-        * __*secondMachineLearningApproach_ARIMA.py*__ -> Script de Python realiza las predicciones de la segunda aproximación de predicciones mediante el modelo ARIMA.
+        * __*secondMachineLearningApproach_ARIMA_trainingdatatest.py*__ -> Script de Python que realiza las predicciones mediante el modelo ARIMA con los datos de entrenamiento como parte de la predicción.
+        * __*secondMachineLearningApproach_ARIMA.py*__ -> Script de Python que realiza las predicciones reales de la segunda aproximación de predicciones mediante el modelo ARIMA.
     * __*Volumen de tráfico*__ -> Carpeta que contiene las distintas aproximaciones del volumen de tráfico.
       * __*Primera aproximacion*__ -> Carpeta que contiene la primera aproximación de predicciones del volumen de tráfico.
         * __*nohaynada.txt*__ -> Archivo que indica que todavía no hay nada.

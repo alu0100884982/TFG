@@ -122,19 +122,18 @@
 │   │   │   ├── 1ª aproximacion
 │   │   │   │   ├── borrarTablas_interstollgtime_test1.sql
 │   │   │   │   ├── firstMachineLearningAproximation.py
-│   │   │   │   ├── firstMachineLearningModelsOverview.py
+│   │   │   │   ├── firstMachineLearningAproximation_otherMAPE.py
 │   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql
 │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql
 │   │   │   │   ├── primera_aproximacion_tfgtest1.sql
 │   │   │   └── 2ª aproximacion
-│   │   │       ├── secondMachineLearningApproach_LinearRegression.py
+│   │   │       ├── secondMachineLearningApproach_ARIMA.py
 │   │   └── Volumen de tráfico
 │   │       └── Primera aproximacion
 │   │           └── nohaynada.txt
 │   ├── codigosEjemploTecnicasMachineLearning
 │   │   ├── ARIMA
 │   │   │   ├── ARIMA_example.py
-│   │   │   ├── createARIMAmodel_example.py
 │   │   │   ├── shampoo-sales.csv
 │   │   │   ├── tuningParametersARIMA_example.py
 │   │   ├── KNN
@@ -154,30 +153,8 @@
 ├── README.md
 ├── Tareas.md
 
-</pre
-├── cargaBasesDeDatos
-│   ├── constraints
-│   │   ├── check_links_order_vehicle_trajectories_training_modified.sql
-│   │   ├── sum_traveltimes_each_route_compare_total_traveltime.sql
-│   │   └── vehicle_trajectories_training_modified_foreign_key.sql
-│   ├── scriptTablasModificadas.sql
-│   ├── scriptTablasOriginales.sql
-│   ├── scriptTablasTest1.sql
-│   ├── scriptTablasTraining2.sql
-├── datasetsOriginales
-│   ├── dataSet_phase2
-│   │   ├── 20min_avg_travel_time_training2.csv
-│   │   ├── trajectories(table 5)_test2.csv
-│   │   ├── trajectories(table_5)_training2.csv
-│   │   ├── volume(table 6)_test2.csv
-│   │   ├── volume(table 6)_training2.csv
-│   │   └── weather (table 7)_2.csv
-│   ├── scripts
-│   │   ├── aggregate_travel_time.py
-│   │   ├── aggregate_volume.py
-│   ├── submission_sample_travelTime.csv
-│   ├── submission_sample_volume.csv
 </pre>
+
 
 * **cargaBasesDeDatos** -> Carpeta que contiene todo lo relacionado con la carga de las bases de datos creadas.
   * **constraints** -> Carpeta que contiene los scripts de comprobación de una serie de restricciones más elaboradas sobre las tablas de las bases de datos.
@@ -278,73 +255,58 @@
         * __*Task2_3rdPlace.pdf*__ -> Presentación del equipo que quedó en 3er puesto.
 * **Dudas, sugerencias y cosas que arreglar.md** -> Documento Markdown en el que se contemplan dudas, sugerencias y cosas que arreglar del proyecto del TFG.
 * **graficas** -> Carpeta que contiene las gráficas del proyecto del TFG.
-  * **grafica_con_promedio_tiempomediodeviaje_ todoslosdias** -> Carpeta que contiene las gráficas del tiempo promedio de viaje de todos los días en todas las rutas.
+  * **grafica_con_promedio_tiempomediodeviaje_ todoslosdias** -> Carpeta que contiene las gráficas del tiempo promedio de viaje de todos los días de entrenamiento en todas las rutas.
     * __*generacion_grafica.py*__ -> Script de Python que genera las gráficas.
     * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
-  * **grafica_con_promedio_volumentrafico_todoslosdias** -> Carpeta que contiene las gráficas del volumen de tráfico de todos los días en todas las rutas en la dirección de entrada y salida(las rutas que permitan la salida).
+  * **grafica_con_promedio_volumentrafico_todoslosdias** -> Carpeta que contiene las gráficas del volumen de tráfico de todos los días de entrenamiento en todas las barreras de peaje en la dirección de entrada y salida (las rutas que permitan la salida).
     * __*generacion_grafica.py*__ -> Script de Python que genera las gráficas.
     * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
   * **graficas_iniciales.py** -> Script de Python que genera una serie de gráficas iniciales sobre los datos.
-  * **graficas_primera_aproximacion_tiempopromedioviaje** -> Script de Python que genera gráficas relacionadas con la primera aproximacion del tiempo promedio de viaje.
-    ─ graficas
-    │   ├── grafica_con_promedio_tiempomediodeviaje_ todoslosdias
-    │   │   ├── generacion_grafica.py
-    │   │   └── graficas_pdf.pdf
-    │   ├── grafica_con_promedio_volumentrafico_todoslosdias
-    │   │   ├── generacion_grafica.py
-    │   │   └── graficas_pdf.pdf
-    │   ├── graficas_iniciales.py
-    │   ├── graficas_primera_aproximacion
-    │   │   ├── generacion_grafica.py
-    │   │   ├── grafica_numero_instancias_vistas_ruta-intervalo.py~
-    │   │   └── graficas_pdf.pdf
-    │   ├── graficas_tiempomedioviaje_intersecciones_por_día
-    │   │   ├── graficas_pdf.pdf
-    │   │   ├── graficas_tiempomedioviaje_intersecciones_por_día.py
-    │   │   └── graficas_tráfico_intersecciones_por_día.py~
-    │   ├── graficas_tiempo_meteorologico
-    │   │   ├── graficas_pdf.pdf
-    │   │   ├── graficas_tiempo_meteorologico.py
-    │   │   └── graficas_tiempo_meteorologico.py~
-    │   └── graficas_volumentrafico_intersecciones_por_dia
-    │       ├── graficas_pdf.pdf
-    │       ├── graficas_volumentrafico_intersecciones_por_dia.py
-    │       └── graficas_volumentrafico_intersecciones_por_dia.py~
-    ├── machineLearningProyecto
-    │   ├── Anotaciones.md~
-    │   ├── Aproximaciones
-    │   │   ├── Tiempo promedio de viaje
-    │   │   │   ├── 1ª aproximacion
-    │   │   │   │   ├── borrarTablas_interstollgtime_test1.sql
-    │   │   │   │   ├── borrarTablas_interstollgtime_test1.sql~
-    │   │   │   │   ├── firstMachineLearningApproach.py~
-    │   │   │   │   ├── firstMachineLearningAproximation.py
-    │   │   │   │   ├── firstMachineLearningAproximation.py~
-    │   │   │   │   ├── firstMachineLearningModelsOverview.py
-    │   │   │   │   ├── firstMachineLearningModelsOverview.py~
-    │   │   │   │   ├── primera_aproximacion.sql~
-    │   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql
-    │   │   │   │   ├── primera_aproximacion_tfgdatosmodificados.sql~
-    │   │   │   │   ├── primera_aproximacion_tfgtes1_construccion_tablaconintervalosdoshorasantes.sql~
-    │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql
-    │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql~
-    │   │   │   │   ├── primera_aproximacion_tfgtest1_construccion_tablaresultado.sql~
-    │   │   │   │   ├── primera_aproximacion_tfgtest1.sql
-    │   │   │   │   ├── primera_aproximacion_tfgtest1.sql~
-    │   │   │   │   └── primera_aproximacion_tfgtraining2.sql~
-    │   │   │   └── 2ª aproximacion
-    │   │   │       ├── secondMachineLearningApproach_LinearRegression.py
-    │   │   │       └── secondMachineLearningApproach_LinearRegression.py~
-    │   │   └── Volumen de tráfico
-    │   │       └── Primera aproximacion
-    │   │           └── nohaynada.txt
-    │   ├── borrarVistas.sql~
-    │   ├── codigosEjemploTecnicasMachineLearning
-    │   │   ├── ARIMA
-    │   │   │   ├── ARIMA_example.py
-    │   │   │   ├── ARIMA_example.py~
-    │   │   │   ├── createARIMAmodel_example.py
-    │   │   │   ├── shampoo-sales.csv
-    │   │   │   ├── shampoo-sales.csv~
-    │   │   │   ├── tuningParametersARIMA_example.py
-    │   │   │   └── tuningParametersARIMA_exam
+  * **graficas_primera_aproximacion_tiempopromedioviaje** -> Carpeta que contiene gráficas relacionadas con la primera aproximación del tiempo promedio de viaje.
+    * __*generacion_grafica.py*__ -> Script de Python que genera las gráficas.
+    * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
+  * **graficas_tiempomedioviaje_intersecciones_por_día** -> Carpeta que contiene gráficas del tiempo promedio de viaje por día de entrenamiento en cada una de las intersecciones por horas.
+    * __*graficas_tiempomedioviaje_intersecciones_por_día.py*__ -> Script de Python que genera las gráficas.
+    * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
+  * **graficas_tiempo_meteorologico** -> Carpeta que contiene gráficas del tiempo meteorológico de los datos de entrenamiento por días y por horas.
+    * __*graficas_tiempo_meteorologico.py*__ -> Script de Python que genera las gráficas.
+    * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
+  * **graficas_volumentrafico_intersecciones_por_dia** -> Carpeta que contiene gráficas del volumen de tráfico en cada uno de los días de entrenamiento por horas en cada una de las barreras de peaje en la dirección de entrada y salida (aquellas que la tengan).
+    * __*graficas_volumentrafico_intersecciones_por_dia.py*__ -> Script de Python que genera las gráficas.
+    * __*graficas_pdf.pdf*__ -> Documento que contiene las gráficas.
+* **machineLearningProyecto** -> Carpeta que contiene todo lo relacionado con el aprendizaje automático aplicado al proyecto del TFG.
+  * **Aproximaciones** -> Carpeta que contiene las distintas aproximaciónes de aprendizaje automático aplicado a los datos.
+    * __*Tiempo promedio de viaje*__ -> Carpeta que contiene las distintas aproximaciones del tiempo promedio de viaje.
+      * __*1ª aproximacion*__ -> Carpeta que contiene la primera aproximación de predicciones del tiempo promedio de viaje.
+        * __*borrarTablas_interstollgtime_test1.sql*__ -> Script de Python que borra las vistas creadas por cada ruta-intervalo.
+        * __*firstMachineLearningAproximation.py*__ -> Script de Python que realiza las predicciones de tiempo promedio de viaje de la primera aproximación.
+        * __*firstMachineLearningAproximation_otherMAPE.py*__ -> Script de Python que realiza las mismas predicciones que el script anterior excepto en que calcula el error MAPE de forma diferente.
+        * __*primera_aproximacion_tfgdatosmodificados.sql*__ -> Script de PostgreSQL que permite añadir unas columnas necesarias a una serie de tablas y generar las tablas necesarias sobre los datos de entrenamiento para poder realizar las predicciones.
+        * __*primera_aproximacion_tfgtest1_construccion_tablaconintervalosdoshorasantes.sql*__ ->  Script de PostgreSQL que permite añadir unas columnas necesarias a la tabla que almacena el tiempo promedio de viaje de los intervalos de 2 horas antes de los intervalos (este script se realizó por si era necesario para las predicciones).
+        * __*primera_aproximacion_tfgtest1.sql*__ -> Script de PostgreSQL que permite añadir unas columnas necesarias a una serie de tablas y generar las tablas necesarias sobre los datos de testeo para poder realizar las predicciones.
+      * __*2ª aproximacion*__ -> Carpeta que contiene la segunda aproximación de predicciones del tiempo promedio de viaje.
+        * __*secondMachineLearningApproach_ARIMA.py*__ -> Script de Python realiza las predicciones de la segunda aproximación de predicciones mediante el modelo ARIMA.
+    * __*Volumen de tráfico*__ -> Carpeta que contiene las distintas aproximaciones del volumen de tráfico.
+      * __*Primera aproximacion*__ -> Carpeta que contiene la primera aproximación de predicciones del volumen de tráfico.
+        * __*nohaynada.txt*__ -> Archivo que indica que todavía no hay nada.
+  * **codigosEjemploTecnicasMachineLearning** -> Carpeta que contiene ejemplos en Python del uso de distintos modelos de aprendizaje automático.
+    * __* ARIMA*__ -> Carpeta que contiene ejemplos del modelo ARIMA en Python.
+      * __* ARIMA_example.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo ARIMA sobre una serie de datos.
+      * __* shampoo-sales.csv*__ -> Conjunto de datos utilizados para el ejemplo.
+      * __* tuningParametersARIMA_example.py*__ -> Script de Python que contiene otro ejemplo de aplicación del modelo ARIMA sobre una serie de datos.
+    * __*KNN*__ -> Carpeta que contiene ejemplos del modelo KNN en Python.
+      * __* iris.data*__ -> Conjunto de datos utilizados para el ejemplo.
+      * __*KNN_example.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo KNN sobre una serie de datos.
+    * __*LightGBM*__ -> Carpeta que contiene ejemplos del modelo LightGBM en Python.
+      * __* adult.csv*__ -> Conjunto de datos utilizados para el ejemplo.
+      * __*XGBoostvsLightGBM.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo XGBoost comparado con el modelo LightGBM.
+    * __*Multiple Layer Perception*__ -> Carpeta que contiene ejemplos del modelo de Redes Neuronales en Python.
+      * __*wine_classification.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo de Redes Neuronales sobre una serie de datos.
+      * __*wine_data.csv*__ -> Conjunto de datos utilizados en el ejemplo.
+    * __*XGBoost*__ -> Carpeta que contiene ejemplos del modelo XGBoost en Python.
+      * __*xgboost_example.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo XGBoost sobre una serie de datos.
+      * __*pima-indians-diabetes.csv*__ -> Conjunto de datos utilizados en el ejemplo.
+  * **Scripts de utilidad** -> Carpeta que contiene scripts de utilidad a aplicar sobre el aprendizaje automático del proyecto.
+    * **borrarVistas.sql** -> Script de PostgreSQL que borra una serie de vistas creadas para las predicciones.
+* **README.md** -> Documento de presentación del repositorio del proyecto del TFG.
+* **Tareas.md** -> Documento que recoge las distintas tareas realizadas y pendientes en cada una de las reuniones realizadas.

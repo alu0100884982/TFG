@@ -290,14 +290,14 @@
         * __*nohaynada.txt*__ -> Archivo que indica que todavía no hay nada.
   * **codigosEjemploTecnicasMachineLearning** -> Carpeta que contiene ejemplos en Python del uso de distintos modelos de aprendizaje automático.
     * __* ARIMA*__ -> Carpeta que contiene ejemplos del modelo ARIMA en Python.
-      * __* ARIMA_example.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo ARIMA sobre una serie de datos.
-      * __* shampoo-sales.csv*__ -> Conjunto de datos utilizados para el ejemplo.
-      * __* tuningParametersARIMA_example.py*__ -> Script de Python que contiene otro ejemplo de aplicación del modelo ARIMA sobre una serie de datos.
+      * __*ARIMA_example.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo ARIMA sobre una serie de datos.
+      * __*shampoo-sales.csv*__ -> Conjunto de datos utilizados para el ejemplo.
+      * __*tuningParametersARIMA_example.py*__ -> Script de Python que contiene otro ejemplo de aplicación del modelo ARIMA sobre una serie de datos.
     * __*KNN*__ -> Carpeta que contiene ejemplos del modelo KNN en Python.
-      * __* iris.data*__ -> Conjunto de datos utilizados para el ejemplo.
+      * __*iris.data*__ -> Conjunto de datos utilizados para el ejemplo.
       * __*KNN_example.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo KNN sobre una serie de datos.
     * __*LightGBM*__ -> Carpeta que contiene ejemplos del modelo LightGBM en Python.
-      * __* adult.csv*__ -> Conjunto de datos utilizados para el ejemplo.
+      * __*adult.csv*__ -> Conjunto de datos utilizados para el ejemplo.
       * __*XGBoostvsLightGBM.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo XGBoost comparado con el modelo LightGBM.
     * __*Multiple Layer Perception*__ -> Carpeta que contiene ejemplos del modelo de Redes Neuronales en Python.
       * __*wine_classification.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo de Redes Neuronales sobre una serie de datos.

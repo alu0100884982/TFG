@@ -289,7 +289,7 @@
       * __*Primera aproximacion*__ -> Carpeta que contiene la primera aproximación de predicciones del volumen de tráfico.
         * __*nohaynada.txt*__ -> Archivo que indica que todavía no hay nada.
   * **codigosEjemploTecnicasMachineLearning** -> Carpeta que contiene ejemplos en Python del uso de distintos modelos de aprendizaje automático.
-    * __* ARIMA*__ -> Carpeta que contiene ejemplos del modelo ARIMA en Python.
+    * __*ARIMA*__ -> Carpeta que contiene ejemplos del modelo ARIMA en Python.
       * __*ARIMA_example.py*__ -> Script de Python que contiene un ejemplo de aplicación del modelo ARIMA sobre una serie de datos.
       * __*shampoo-sales.csv*__ -> Conjunto de datos utilizados para el ejemplo.
       * __*tuningParametersARIMA_example.py*__ -> Script de Python que contiene otro ejemplo de aplicación del modelo ARIMA sobre una serie de datos.

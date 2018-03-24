@@ -179,13 +179,13 @@
   * **submission_sample_travelTime.csv** -> Fichero ejemplo que contiene la plantilla utilizada para incluir las predicciones realizadas del tiempo promedio de viaje.
   * **submission_sample_volume.csv** -> Fichero ejemplo que contiene la plantilla utilizada para incluir las predicciones realizadas del volumen de tráfico.
   * **testing_phase1** -> Carpeta que contiene los datos de testeo de la primera fase de la competición.
-    * __* test1_20min_avg_travel_time.csv*__ -> Fichero que agrupa el tiempo promedio de viaje por rutas e intervalos de tiempo de las 2 horas antes de los intervalos a predecir.
-    * __* test1_20min_avg_volume.csv*__ -> Fichero que agrupa el volumen de tráfico por rutas e intervalos de tiempo de las 2 horas antes de los intervalos a predecir.
+    * __*test1_20min_avg_travel_time.csv*__ -> Fichero que agrupa el tiempo promedio de viaje por rutas e intervalos de tiempo de las 2 horas antes de los intervalos a predecir.
+    * __*test1_20min_avg_volume.csv*__ -> Fichero que agrupa el volumen de tráfico por rutas e intervalos de tiempo de las 2 horas antes de los intervalos a predecir.
     * __*trajectories(table5)_test1.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las rutas contempladas en los datos de la competición en las dos horas previas a los intervalos a predecir junto al tiempo que tarda en recorrer cada uno de los enlaces de la ruta y el tiempo promedio del viaje realizado. Se utiliza para obtener el fichero _test1_20min_avg_travel_time.csv_.
     * __*volume(table 6)_test1.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las barreras de peaje contempladas en la competición en las dos horas previas a los intervalos a predecir junto con la dirección en la que ha atravesado la barrera de peaje y otras características. Se utiliza para obtener el fichero _test1_20min_avg_volume.csv_.
     * __*weather (table 7)_test1.csv*__ -> Fichero que contiene los datos meteorológicos cada 3 horas de los días a predecir.
   * **training** -> Carpeta que contiene los datos de entrenamiento de la primera fase de la competición.
-    * __* links_table3.csv*__ -> Fichero que contiene cada uno de los enlaces que forman las rutas de la competición junto con sus características.
+    * __*links_table3.csv*__ -> Fichero que contiene cada uno de los enlaces que forman las rutas de la competición junto con sus características.
     * __*routes_table4.csv*__ -> Fichero que contiene cada una de las rutas de la competición junto con la secuencia de enlaces que la forman.
     * __*trajectories_table5_training_20min_avg_travel_time.csv*__ -> Fichero que agrupa el tiempo promedio de viaje por rutas e intervalos de tiempo de entrenamiento.
     * __*trajectories_table 5_training.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las rutas contempladas en los datos de la competición en los intervalos de tiempo de entrenamiento junto al tiempo que tarda en recorrer cada uno de los enlaces de la ruta y el tiempo promedio del viaje realizado. Se utiliza para obtener el fichero _trajectories_table5_training_20min_avg_travel_time.csv_.
@@ -193,45 +193,44 @@
     * __*volume_table 6_training.csv*__ -> Fichero que contiene los vehículos que han pasado por una de las barreras de peaje contempladas en la competición en los intervalos de tiempo de entrenamiento junto con la dirección en la que ha atravesado la barrera de peaje y otras características. Se utiliza para obtener el fichero _volume_table 6_training_20min_avg_volume.csv_.
     * __*weather (table 7)_training.csv*__ -> Fichero que contiene los datos meteorológicos cada 3 horas de los días de entrenamiento.
 * **documentacion** -> Carpeta que contiene toda la documentación del TFG.
- * **documentacionAdicional** -> Carpeta que contiene los datos de entrenamiento de la primera fase de la competición.
-   * __*Estado del arte*__ -> Fichero que contiene los documentos escogidos para representar el estado del arte del tema tratado en el TFG.  
-      * __*ALEIXANDRE - Predicción de tráfico en las carreteras de la red de la Generalitat Valenciana.pdf*__ -> Trabajo de Fin de Grado acerca de la predicción de tráfico en las carreteras de la red de la Generalitat Valenciana.
-      * __*ForecastingTrafficTimeSeries.pdf*__ -> Artículo acerca de la predicción de tráfico.
-      * __*HowLongWillTheTrafficFlowSeries.pdf*__ -> Artículo en el que se estudia la cuestión acerca del tiempo de validez en que se mantiene eficaz una serie histórica de tiempos de flujo del tráfico para predecir el futuro.
-      * __*Short-Term-Traffic-Prediction-on-the-UK-Motorway-N_2016_Transportation-Resea.pdf*__ -> Artículo en el que se realizan estimaciones a corto plazo (15 minutos en el futuro) con la información histórica del tráfico de la red de autopistas del Reino Unido utilizando redes neuronales, de tal forma que esto permita reducir la congestión del transporte mediante la mejora de sistemas inteligentes de transporte utilizados para controlar el tráfico para que realicen decisiones proactivas sobre la red de carreteras (anticiparse al inicio de la congestión del tráfico)
-      * __*What-Drives-Mobility-Trends--Results-from-Case-Studies_2016_Transportation-R.pdf*__ -> Artículo en el que se estudian las tendencias de movilidad urbana en Paris, Santiago de Chile, Singapur y Viena con el objetivo de analizar la demanda de las diversas formas de transporte que existen en esas ciudades y establecer políticas adecuadas.
-    * __*Machine Learning*__ -> Carpeta que contiene documentación de apoyo sobre el aprendizaje
-     automático.
-     * __*machine_learning_a_bayesian_perspective.pdf*__ -> Documento sobre información de aprendizaje automático en general en general.
-     * __*machine_learning_mastery_with_python.pdf*__ -> Documento que contiene información acerca del aprendizaje automático en Python.
-     * __*tips, tricks and hacks that you can use to make better predictions.pdf*__ -> Documento que contiene consejos para realizar mejores predicciones en Python.  
-      automático.
-    * __*PostgreSQL*__ -> Carpeta que contiene documentación de apoyo sobre PostgreSQL.
-     * __*PostgreSQL.pdf*__ -> Documento que contiene información sobre PostgreSQL.
-    * __*Python*__ -> Carpeta que contiene documentación de apoyo sobre Python.
-     * __*CheatSheets*__ -> Carpeta que contiene documentos que resumen características que tiene el lenguaje Python para aprendizaje automático.
-       * __*data-visualisation-infographics1.jpg*__ -> Imagen que contiene los distintos tipos de visualización de datos que posee Python.
-       * __*LearnDataScienceInPython.jpg*__ -> Imagen que contiene de forma resumida los pasos a seguir para aprender ciencia de datos en Python.
-       * __*Pandas.png*__ -> Imagen que contiene algunas características que ofrece la librería _Pandas_ de Python.
-       * __*PythonForDataScience.pdf*__ -> Documento que contiene los principios básicos de Python para realizar ciencia de datos.
-       * __*Scikit-Learn.pdf*__ -> Documento que contiene información acerca de los distintos algoritmos de aprendizaje automático que ofrece la librería _Scikit-Learn_ de Python.
-     * __*CódigosEjemplo*__ -> Carpeta que contiene scripts de Python que muestran pequeños ejemplos de las carecterísticas de este lenguaje para ciencia de datos.
-       * __*CorrelationsBetweenAttributes.py*__ -> Script de Python que muestra cómo averiguar la correlación entre determinados atributos.
-       * __*datasets*__ -> Conjuntos de datos utilizados en los ejemplos.
-         * __*pima-indians-diabetes.data.csv*__ -> Conjunto de datos utilizado para los ejemplos.
-         * __*ima-indians-diabetes.names*__ -> Información acerca del conjunto de datos utilizado para los ejemplos.
-       * __*DataTypeForEachAttribute.py*__ -> Script the Python que muestra el tipo de dato que tiene cada uno de los atributos cargados desde un fichero CSV.
-       * __*DescriptiveStatistics.py*__ -> Script de Python que muestra estadísticos descriptivos de los datos cargados desde un fichero CSV.
-       * __*DimensionsOfYourData.py*__ -> Script de Python que muestra las dimensiones de los datos cargados desde un fichero CSV
-       * __*LoadCSVFiles_with_NumPy.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca NumPy.
-       * __*LoadCSVFiles_with_Pandas.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca Pandas.
-       * __*LoadCSVFiles_with_the_PythonStandardLibrary.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca estándar de Python.
-       * __*LoadCSV_from_URL_using_NumPy.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con una URL utilizando la biblioteca NumPy.
-       * __*LoadCSV_using_Pandas_from_URL.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con una URL utilizando la biblioteca Pandas.
-       * __*PeekAtYourData.py*__ -> Script de Python que muestra una pequeña parte de los datos cargados desde un fichero CSV.
-     * __*python_pandas_tutorial.pdf*__ -> Documento extenso sobre la biblioteca Pandas.
-     * __*ScipyLectures-simple.pdf*__ -> Documento extenso sobre la biblioteca Scipy.
-  * **documentacionProyecto** -> Carpeta que contiene la documentación del proyecto del TFG.
+  * **documentacionAdicional** -> Carpeta que contiene los datos de entrenamiento de la primera fase de la competición.
+     * __*Estado del arte*__ -> Fichero que contiene los documentos escogidos para representar el estado del arte del tema tratado en el TFG.  
+        * __*ALEIXANDRE - Predicción de tráfico en las carreteras de la red de la Generalitat Valenciana.pdf*__ -> Trabajo de Fin de Grado acerca de la predicción de tráfico en las carreteras de la red de la Generalitat Valenciana.
+        * __*ForecastingTrafficTimeSeries.pdf*__ -> Artículo acerca de la predicción de tráfico.
+        * __*HowLongWillTheTrafficFlowSeries.pdf*__ -> Artículo en el que se estudia la cuestión acerca del tiempo de validez en que se mantiene eficaz una serie histórica de tiempos de flujo del tráfico para predecir el futuro.
+        * __*Short-Term-Traffic-Prediction-on-the-UK-Motorway-N_2016_Transportation-Resea.pdf*__ -> Artículo en el que se realizan estimaciones a corto plazo (15 minutos en el futuro) con la información histórica del tráfico de la red de autopistas del Reino Unido utilizando redes neuronales, de tal forma que esto permita reducir la congestión del transporte mediante la mejora de sistemas inteligentes de transporte utilizados para controlar el tráfico para que realicen decisiones proactivas sobre la red de carreteras (anticiparse al inicio de la congestión del tráfico)
+        * __*What-Drives-Mobility-Trends--Results-from-Case-Studies_2016_Transportation-R.pdf*__ -> Artículo en el que se estudian las tendencias de movilidad urbana en Paris, Santiago de Chile, Singapur y Viena con el objetivo de analizar la demanda de las diversas formas de transporte que existen en esas ciudades y establecer políticas adecuadas.
+      * __*Machine Learning*__ -> Carpeta que contiene documentación de apoyo sobre el aprendizajeautomático.
+       * __*machine_learning_a_bayesian_perspective.pdf*__ -> Documento sobre información de aprendizaje automático en general en general.
+       * __*machine_learning_mastery_with_python.pdf*__ -> Documento que contiene información acerca del aprendizaje automático en Python.
+       * __*tips, tricks and hacks that you can use to make better predictions.pdf*__ -> Documento que contiene consejos para realizar mejores predicciones en Python.  
+        automático.
+      * __*PostgreSQL*__ -> Carpeta que contiene documentación de apoyo sobre PostgreSQL.
+        * __*PostgreSQL.pdf*__ -> Documento que contiene información sobre PostgreSQL.
+      * __*Python*__ -> Carpeta que contiene documentación de apoyo sobre Python.
+        * __*CheatSheets*__ -> Carpeta que contiene documentos que resumen características que tiene el lenguaje Python para aprendizaje automático.
+         * __*data-visualisation-infographics1.jpg*__ -> Imagen que contiene los distintos tipos de visualización de datos que posee Python.
+         * __*LearnDataScienceInPython.jpg*__ -> Imagen que contiene de forma resumida los pasos a seguir para aprender ciencia de datos en Python.
+         * __*Pandas.png*__ -> Imagen que contiene algunas características que ofrece la librería _Pandas_ de Python.
+         * __*PythonForDataScience.pdf*__ -> Documento que contiene los principios básicos de Python para realizar ciencia de datos.
+         * __*Scikit-Learn.pdf*__ -> Documento que contiene información acerca de los distintos algoritmos de aprendizaje automático que ofrece la librería _Scikit-Learn_ de Python.
+       * __*CódigosEjemplo*__ -> Carpeta que contiene scripts de Python que muestran pequeños ejemplos de las carecterísticas de este lenguaje para ciencia de datos.
+         * __*CorrelationsBetweenAttributes.py*__ -> Script de Python que muestra cómo averiguar la correlación entre determinados atributos.
+         * __*datasets*__ -> Conjuntos de datos utilizados en los ejemplos.
+           * __*pima-indians-diabetes.data.csv*__ -> Conjunto de datos utilizado para los ejemplos.
+           * __*ima-indians-diabetes.names*__ -> Información acerca del conjunto de datos utilizado para los ejemplos.
+         * __*DataTypeForEachAttribute.py*__ -> Script the Python que muestra el tipo de dato que tiene cada uno de los atributos cargados desde un fichero CSV.
+         * __*DescriptiveStatistics.py*__ -> Script de Python que muestra estadísticos descriptivos de los datos cargados desde un fichero CSV.
+         * __*DimensionsOfYourData.py*__ -> Script de Python que muestra las dimensiones de los datos cargados desde un fichero CSV
+         * __*LoadCSVFiles_with_NumPy.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca NumPy.
+         * __*LoadCSVFiles_with_Pandas.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca Pandas.
+         * __*LoadCSVFiles_with_the_PythonStandardLibrary.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con la biblioteca estándar de Python.
+         * __*LoadCSV_from_URL_using_NumPy.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con una URL utilizando la biblioteca NumPy.
+         * __*LoadCSV_using_Pandas_from_URL.py*__ -> Script de Python que muestra cómo cargar ficheros CSV con una URL utilizando la biblioteca Pandas.
+         * __*PeekAtYourData.py*__ -> Script de Python que muestra una pequeña parte de los datos cargados desde un fichero CSV.
+       * __*python_pandas_tutorial.pdf*__ -> Documento extenso sobre la biblioteca Pandas.
+       * __*ScipyLectures-simple.pdf*__ -> Documento extenso sobre la biblioteca Scipy.
+   * **documentacionProyecto** -> Carpeta que contiene la documentación del proyecto del TFG.
      * __*arbolDirectorios.md*__ -> Documento Markdown que contiene el árbol de directorios del repositorio donde se aloja el proyecto del TFG, así como información de cada uno de los componentes del mismo.
      documentacionProyecto
      * __*Información KDDCup 2017*__ -> Carpeta que contiene la información de la competición KDDCup 2017.

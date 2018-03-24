@@ -230,8 +230,8 @@
          * __*PeekAtYourData.py*__ -> Script de Python que muestra una pequeña parte de los datos cargados desde un fichero CSV.
        * __*python_pandas_tutorial.pdf*__ -> Documento extenso sobre la biblioteca Pandas.
        * __*ScipyLectures-simple.pdf*__ -> Documento extenso sobre la biblioteca Scipy.
-  * **documentacionProyecto** -> Carpeta que contiene la documentación del proyecto del TFG.
-       * __*arbolDirectorios.md*__ -> Documento Markdown que contiene el árbol de directorios del repositorio donde se aloja el proyecto del TFG, así como información de cada uno de los componentes del mismo.
+ * **documentacionProyecto** -> Carpeta que contiene la documentación del proyecto del TFG.
+    * __*arbolDirectorios.md*__ -> Documento Markdown que contiene el árbol de directorios del repositorio donde se aloja el proyecto del TFG, así como información de cada uno de los componentes del mismo.
        documentacionProyecto
        * __*Información KDDCup 2017*__ -> Carpeta que contiene la información de la competición KDDCup 2017.
         * __*Informacion KDDCup 2017.pdf*__ -> Documento que contiene la información proporcionada por la competición KDDCup 2017.

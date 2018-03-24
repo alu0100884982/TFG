@@ -234,24 +234,24 @@
     * __*arbolDirectorios.md*__ -> Documento Markdown que contiene el árbol de directorios del repositorio donde se aloja el proyecto del TFG, así como información de cada uno de los componentes del mismo.
        documentacionProyecto
        * __*Información KDDCup 2017*__ -> Carpeta que contiene la información de la competición KDDCup 2017.
-        * __*Informacion KDDCup 2017.pdf*__ -> Documento que contiene la información proporcionada por la competición KDDCup 2017.
-        * __*Route_KDD.pdf*__ -> Documento que contiene un esquema de las rutas de la competición junto con los enlaces que las forman.
+          * __*Informacion KDDCup 2017.pdf*__ -> Documento que contiene la información proporcionada por la competición KDDCup 2017.
+          * __*Route_KDD.pdf*__ -> Documento que contiene un esquema de las rutas de la competición junto con los enlaces que las forman.
        * __*Machine Learning*__ -> Carpeta que contiene la documentación del aprendizaje automático aplicado al proyecto del TFG.
-        * __*Machine Learning del proyecto.pdf*__ -> Documento que contiene la información del aprendizaje automático del proyecto del TFG.
-        * __*Machine Learning Models.pdf*__ -> Documento que contiene información sobre los distintos algoritmos de aprendizaje automático utilizados en el proyecto del TFG.
-        * __*modelo-arima.pdf*__ -> Documento que contiene información sobre el modelo de predicción de series temporales denominado _ARIMA_.
+          * __*Machine Learning del proyecto.pdf*__ -> Documento que contiene la información del aprendizaje automático del proyecto del TFG.
+          * __*Machine Learning Models.pdf*__ -> Documento que contiene información sobre los distintos algoritmos de aprendizaje automático utilizados en el proyecto del TFG.
+          * __*modelo-arima.pdf*__ -> Documento que contiene información sobre el modelo de predicción de series temporales denominado _ARIMA_.
        * __*PostgreSQL*__ -> Carpeta que contiene la documentación de las características de PostgreSQL utilizadas en el proyecto del TFG.
-        * __*Carga de la base de datos con PostgreSQL.pdf*__ -> Documento que contiene la información sobre la carga de la base de datos del proyecto del TFG.
-        * __*Manual PostgreSQL.pdf*__ -> Documento que contiene la información sobre los tipos de datos y los comandos de PostgreSQL utilizados en la carga de la base de datos del proyecto del TFG.
+          * __*Carga de la base de datos con PostgreSQL.pdf*__ -> Documento que contiene la información sobre la carga de la base de datos del proyecto del TFG.
+          * __*Manual PostgreSQL.pdf*__ -> Documento que contiene la información sobre los tipos de datos y los comandos de PostgreSQL utilizados en la carga de la base de datos del proyecto del TFG.
        * __*PresentacionesPDFMejoresResultados*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017.
-        * __*Travel Time Prediction*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017 con respecto a la tarea de predicción del tiempo promedio de viaje.
-          * __*Task1_1stPlace.pdf*__ -> Presentación del equipo que quedó en 1er puesto.
-          * __*Task1_2ndPlace.pdf*__ -> Presentación del equipo que quedó en 2º puesto.
-          * __*Task1_3rdPlace.pdf*__ -> Presentación del equipo que quedó en 3er puesto.
-        * __*Volume Prediction*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017 con respecto a la tarea de predicción del volumen de tráfico.
-          * __*Task2_1stPlace.pdf*__ -> Presentación del equipo que quedó en 1er puesto.
-          * __*Task2_2ndPlace.pdf*__ -> Presentación del equipo que quedó en 2º puesto.
-          * __*Task2_3rdPlace.pdf*__ -> Presentación del equipo que quedó en 3er puesto.
+          * __*Travel Time Prediction*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017 con respecto a la tarea de predicción del tiempo promedio de viaje.
+            * __*Task1_1stPlace.pdf*__ -> Presentación del equipo que quedó en 1er puesto.
+            * __*Task1_2ndPlace.pdf*__ -> Presentación del equipo que quedó en 2º puesto.
+            * __*Task1_3rdPlace.pdf*__ -> Presentación del equipo que quedó en 3er puesto.
+          * __*Volume Prediction*__ -> Carpeta que contiene las presentaciones de los ganadores de la competición KDDCup 2017 con respecto a la tarea de predicción del volumen de tráfico.
+            * __*Task2_1stPlace.pdf*__ -> Presentación del equipo que quedó en 1er puesto.
+            * __*Task2_2ndPlace.pdf*__ -> Presentación del equipo que quedó en 2º puesto.
+            * __*Task2_3rdPlace.pdf*__ -> Presentación del equipo que quedó en 3er puesto.
 * **Dudas, sugerencias y cosas que arreglar.md** -> Documento Markdown en el que se contemplan dudas, sugerencias y cosas que arreglar del proyecto del TFG.
 * **graficas** -> Carpeta que contiene las gráficas del proyecto del TFG.
   * **grafica_con_promedio_tiempomediodeviaje_ todoslosdias** -> Carpeta que contiene las gráficas del tiempo promedio de viaje de todos los días de entrenamiento en todas las rutas.

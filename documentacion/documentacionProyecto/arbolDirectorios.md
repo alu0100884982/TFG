@@ -133,6 +133,7 @@
 │   │   │   └── 2ª aproximacion
 │   │   │       ├── secondMachineLearningApproach_ARIMA.py
 │   │   │       ├── secondMachineLearningApproach_ARIMA_trainingdatatest.py
+│   │   │       ├── secondMachineLearningApproach_ARIMA_optimized.py
 │   │   └── Volumen de tráfico
 │   │       └── Primera aproximacion
 │   │           └── nohaynada.txt
@@ -169,7 +170,7 @@
   * __*scriptTablasOriginales.sql*__ -> Script de PostgreSQL que realiza la carga de la base de datos *tfgdatosoriginales*.
   * __*scriptTablasTest1.sql*__ -> Script de PostgreSQL que realiza la carga de la base de datos *tfgtest1*.
   * __*scriptTablasTraining2.sql*__ -> Script de PostgreSQL que realiza la carga de la base de datos *tfgtraining2*.
-* **datasetsOriginales** -> Carpeta que contiene los datos originales proporcionados por la competición KDDCup2017.
+* **datasetsOriginales**machine  -> Carpeta que contiene los datos originales proporcionados por la competición KDDCup2017.
   * **dataSet_phase2** -> Carpeta que contiene los datos originales de la segunda fase de la competición.
     * __*20min_avg_travel_time_training2.csv*__ -> Archivo que contiene los tiempos promedios de viaje entre los días 18 y 24 de octubre de 2016 agrupados por ruta e intervalo. Estos datos son necesarios para comparar las predicciones realizadas sobre los intervalos a predecir.
     * __*trajectories(table 5)_test2.csv*__ -> Archivo csv que contiene los datos de testeo del tiempo promedio de viaje de la segunda fase de la competición. Es necesario agrupar estos tiempos por intervalos con el script *aggregate_travel_time.py*, de tal forma que se obtiene el tiempo promedio de viaje en intervalos de 20 minutos dentro de los intervalos de 2 horas antes de los intervalos a predecir en la segunda fase de la competición.
@@ -293,7 +294,8 @@
         * __*primera_aproximacion_tfgtest1.sql*__ -> Script de PostgreSQL que permite añadir unas columnas necesarias a una serie de tablas y generar las tablas necesarias sobre los datos de testeo para poder realizar las predicciones.
       * __*2ª aproximacion*__ -> Carpeta que contiene la segunda aproximación de predicciones del tiempo promedio de viaje.
         * __*secondMachineLearningApproach_ARIMA_trainingdatatest.py*__ -> Script de Python que realiza las predicciones mediante el modelo ARIMA con los datos de entrenamiento como parte de la predicción.
-        * __*secondMachineLearningApproach_ARIMA.py*__ -> Script de Python que realiza las predicciones reales de la segunda aproximación de predicciones mediante el modelo ARIMA.
+        * __*secondMachineLearningApproach_ARIMA.py*__ -> Script de Python que realiza las predicciones reales de la segunda aproximación de predicciones mediante el modelo ARIMA
+        * __*secondMachineLearningApproach_ARIMA_optimized.py*__ -> Script de Python que realizar las predicciones reales de la segunda aproximación de predicciones mediante el modelo ARIMA con más precisión.
     * __*Volumen de tráfico*__ -> Carpeta que contiene las distintas aproximaciones del volumen de tráfico.
       * __*Primera aproximacion*__ -> Carpeta que contiene la primera aproximación de predicciones del volumen de tráfico.
         * __*nohaynada.txt*__ -> Archivo que indica que todavía no hay nada.

@@ -1,9 +1,11 @@
 import psycopg2
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 from statsmodels.tsa.seasonal import seasonal_decompose
 from pandas.tools.plotting import autocorrelation_plot
-
+from statsmodels.tsa.stattools import adfuller
+import datetime;
 # Predicciones sobre el conjunto de entrenamiento
 def generacionGrafica(ruta, ruta_array):
         try:
@@ -11,11 +13,23 @@ def generacionGrafica(ruta, ruta_array):
         except:
             print("I am unable to connect to the database")
         cur = conn.cursor()
-        query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_modified where " + ruta + "  order by time_window;"
+        query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_modified where " + ruta + " order by time_window;"
         cur.execute(query)
         rows = cur.fetchall()
         df = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
-        df = df[(df.avg_travel_time > 50) & (df.avg_travel_time <= 150)]
+        minimum_date = min(df.date)
+        maximum_date = max(df.date)
+        date_aux = minimum_date
+        while (date_aux != maximum_date):
+               if (date_aux not in df['date']):
+                 valores_avg_travel = []
+                 for row in df.values:
+                        if (row[0].time() == date_aux.time()):
+                                valores_avg_travel.append(row[1])
+                 df.loc[len(df)] = [date_aux, np.mean(valores_avg_travel)]
+               date_aux += datetime.timedelta(minutes=20) 
+        print("DATES : ", df)
+        df = df.sort_index()
         serie = pd.Series(df['avg_travel_time'].values, index=df['date'].values)
         serie.plot()
         plt.xlabel('Intervalos')
@@ -38,6 +52,13 @@ def generacionGrafica(ruta, ruta_array):
         var1, var2 = X1.var(), X2.var()
         print('mean1=%f, mean2=%f' % (mean1, mean2))
         print('variance1=%f, variance2=%f' % (var1, var2))
+        #Augmented Dickey-Fuller test
+        result = adfuller(X)
+        print('ADF Statistic: %f' % result[0])
+        print('p-value: %f' % result[1])
+        print('Critical Values:')
+        for key, value in result[4].items():
+	        print('\t%s: %.3f' % (key, value))
 
 
 rutas = [('A',2), ('A',3), ('B',1), ('B',3), ('C',1), ('C',3)]

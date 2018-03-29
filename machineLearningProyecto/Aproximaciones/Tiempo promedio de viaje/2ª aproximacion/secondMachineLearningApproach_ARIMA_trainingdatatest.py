@@ -4,10 +4,12 @@ from pandas import set_option
 from numpy import loadtxt
 from pandas import read_csv
 from pandas import datetime
+import numpy as np
 from pandas.plotting import autocorrelation_plot
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
+import datetime
 
 # Predicciones sobre el conjunto de entrenamiento
 try:
@@ -22,7 +24,19 @@ where intersection_id = 'A' AND tollgate_id = 2
 order by time_window;""")
 rows = cur.fetchall()
 df = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
-df = df[(df.avg_travel_time > 50) & (df.avg_travel_time < 150)]
+#df = df[(df.avg_travel_time > 50) & (df.avg_travel_time < 150)]
+minimum_date = min(df.date)
+maximum_date = max(df.date)
+date_aux = minimum_date
+while (date_aux != maximum_date):
+               if (date_aux not in df['date']):
+                 valores_avg_travel = []
+                 for row in df.values:
+                        if (row[0].time() == date_aux.time()):
+                                valores_avg_travel.append(row[1])
+                 df.loc[len(df)] = [date_aux, np.mean(valores_avg_travel)]
+
+df = df.sort_index()
 indexes = [i for i in range(len(df))]
 print(df.shape)
 dates = pd.DatetimeIndex(df['date'].values)

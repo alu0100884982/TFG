@@ -46,8 +46,6 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                          new_forecast=[]
                          for element in rows2:
                                   new_forecast.append(forecast[((datetime.datetime(2018,1,1,element[0].hour,element[0].minute, 0)-hora_de_referencia)/1200).seconds])
-                         print("FORECAST : ", new_forecast)
-                         print("ROWS2 : ",valores_reales)
                          mse = mean_squared_error(valores_reales, new_forecast)
                          print("MSE : ", mse, " BEST_SCORE: ", best_score)
                          if mse < best_score:
@@ -56,8 +54,7 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                  except:
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
-        model = ARIMA(serie, order=best_cfg)
-        print("HOLA")
+        model = ARIMA(serie, order=(9,1,0))
         model_fit = model.fit(disp=0)
         predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = model_fit.forecast(steps=6)[0]
 
@@ -95,7 +92,19 @@ for route in routes:
         cur.execute(query)
         rows = cur.fetchall()
         df1 = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
-        df1 = df1[(df1.avg_travel_time > 50) & (df1.avg_travel_time < 150)]
+        #df1 = df1[(df1.avg_travel_time > 50) & (df1.avg_travel_time < 150)]
+        minimum_date = min(df1.date)
+        maximum_date = max(df1.date)
+        date_aux = minimum_date
+        while (date_aux != maximum_date):
+               if (date_aux not in df1['date']):
+                 valores_avg_travel = []
+                 for row in df1.values:
+                        if (row[0].time() == date_aux.time()):
+                                valores_avg_travel.append(row[1])
+                 df1.loc[len(df1)] = [date_aux, np.mean(valores_avg_travel)]
+                 date_aux += datetime.timedelta(minutes=20)
+        df1 = df1.sort_index()
         for day in days:
               count += 1;
               print("CUENTA : ", count)
@@ -137,6 +146,8 @@ for route in routes:
                         else:
                            momento_del_dia = 1
                            rhs = datetime.datetime(2018,1,1,17,0,0)
+                           print("FORECAST : ", predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
+                           print("ROWS2 : ",rows2[0][1])
                         y_test_sum += abs((rows2[0][1] - predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
                         count += 1
            intervals_sum += y_test_sum/count;     

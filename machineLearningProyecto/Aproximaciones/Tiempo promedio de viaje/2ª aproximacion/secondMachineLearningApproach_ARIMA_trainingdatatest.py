@@ -35,7 +35,7 @@ while (date_aux != maximum_date):
                         if (row[0].time() == date_aux.time()):
                                 valores_avg_travel.append(row[1])
                  df.loc[len(df)] = [date_aux, np.mean(valores_avg_travel)]
-
+                 date_aux += datetime.timedelta(minutes=20)
 df = df.sort_index()
 indexes = [i for i in range(len(df))]
 print(df.shape)

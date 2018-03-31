@@ -1,15 +1,6 @@
 # DUDAS
-* A la hora de realizar la comprobación de las rutas en la columna *travel_seq* de la tabla **vehicle_trajectories_training_modified**, hay rutas que conectan la intersección C con la barrera de peaje 1 pero no se corresponde con la ruta establecida en la tabla **vehicle_routes_modified**. Es decir, hay rutas en las que pasan de un enlace a otro sin tener en cuenta enlaces intermedios. Un ejemplo para ver esto: 
-
-```sql
-SELECT *
-FROM vehicle_trajectories_training_modified 
-WHERE intersection_id = 'C' AND tollgate_id = 1 AND travel_seq[6].id = '121';
-```
-irando si es entre semana o fin de semana) o no y, si fuera recomendable tenerla en cuenta, cómo la uso como variable a la hora de introducirla en el modelo.
-
-
-* En la tabla resultado de predicción de tiempo promedio de viaje, a la hora de tener en cuenta el tiempo medio de viaje 20 min antes, 40 min antes, etcétera, en los intervalos de tiempo a predecir,  resulta que por ejemplo el intervalo de tiempo  {"2016-10-18 08:20:00","2016-10-18 08:40:00"} necesita, para el atributo 20 min antes, el tiempo promedio de viaje del intervalo anterior ({"2016-10-18 08:00:00","2016-10-18 08:20:00"}), pero este intervalo también está dentro de los intervalos que tengo que predecir y, por tanto, no tengo su tiempo promedio de viaje. ¿Qué debería hacer en este caso? ¿Hacer la media de todos los tiempos promedios de viaje en el intervalo de tiempo (08:00:00 - 08:20:00) en los dias anteriores en la ruta que estemos considerando? -> Al hacer las tablas necesarias para hacer las predicciones de la primera aproximacion los valores salen muy parecidos -> PROPUESTA: Seguir haciendo la media y, una vez realizada la media, hacer una media ponderada de la media anterior y el valor inmediatamente anterior (fila anterior).
+* Series temporales como Aprendizaje Supervisado (Machine Learning Mastery) -> ¿No se basa en el mismo principio que en el modelo ARIMA? ¿De tener en cuenta valores anteriores?
+* SVM -> Las predicciones del tiempo promedio de viaje se mantienen en un rango pequeño
 # SUGERENCIAS
 
 # COSAS QUE ARREGLAR

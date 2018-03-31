@@ -1,3 +1,6 @@
+# En esta aproximación se realiza la predicción de los intervalos de tiempo a predecir de forma directa; es decir,  model_fit.forecast(steps=6)[0] => predice los 6 intervalos de golpe.
+# ¿Se debería hacer la predicción poco a poco? Es decir, en vez de predecir los intervalos de golpe, ¿ se debería predecir uno y luego añadir el valor predicho a la serie temporal, volver a entrenar la serie temporal y predecir el siguiente valor?
+
 import psycopg2
 import pandas as pd
 from pandas import set_option
@@ -12,7 +15,7 @@ import numpy as np
 import datetime
 
 
-def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_referencia):
+def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_referencia,day,df1_aux,route):
         try:
            conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
         except:
@@ -22,7 +25,7 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
         cur.execute(query)
         rows = cur.fetchall()
         df2 = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
-        result_dataframe = pd.concat([df1,df2])
+        result_dataframe = pd.concat([df1_aux,df2])
         try:
            conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
         except:
@@ -34,6 +37,7 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
         serie = pd.Series(result_dataframe['avg_travel_time'].values, index=result_dataframe['date'])
         best_score, best_cfg = float("inf"), None
         valores_reales = [element[1] for element in rows2]
+        '''
         for p in range(3,10):
           for d in range(3):
             for q in range(5):   
@@ -54,7 +58,8 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                  except:
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
-        model = ARIMA(serie, order=(9,1,0))
+        '''
+        model = ARIMA(serie, order= (9,1,0))
         model_fit = model.fit(disp=0)
         predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = model_fit.forecast(steps=6)[0]
 
@@ -97,33 +102,38 @@ for route in routes:
         maximum_date = max(df1.date)
         date_aux = minimum_date
         while (date_aux != maximum_date):
-               if (date_aux not in df1['date']):
+               if (not((date_aux == df1['date']).any())):
                  valores_avg_travel = []
                  for row in df1.values:
                         if (row[0].time() == date_aux.time()):
                                 valores_avg_travel.append(row[1])
                  df1.loc[len(df1)] = [date_aux, np.mean(valores_avg_travel)]
-                 date_aux += datetime.timedelta(minutes=20)
+               date_aux += datetime.timedelta(minutes=20)
         df1 = df1.sort_index()
         for day in days:
+              df1_aux = df1.copy()
               count += 1;
               print("CUENTA : ", count)
-              creacionElementosDiccionario("TIME '6:00:00' AND TIME '7:40:00'","TIME '8:00:00' AND TIME '9:40:00'", 0, datetime.datetime(2018,1,1,8,0,0))
-              creacionElementosDiccionario("TIME '15:00:00' AND TIME '16:40:00'","TIME '17:00:00' AND TIME '18:40:00'", 1, datetime.datetime(2018,1,1,17,0,0))
+              minimum_date = maximum_date
+              maximum_date = datetime.datetime(2016,10,int(day[8:10]),6,00,0)
+              date_aux = minimum_date
+              while (date_aux != maximum_date):
+               if (not((date_aux == df1['date']).any())):
+                 valores_avg_travel = []
+                 for row in df1_aux.values:
+                        if (row[0].time() == date_aux.time()):
+                                valores_avg_travel.append(row[1])
+               df1_aux.loc[len(df1_aux)] = [date_aux, np.mean(valores_avg_travel)]
+               date_aux += datetime.timedelta(minutes=20)
+              df1_aux = df1_aux.sort_index()
+              creacionElementosDiccionario("TIME '6:00:00' AND TIME '7:40:00'","TIME '8:00:00' AND TIME '9:40:00'", 0, datetime.datetime(2018,1,1,8,0,0),day,df1_aux,route)
+              creacionElementosDiccionario("TIME '15:00:00' AND TIME '16:40:00'","TIME '17:00:00' AND TIME '18:40:00'", 1, datetime.datetime(2018,1,1,17,0,0),day,df1_aux,route)
               
 for key,val in predicciones_ruta_dia.items():
     print (key, "=>", val)                
 routes_sum = 0;   
 
 for route in routes:
-        try:
-                conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
-        except:
-               print("I am unable to connect to the database")
-        cur = conn.cursor()
-        query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_modified  where intersection_id = '" +route[0] +"' AND tollgate_id = " + route[1] + " order by time_window;"
-        cur.execute(query)
-        rows = cur.fetchall()
         suma_intervalos_tiempo = 0;
         intervals_sum = 0;
         for interval in time_intervals:

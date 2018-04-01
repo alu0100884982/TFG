@@ -5,6 +5,7 @@ import numpy as np
 from statsmodels.tsa.seasonal import seasonal_decompose
 from pandas.tools.plotting import autocorrelation_plot
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf
 import datetime;
 # Predicciones sobre el conjunto de entrenamiento
 def generacionGrafica(ruta, ruta_array):
@@ -21,7 +22,7 @@ def generacionGrafica(ruta, ruta_array):
         maximum_date = max(df.date)
         date_aux = minimum_date
         while (date_aux != maximum_date):
-               if (date_aux not in df['date']):
+               if (not((date_aux == df['date']).any())):
                  valores_avg_travel = []
                  for row in df.values:
                         if (row[0].time() == date_aux.time()):
@@ -40,6 +41,8 @@ def generacionGrafica(ruta, ruta_array):
         plt.close()
         new_df = pd.DataFrame(data=df['avg_travel_time'].values, index = df['date'].values);
         print(new_df.index)
+        plot_acf(serie)
+        plt.show()
         # Another tool to visualize the data is the seasonal_decompose function in statsmodel. With this, the trend and seasonality become even more obvious.
         decomposition = seasonal_decompose(new_df,freq=72)
         fig = decomposition.plot()  

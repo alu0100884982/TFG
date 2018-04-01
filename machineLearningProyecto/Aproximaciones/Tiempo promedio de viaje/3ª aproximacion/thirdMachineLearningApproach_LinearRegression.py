@@ -60,7 +60,7 @@ dates_traveltime = pd.DataFrame.from_records(rows, columns=['date','avg_travel_t
 minimum_date = min(dates_traveltime.date)
 maximum_date = max(dates_traveltime.date)
 date_aux = minimum_date
-
+dates_traveltime = dates_traveltime[(dates_traveltime['avg_travel_time'] > 30) & (dates_traveltime['avg_travel_time'] < 150)]
 while (date_aux != maximum_date): 
        if (not((date_aux == dates_traveltime['date']).any())):
          valores_avg_travel = []
@@ -70,30 +70,42 @@ while (date_aux != maximum_date):
          dates_traveltime.loc[len(dates_traveltime)] = [date_aux, np.mean(valores_avg_travel)]
        date_aux += datetime.timedelta(minutes=20)
 dates_traveltime = dates_traveltime.sort_index()
-print("HOLA0")
 array = dates_traveltime.values
 X = array[:,0]
-X = [int(x.strftime('%d%m%Y')) for x in X]
+X = [elemento.strftime('%H%M%S') for elemento in X] #Cojo solo la hora para que el algoritmo SVR realice mejor la predicción (repetición de patrones a unas horas determinadas).
 Y = array[:,1]
-print("X_train: ", X_train)
-print("SIZE : ", int(len(X)*0.66))
-X_train = X[:int(len(X)*0.66)]
-y_train = X[:int(len(Y)*0.66)]
-X_test = X[int(len(X)*0.66):]
-y_test = X[int(len(Y)*0.66):]
 svr_lin = SVR(kernel = 'linear', C=1e3)
 svr_poly = SVR(kernel = 'poly', C=1e3, degree = 2)
-svr_rbf = SVR(kernel='rbf',C=100,gamma=.001)
+svr_rbf = SVR(kernel='rbf',C=1e3,gamma=0.1)
+test_size = 0.33
+seed = 7
 #svr_lin.fit(np.array(X_train).reshape(-1, 1), y_train)
 #svr_poly.fit(np.array(X_train).reshape(-1, 1), y_train)
-svr_rbf.fit(np.array(X_train).reshape(-1, 1), y_train)
+svr_rbf.fit(np.array(X).reshape(-1, 1), Y)
 
+
+try:
+    conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
+except:
+    print("I am unable to connect to the database")
+
+cur = conn.cursor()
+query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_test1  where intersection_id = 'A' AND tollgate_id = 2 order by time_window;"
+cur.execute(query)
+rows = cur.fetchall()
+dates_traveltime = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
+array = dates_traveltime.values
+X_test = array[:,0]
+X_test = [elemento.strftime('%H%M%S') for elemento in X_test] #Cojo solo la hora para que el algoritmo SVR realice mejor la predicción (repetición de patrones a unas horas determinadas).
+y_test = array[:,1]
 predictions = svr_rbf.predict(np.array(X_test).reshape(-1, 1))
 for i in range(len(predictions)):
-     print("PRED: ", predictions[i], " REAL : ", y_test[i])
+   print("PRED: ", predictions[i], " REAL : ", y_test[i])
 print("ERROR : ", mean_squared_error(predictions, y_test))
 indexes = [i for i in range(len(X_test))]
 plt.plot(indexes,predictions, color='blue')
 plt.plot(indexes,y_test, color='black')
-#plt.plot(X_test, y_test)
 plt.show()
+
+# Intentar hacer lo de time series to supervised learning.
+

@@ -23,6 +23,8 @@ def create_dataset(dataset, look_back=1):
 		dataY.append(dataset[i + look_back, 0])
 	return numpy.array(dataX), numpy.array(dataY)
 	
+	
+	
 try:
     conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
 except:
@@ -48,9 +50,10 @@ while (date_aux != maximum_date):
 dates_traveltime = dates_traveltime.sort_index()
 # Normalizes the dataset using the MinMaxScaler preprocessing class from the scikit-learn library.
 dates_traveltime = pd.DataFrame(dates_traveltime['avg_travel_time'].values, index=dates_traveltime['date'])
+dates_traveltime = dates_traveltime.values
 scaler = MinMaxScaler(feature_range=(0, 1))
 dates_traveltime = scaler.fit_transform(dates_traveltime)
-train_size = int(len(dates_traveltime) * 0.67)
+train_size = int(len(dates_traveltime) * 0.99)
 test_size = len(dates_traveltime) - train_size
 train, test = dates_traveltime[0:train_size,:], dates_traveltime[train_size:len(dates_traveltime),:]
 print(len(train), len(test))
@@ -58,4 +61,39 @@ print(len(train), len(test))
 look_back = 1
 trainX, trainY = create_dataset(train, look_back)
 testX, testY = create_dataset(test, look_back)
-print("Train X: ", trainX)
+print("Train X: ", trainX.shape)
+trainX = numpy.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
+testX = numpy.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
+model = Sequential()
+model.add(LSTM(4, input_shape=(1, look_back)))
+model.add(Dense(1))
+model.compile(loss='mean_squared_error', optimizer='adam')
+model.fit(trainX, trainY, epochs=7, batch_size=1, verbose=2)
+
+trainPredict = model.predict(trainX)
+testPredict = model.predict(testX)
+# invert predictions
+trainPredict = scaler.inverse_transform(trainPredict)
+trainY = scaler.inverse_transform([trainY])
+testPredict = scaler.inverse_transform(testPredict)
+testY = scaler.inverse_transform([testY])
+for i in range(len(testY[0])):
+       print("REAL : ", trainY[0][i], "  PREDICTED: ", trainPredict[i,0])
+trainScore = mean_squared_error(trainY[0], trainPredict[:,0])
+print('Train Score: %.2f RMSE' % (trainScore))
+testScore = mean_squared_error(testY[0], testPredict[:,0])
+print('Test Score: %.2f RMSE' % (testScore))
+trainPredictPlot = numpy.empty_like(dates_traveltime)
+trainPredictPlot[:, :] = numpy.nan
+trainPredictPlot[look_back:len(trainPredict)+look_back, :] = trainPredict
+# shift test predictions for plotting
+testPredictPlot = numpy.empty_like(dates_traveltime)
+testPredictPlot[:, :] = numpy.nan
+testPredictPlot[len(trainPredict)+(look_back*2)+1:len(dates_traveltime)-1, :] = testPredict
+# plot baseline and predictions
+plt.plot(scaler.inverse_transform(dates_traveltime))
+plt.plot(trainPredictPlot)
+plt.plot(testPredictPlot)
+plt.show()
+
+

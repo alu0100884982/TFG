@@ -117,6 +117,12 @@ Las tareas realizadas hasta el momento son las siguientes:
 Las tareas a realizar actualmente son las siguientes:
 * **Seguir con la memoria del TFG**. Tener en cuenta no poner mucha información acerca de la minería de datos en general y empezar a meter la documentación de los distintos modelos y su utilización en el proyecto. También establecer la misma estructura de datos para las predicciones de series temporales.
 * **Actualizar la documentación acerca de la estructura de carpetas del repositorio**
-* **Empezar a realizar predicciones sobre el volumen de tráfico**. Aplicar de forma similar al tiempo promedio de viaje predicciones sobre el volumen de tráfico. 
+* **Empezar a realizar predicciones sobre el volumen de tráfico**. Aplicar de forma similar al tiempo promedio de viaje predicciones sobre el volumen de tráfico.
+* **Realizar gráficas superpuestas del tiempo promedio de viaje durante los intervalos de 20 minutos de unos cuantos días**. Esto se quiere hhacer con el objetivo de tener una mejor visualización acerca de la semejanza del tiempo promedio de viaje en distintos intervalos de tiempo de 20 minutos en varios días.
+
+## Próxima reunión
+### Tareas realizadas
+
+### Tareas pendientes
 
 

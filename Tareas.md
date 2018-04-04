@@ -119,6 +119,7 @@ Las tareas a realizar actualmente son las siguientes:
 * **Actualizar la documentación acerca de la estructura de carpetas del repositorio**
 * **Empezar a realizar predicciones sobre el volumen de tráfico**. Aplicar de forma similar al tiempo promedio de viaje predicciones sobre el volumen de tráfico.
 * **Realizar gráficas superpuestas del tiempo promedio de viaje durante los intervalos de 20 minutos de unos cuantos días**. Esto se quiere hhacer con el objetivo de tener una mejor visualización acerca de la semejanza del tiempo promedio de viaje en distintos intervalos de tiempo de 20 minutos en varios días.
+* **Comprobar la posible estacionalidad de la serie temporal de tiempos promedios de viaje**. Se pretende comprobar si las series temporales del tiempo promedio de viaje tienen una componente estacional con el objetivo de aplicar métodos para eliminarla de la serie y ver si las predicciones del tiempo promedio de viaje de la tercera aproximación mejoran.
 
 ## Próxima reunión
 ### Tareas realizadas

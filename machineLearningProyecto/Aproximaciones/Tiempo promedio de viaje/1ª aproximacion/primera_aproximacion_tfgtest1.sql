@@ -1,5 +1,8 @@
-CREATE TYPE tipo_fila AS (intersection char(1),tollgate int, left_side_interval timestamp );
+--Crea el tipo para almacenar cada una de las filas de una tabla
+CREATE TYPE tipo_fila AS (intersection char(1),tollgate int, left_side_interval timestamp )
+--Crea el tipo para almacenar una ruta de la red de carreteras.
 CREATE TYPE ruta AS (intersection char(1), tollgate int);
+--Función que crea 
 CREATE OR REPLACE FUNCTION create_firstrow_route_interval(rutaintervalo tipo_fila) 
     RETURNS void AS $$
     DECLARE
@@ -74,6 +77,7 @@ CREATE OR REPLACE FUNCTION actualizar_filaactual_con_filaanterior(rutaintervalo_
                      WHERE actual.intersection_id = rutaintervalo_actual.intersection AND actual.tollgate_id = rutaintervalo_actual.tollgate AND actual.time_window[1]= rutaintervalo_actual.left_side_interval AND before.intersection_id = rutaintervalo_anterior.intersection AND before.tollgate_id = rutaintervalo_anterior.tollgate AND before.time_window[1] =      rutaintervalo_anterior.left_side_interval;
     END;
     $$ LANGUAGE plpgsql;
+
 
 DO $$
 <<block>>

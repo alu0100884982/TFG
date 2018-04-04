@@ -102,12 +102,21 @@ Las tareas a realizar actualmente son las siguientes:
 * **Realizar la documentación de la primera aproximación de predicciones sobre el tiempo promedio de viaje**.
 * **Actualizar la documentación del repositorio**.
 
-## Próxima reunión
+## Reunión 4 de abril de 2018
 ### Tareas realizadas
 Las tareas realizadas hasta el momento son las siguientes:
+* **Mejorada la organización del repositorio**. Se ha modificado la estructura del repositorio donde se aloja el TFG para una mejor comprensión del contenido.
+* **Terminado el modelo del proyecto del TFG**. Se ha terminado y subido a la tarea correspondiente el modelo del proyecto del TFG.
+* **Documentados todos los modelos**. Se ha procedido a incluir los modelos a utilizar en el desarrollo del proyecto, así como llevar a cabo un estudio de los mismos.
+* **Terminada la documentación sobre la estructura de carpetas del repositorio**. Se ha realizado la documentación del contenido del repositorio.
+* **Realizadas gráficas sobre el número de instancias de cada una de las tablas creadas para entrenar en la primera aproximación de predicciones del tiempo promedio de viaje**. Se han construido gráficas para visualizar el número de instancias de cada una de las vistas creadas en la primera aproximación de predicciones del tiempo promedio de viaje.
+* **Realizadas más aproximaciones de predicciones del tiempo promedio de viaje**. Se ha procedido a realizar más aproximaciones de predicciones del tiempo promedio de viaje para tener una visión global del funcionamiento de distintos modelos de predicción.
+* **Comenzada la memoria del TFG**. Se ha iniciado la redacción de la memoria del TFG.
 
 ### Tareas pendientes
 Las tareas a realizar actualmente son las siguientes:
-
+* **Seguir con la memoria del TFG**. Tener en cuenta no poner mucha información acerca de la minería de datos en general y empezar a meter la documentación de los distintos modelos y su utilización en el proyecto. También establecer la misma estructura de datos para las predicciones de series temporales.
+* **Actualizar la documentación acerca de la estructura de carpetas del repositorio**
+* **Empezar a realizar predicciones sobre el volumen de tráfico**. Aplicar de forma similar al tiempo promedio de viaje predicciones sobre el volumen de tráfico. 
 
 

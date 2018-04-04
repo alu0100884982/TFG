@@ -23,28 +23,36 @@ except:
 
 
 cur = conn.cursor()
-cur.execute("""select sum_etc, sum_volume, avg_travel_time
+cur.execute("""select sum_volume, avg_travel_time
 from travel_time_intersection_to_tollgate_modified as left_table NATURAL JOIN (select tollgate_id, time_window,sum(proportion_hasetc_vehicles) as sum_etc, sum(volume) as sum_volume
 from traffic_volume_tollgates_modified 
 group by tollgate_id, time_window) as traffic;
 """)
 rows = cur.fetchall()
-colnames = ['sum_etc','sum_volume', 'avg_travel_time']
+colnames = ['sum_volume', 'avg_travel_time']
 volume_traveltime = pd.DataFrame(rows, columns=colnames)
 print("Coeficiente de Pearson entre la suma de volumen y el tiempo promedio de viaje: ", np.corrcoef(volume_traveltime['sum_volume'], volume_traveltime['avg_travel_time'] ))
 array = volume_traveltime.values
-X = array[:,0:2]
-Y = array[:,2]
-test_size = 0.33
+X = array[:,0:1]
+Y = array[:,1]
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+ax.scatter(volume_traveltime['sum_volume'], volume_traveltime['avg_travel_time'])
+ax.set_ylim(0,400)
+ax.set_xlim(0,400)
+test_size = 0.22
 seed = 7
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=test_size, random_state=seed)
 model = linear_model.LinearRegression()
 model.fit(X_train, y_train)
+plt.plot(X_test, model.predict(X_test),color='k')
+plt.show()
 y_pred = model.predict(X_test)
 errores_predicciones = mean_squared_error(y_pred, y_test)
 for i in range(len(y_pred)):
    print("PRED: ", y_pred[i], "  REAL: ", y_test[i])
 print("ERROR : ", errores_predicciones)
+
 ################################################################################################################################################
 
 

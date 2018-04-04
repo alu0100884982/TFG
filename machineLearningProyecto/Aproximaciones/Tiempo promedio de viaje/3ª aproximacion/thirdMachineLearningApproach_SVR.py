@@ -1,3 +1,8 @@
+# https://stats.stackexchange.com/questions/225409/what-does-the-cost-c-parameter-mean-in-svm/225553 -> Parámetro C
+# https://www.sciencedirect.com/science/article/pii/S0169743903001114
+# https://www.youtube.com/watch?v=m2a2K4lprQw -> Parámetro gamma
+# https://www.youtube.com/watch?v=joTa_FeMZ2s -> Parámetro C
+
 import psycopg2
 import pandas as pd
 from sklearn import linear_model
@@ -38,8 +43,8 @@ X = array[:,0]
 X = [elemento.strftime('%H%M%S') for elemento in X] #Cojo solo la hora para que el algoritmo SVR realice mejor la predicción (repetición de patrones a unas horas determinadas).
 Y = array[:,1]
 svr_lin = SVR(kernel = 'linear', C=1e3)
-svr_poly = SVR(kernel = 'poly', C=1e3, degree = 2)
-svr_rbf = SVR(kernel='rbf',C=1e3,gamma=0.1)
+#svr_poly = SVR(kernel = 'poly', C=1e3, degree = 2)
+svr_rbf = SVR(kernel='rbf',C=1e3,gamma=0.001)
 test_size = 0.33
 seed = 7
 #svr_lin.fit(np.array(X_train).reshape(-1, 1), y_train)
@@ -74,32 +79,28 @@ plt.show()
 # Prueba de SVR con las columnas date-avg_travel_time => Time Series to Supervised Learning.
 series = pd.Series(dates_traveltime['avg_travel_time'].values, index=dates_traveltime['date'])
 dataframe = pd.DataFrame()
-for i in range(9,0,-1):
+for i in range(5,0,-1):
         dataframe['t-'+str(i)] = series.shift(i)
 dataframe['t'] = series.values
-dataframe = dataframe[10:]
+dataframe = dataframe[6:]
+print("HEAD : ", dataframe.head())
 array = dataframe.values
-X = array[:,0:9]
-y = array[:,9]
+X = array[:,0:5]
+y = array[:,5]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.22, random_state=7)
-svr_rbf = SVR(kernel='rbf',C=1e3,gamma='auto')
+svr_rbf = SVR(kernel='rbf',C=70,gamma=0.00008)
 svr_rbf.fit(X_train, y_train)
 #print("X_test : ", X_test)
 predictions = svr_rbf.predict(X_test)
-#for i in range(len(predictions)):
- #  print("PREDICTION: ", predictions[i], " REAL : ", y_test[i])
+for i in range(len(predictions)):
+ print("PREDICTION: ", predictions[i], " REAL : ", y_test[i])
 print("ERRORR1 : ", mean_squared_error(predictions, y_test))
 indexes = [i for i in range(len(X_test))]
 plt.plot(indexes,predictions, color='blue')
 plt.plot(indexes,y_test, color='black')
 plt.show()
 
-mlp = MLPRegressor(hidden_layer_sizes=(13,13,13),max_iter=500)
-mlp.fit(X_train,y_train)
-predictions = mlp.predict(X_test)
-for i in range(len(predictions)):
- print("PREDICTION: ", predictions[i], " REAL : ", y_test[i])
-print("ERRORR2 : ", mean_squared_error(predictions, y_test))
+
 '''
 X = array[:,0:-1]
 y = array[:,-1]

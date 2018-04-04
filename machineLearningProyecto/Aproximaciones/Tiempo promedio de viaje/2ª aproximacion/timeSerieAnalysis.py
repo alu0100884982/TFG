@@ -14,7 +14,7 @@ def generacionGrafica(ruta, ruta_array):
         except:
             print("I am unable to connect to the database")
         cur = conn.cursor()
-        query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_modified where " + ruta + " order by time_window;"
+        query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_modified where " + ruta + " AND time_window[1].date BETWEEN DATE '2016-07-19' AND DATE '2016-07-22' order by time_window;"
         cur.execute(query)
         rows = cur.fetchall()
         df = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])

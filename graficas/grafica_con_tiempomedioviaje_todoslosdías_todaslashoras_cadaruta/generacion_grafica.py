@@ -34,7 +34,7 @@ keys = coll.OrderedDict(sorted(keys.items()))
 fontP = FontProperties()
 fontP.set_size('small')
 counter = 1
-dates = dates[0:2]
+dates = dates[5:9]
 # Create the PdfPages object to which we will save the pages:
 # The with statement makes sure that the PdfPages object is closed properly at
 # the end of the block, even if an Exception occurs.
@@ -44,7 +44,7 @@ with PdfPages('graficas_pdf.pdf') as pdf:
                 hours = [element[0].strftime("%H:%M") for element in keys[(pair[0], pair[1], date)]]
                 values = [element[1] for element in keys[(pair[0], pair[1], date)]]
                 serie = pd.Series(values, index=hours)
-                serie.plot()
+                serie.plot(label=date)
                 plt.legend(prop=fontP)
         plt.title(pair)
         plt.xlabel('Hours')

@@ -17,13 +17,6 @@ RETURNS void AS $$
         WHERE intersection_id = '''|| rutaintervalo.intersection|| ''' AND tollgate_id = '|| rutaintervalo.tollgate || ' AND
         time_window[1].time = '''|| tiempo1|| ''' AND
         time_window[2].time = ''' || tiempo2 || ''' AND EXTRACT(isodow FROM time_window[1].date) = '     ||      EXTRACT(isodow FROM (rutaintervalo.left_side_interval).date)) INTO valor;
-         IF (valor IS NULL) THEN
-          EXECUTE('SELECT AVG(avg_travel_time) FROM travel_time_intersection_to_tollgate_modified
-          WHERE intersection_id = '''|| rutaintervalo.intersection|| ''' AND tollgate_id = '|| rutaintervalo.tollgate || ' AND
-          time_window[1].time = '''|| tiempo1|| ''' AND
-          time_window[2].time = ''' || tiempo2 || ''' AND EXTRACT(isodow FROM time_window[1].date) = '||rutaintervalo.tollgate) INTO valor;
-        END IF;
-         
          EXECUTE('UPDATE  travel_time_intersection_to_tollgate_modified SET ' || valores[1] || ' = ' || valor || 
                      ' WHERE time_window[1] = '''|| rutaintervalo.left_side_interval || ''' AND  time_window[2] = ''' || (rutaintervalo.left_side_interval  + INTERVAL '20 minute')
                      || ''' AND intersection_id = ''' ||rutaintervalo.intersection|| ''' AND  tollgate_id = ' || rutaintervalo.tollgate);
@@ -121,7 +114,8 @@ CREATE OR REPLACE FUNCTION actualizar_filaactual_con_filaanterior(rutaintervalo_
                         
       
       UPDATE  travel_time_intersection_to_tollgate_modified AS actual
-                     SET forty_min_previous = before.twenty_min_previous,
+                     SET twenty_min_previous = before.avg_travel_time,
+                         forty_min_previous = before.twenty_min_previous,
                          sixty_min_previous = before.forty_min_previous,
                          eighty_min_previous = before.sixty_min_previous,
                          onehundred_min_previous = before.eighty_min_previous,

@@ -151,7 +151,7 @@ errores_predicciones_intervalos = {
 		"Linear Regression" : 0,
 		"LightGBM" : 0,
 		"MLP" : 0,
-		"SVM" : 0,
+		"SVR" : 0,
 		"KNN" : 0
 	}
 	
@@ -160,8 +160,9 @@ errores_predicciones_rutas = {
 		"Linear Regression" : 0,
 		"LightGBM" : 0,
 		"MLP" : 0,
-		"SVM" : 0,
-		"KNN" : 0
+		"SVR" : 0,
+		"KNN" : 0,
+		"LightGBM":0
 	}
 	
 with open('predicciones.txt', 'a') as the_file:
@@ -200,29 +201,34 @@ with open('predicciones.txt', 'a') as the_file:
                 colnames = [ 'date', 'avg_travel_time']
                 travel_time_dataframe = pd.DataFrame(rows, columns=colnames)
                 the_file.write("Valores reales, "+ str(','.join(map(str, travel_time_dataframe['avg_travel_time'].tolist()))) + "\n")
+                
+                #XGBoost
                 model = XGBRegressor()
                 model.fit(X_train, y_train)
                 y_pred = model.predict(X_test)
+                predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
+                        predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
                 errores_predicciones_intervalos["XGBoost"] += y_test_sum
-                model = XGBRegressor()
-                model.fit(X_train, y_train)
-                y_pred = model.predict(X_test)
-                the_file.write("XGBoost,"+ str(','.join(map(str, y_pred))) + "\n")
-                y_test_sum = 0
-                for index, fila in travel_time_dataframe.iterrows():
-                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
-                y_test_sum /= len(travel_time_dataframe);
+                the_file.write("XGBoost,"+ str(','.join(map(str, predicciones))) + "\n")
+                
+                #Linear Regression
                 model = linear_model.LinearRegression()
                 model.fit(X_train, y_train)
                 y_pred = model.predict(X_test)
-                the_file.write("Regresión Lineal, "+  str(','.join(map(str, y_pred))) + "\n")
+                y_test_sum = 0
+                predicciones=[]
+                for index, fila in travel_time_dataframe.iterrows():
+                        predicciones.append(y_pred[fila['date'].day - 18])
+                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+                y_test_sum /= len(travel_time_dataframe);
+                the_file.write("Regresión Lineal, "+  str(','.join(map(str, predicciones))) + "\n")
                 errores_predicciones_intervalos["Linear Regression"] += y_test_sum
                
-
+                #MLP
                 scaler = StandardScaler()
                 scaler.fit(X_train)
                 X_train = scaler.transform(X_train)
@@ -230,33 +236,43 @@ with open('predicciones.txt', 'a') as the_file:
                 mlp = MLPRegressor(hidden_layer_sizes=(13,13,13),max_iter=10000)
                 mlp.fit(X_train,y_train)
                 y_pred = mlp.predict(X_test)
-                the_file.write("Red Neuronal, "+  str(','.join(map(str, y_pred))) + "\n")
+                predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
+                        predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
+                the_file.write("Red Neuronal, "+  str(','.join(map(str, predicciones))) + "\n")
                 errores_predicciones_intervalos["MLP"] += y_test_sum
-
+                
+                #SVR
                 model = svm.SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
                     kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
                 model.fit(X_train, y_train) 
                 y_pred = model.predict(X_test)
-                the_file.write("Máquina de Soporte Vectorial,: "+ str(','.join(map(str, y_pred))) + "\n")
+                predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
+                        predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
-                errores_predicciones_intervalos["SVM"] += y_test_sum
+                the_file.write("Máquina de Soporte Vectorial,: "+ str(','.join(map(str, predicciones))) + "\n")
+                errores_predicciones_intervalos["SVR"] += y_test_sum
                
+                #KNN
                 model =KNeighborsRegressor(n_neighbors=3)
                 model.fit(X_train, y_train) 
                 y_pred = model.predict(X_test)
-                the_file.write("KNN, "+  str(','.join(map(str, y_pred))) + "\n\n")
+                predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
+                        predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
                 errores_predicciones_intervalos["KNN"] += y_test_sum
+                the_file.write("KNN, "+  str(','.join(map(str, predicciones))) + "\n\n")
+                
+                #LightGBM
                 lgb_train = lgb.Dataset(X_train, y_train)
                 lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
                 params = {
@@ -264,19 +280,26 @@ with open('predicciones.txt', 'a') as the_file:
                 'boosting_type': 'gbdt',
                 'objective': 'regression',
                 'metric': {'l2', 'auc'},
-                'num_leaves': 31,
-                'num_iterations': 400,
-                'learning_rate': 0.01,
+                'num_leaves': 40,
+                'num_iterations': 40000,
+                'learning_rate': 0.001,
                 'feature_fraction': 0.8,
                 'bagging_fraction': 0.8,
                 'bagging_freq': 5,
+                'min_data':1,
                 'verbose': 0
                 }
                 gbm = lgb.train(params,
                                 lgb_train)
                 y_pred = gbm.predict(X_test, num_iteration=gbm.best_iteration)
-                print("LightGBM : ", y_pred)
-                the_file.write("LightGBM,: "+ str(','.join(map(str, y_pred))) + "\n")
+                y_test_sum = 0
+                predicciones=[]
+                for index, fila in travel_time_dataframe.iterrows():
+                        predicciones.append(y_pred[fila['date'].day - 18])
+                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+                y_test_sum /= len(travel_time_dataframe);
+                errores_predicciones_intervalos["LightGBM"] += y_test_sum
+                the_file.write("LightGBM,: "+ str(','.join(map(str, predicciones))) + "\n")
              for key, value in errores_predicciones_rutas.items():
                 errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)
                 errores_predicciones_intervalos[key] = 0  

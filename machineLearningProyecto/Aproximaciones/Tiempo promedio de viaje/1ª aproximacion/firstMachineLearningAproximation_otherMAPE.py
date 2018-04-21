@@ -168,8 +168,8 @@ with open('predicciones.txt', 'a') as the_file:
         for route in routes:
              suma_intervalos_tiempo = 0;
              for interval in time_intervals:
-                print("RUTA ", str(route) + " INTERVAL ", str(interval))
-                the_file.write(str(route[0]) + "," + str(route[1]) + "," + str(interval) + "\n")
+                print("RUTA ", str(route) + " INTERVAL ", str(interval.time()) + " - " + str((interval + datetime.timedelta(minutes = 20)).time()))
+                the_file.write(str(route[0]) + "," + str(route[1]) + "," + str(interval.time()) + " - " + str((interval + datetime.timedelta(minutes = 20)).time()) + "\n")
                 colnames =       [ 'type_day','twenty_min_previous','forty_min_previous','sixty_min_previous','eighty_min_previous','onehundred_min_previous','onehundredtwenty_min_previous','pressure','sea_pressure','wind_direction', 'wind_speed', 'temperature', 'rel_humidity', 'precipitation','avg_travel_time']          
                 conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
                 cur = conn.cursor()
@@ -260,23 +260,22 @@ with open('predicciones.txt', 'a') as the_file:
                 lgb_train = lgb.Dataset(X_train, y_train)
                 lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
                 params = {
-                    'task': 'train',
-                    'boosting_type': 'gbdt',
-                    'objective': 'regression',
-                    'metric': {'l2', 'auc'},
-                    'num_leaves': 31,
-                    'learning_rate': 0.05,
-                    'feature_fraction': 0.9,
-                    'bagging_fraction': 0.8,
-                    'bagging_freq': 5,
-                    'verbose': 0
+                'task': 'train',
+                'boosting_type': 'gbdt',
+                'objective': 'regression',
+                'metric': {'l2', 'auc'},
+                'num_leaves': 31,
+                'num_iterations': 400,
+                'learning_rate': 0.01,
+                'feature_fraction': 0.8,
+                'bagging_fraction': 0.8,
+                'bagging_freq': 5,
+                'verbose': 0
                 }
                 gbm = lgb.train(params,
-                                lgb_train,
-                                num_boost_round=20,
-                                valid_sets=lgb_eval,
-                                early_stopping_rounds=5)
+                                lgb_train)
                 y_pred = gbm.predict(X_test, num_iteration=gbm.best_iteration)
+                print("LightGBM : ", y_pred)
                 the_file.write("LightGBM,: "+ str(','.join(map(str, y_pred))) + "\n")
              for key, value in errores_predicciones_rutas.items():
                 errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)

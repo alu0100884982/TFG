@@ -163,96 +163,125 @@ errores_predicciones_rutas = {
 		"SVM" : 0,
 		"KNN" : 0
 	}
-for route in routes:
-     suma_intervalos_tiempo = 0;
-     for interval in time_intervals:
-        colnames =       [ 'type_day','twenty_min_previous','forty_min_previous','sixty_min_previous','eighty_min_previous','onehundred_min_previous','onehundredtwenty_min_previous','pressure','sea_pressure','wind_direction', 'wind_speed', 'temperature', 'rel_humidity', 'precipitation','avg_travel_time']          
-        conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
-        cur = conn.cursor()
-        query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + str(interval.hour) + "_" + str(interval.minute) + ";"
-        cur.execute(query)
-        rows = cur.fetchall()
-        dataframe_traveltime = pd.DataFrame(rows, columns=colnames)
-        X_train = dataframe_traveltime.iloc[:, 0:14]
-        y_train = dataframe_traveltime.iloc[:, 14]
-        
-        conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
-        cur = conn.cursor()
-        query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + str(interval.hour) + "_" + str(interval.minute) + ";"
-        cur.execute(query)
-        rows = cur.fetchall()
-        dataframe_traveltime = pd.DataFrame(rows, columns=colnames)
-        X_test = dataframe_traveltime.iloc[:, 0:14]
-       
-        try:
-            conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
-        except:
-            print("I am unable to connect to the database")
+	
+with open('predicciones.txt', 'a') as the_file:
+        for route in routes:
+             suma_intervalos_tiempo = 0;
+             for interval in time_intervals:
+                print("RUTA ", str(route) + " INTERVAL ", str(interval))
+                the_file.write(str(route[0]) + "," + str(route[1]) + "," + str(interval) + "\n")
+                colnames =       [ 'type_day','twenty_min_previous','forty_min_previous','sixty_min_previous','eighty_min_previous','onehundred_min_previous','onehundredtwenty_min_previous','pressure','sea_pressure','wind_direction', 'wind_speed', 'temperature', 'rel_humidity', 'precipitation','avg_travel_time']          
+                conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
+                cur = conn.cursor()
+                query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + str(interval.hour) + "_" + str(interval.minute) + ";"
+                cur.execute(query)
+                rows = cur.fetchall()
+                dataframe_traveltime = pd.DataFrame(rows, columns=colnames)
+                X_train = dataframe_traveltime.iloc[:, 0:14]
+                y_train = dataframe_traveltime.iloc[:, 14]
+                
+                conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
+                cur = conn.cursor()
+                query = "select * from " + route[0].lower() + "_" + str(route[1]) + "_" + str(interval.hour) + "_" + str(interval.minute) + ";"
+                cur.execute(query)
+                rows = cur.fetchall()
+                dataframe_traveltime = pd.DataFrame(rows, columns=colnames)
+                X_test = dataframe_traveltime.iloc[:, 0:14]
+               
+                try:
+                    conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
+                except:
+                    print("I am unable to connect to the database")
 
-        cur = conn.cursor()
-        query = "select time_window[1].date, avg_travel_time from travel_time_intersection_to_tollgate_training2 where intersection_id = '" + str(route[0]) +"' AND tollgate_id = " + str(route[1]) +" AND time_window[1].time = TIME '"+ str(interval.hour) +":"+str(interval.minute)  + ":00' order by intersection_id, tollgate_id, time_window;"
-        cur.execute(query)
-        rows = cur.fetchall()
-        colnames = [ 'date', 'avg_travel_time']
-        travel_time_dataframe = pd.DataFrame(rows, columns=colnames)
-        model = XGBRegressor()
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-        y_test_sum = 0
-        for index, fila in travel_time_dataframe.iterrows():
-                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
-        y_test_sum /= len(travel_time_dataframe);
-        errores_predicciones_intervalos["XGBoost"] += y_test_sum
-        model = XGBRegressor()
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-        y_test_sum = 0
-        for index, fila in travel_time_dataframe.iterrows():
-                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
-        y_test_sum /= len(travel_time_dataframe);
-        model = linear_model.LinearRegression()
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-        errores_predicciones_intervalos["Linear Regression"] += y_test_sum
+                cur = conn.cursor()
+                query = "select time_window[1].date, avg_travel_time from travel_time_intersection_to_tollgate_training2 where intersection_id = '" + str(route[0]) +"' AND tollgate_id = " + str(route[1]) +" AND time_window[1].time = TIME '"+ str(interval.hour) +":"+str(interval.minute)  + ":00' order by intersection_id, tollgate_id, time_window;"
+                cur.execute(query)
+                rows = cur.fetchall()
+                colnames = [ 'date', 'avg_travel_time']
+                travel_time_dataframe = pd.DataFrame(rows, columns=colnames)
+                the_file.write("Valores reales, "+ str(','.join(map(str, travel_time_dataframe['avg_travel_time'].tolist()))) + "\n")
+                model = XGBRegressor()
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
+                y_test_sum = 0
+                for index, fila in travel_time_dataframe.iterrows():
+                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+                y_test_sum /= len(travel_time_dataframe);
+                errores_predicciones_intervalos["XGBoost"] += y_test_sum
+                model = XGBRegressor()
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
+                the_file.write("XGBoost,"+ str(','.join(map(str, y_pred))) + "\n")
+                y_test_sum = 0
+                for index, fila in travel_time_dataframe.iterrows():
+                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+                y_test_sum /= len(travel_time_dataframe);
+                model = linear_model.LinearRegression()
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
+                the_file.write("Regresión Lineal, "+  str(','.join(map(str, y_pred))) + "\n")
+                errores_predicciones_intervalos["Linear Regression"] += y_test_sum
+               
 
-        # create dataset for lightgbm
-       
+                scaler = StandardScaler()
+                scaler.fit(X_train)
+                X_train = scaler.transform(X_train)
+                X_test = scaler.transform(X_test)
+                mlp = MLPRegressor(hidden_layer_sizes=(13,13,13),max_iter=10000)
+                mlp.fit(X_train,y_train)
+                y_pred = mlp.predict(X_test)
+                the_file.write("Red Neuronal, "+  str(','.join(map(str, y_pred))) + "\n")
+                y_test_sum = 0
+                for index, fila in travel_time_dataframe.iterrows():
+                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+                y_test_sum /= len(travel_time_dataframe);
+                errores_predicciones_intervalos["MLP"] += y_test_sum
 
-        scaler = StandardScaler()
-        scaler.fit(X_train)
-        X_train = scaler.transform(X_train)
-        X_test = scaler.transform(X_test)
-        mlp = MLPRegressor(hidden_layer_sizes=(13,13,13),max_iter=10000)
-        mlp.fit(X_train,y_train)
-        y_pred = mlp.predict(X_test)
-        y_test_sum = 0
-        for index, fila in travel_time_dataframe.iterrows():
-                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
-        y_test_sum /= len(travel_time_dataframe);
-        errores_predicciones_intervalos["MLP"] += y_test_sum
-
-        model = svm.SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
-            kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
-        model.fit(X_train, y_train) 
-        y_pred = model.predict(X_test)
-        y_test_sum = 0
-        for index, fila in travel_time_dataframe.iterrows():
-                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
-        y_test_sum /= len(travel_time_dataframe);
-        errores_predicciones_intervalos["SVM"] += y_test_sum
-       
-        model =KNeighborsRegressor(n_neighbors=3)
-        model.fit(X_train, y_train) 
-        y_pred = model.predict(X_test)
-        y_test_sum = 0
-        for index, fila in travel_time_dataframe.iterrows():
-                y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
-        y_test_sum /= len(travel_time_dataframe);
-        errores_predicciones_intervalos["KNN"] += y_test_sum
-     for key, value in errores_predicciones_rutas.items():
-        errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)
-        errores_predicciones_intervalos[key] = 0  
-for key, value in errores_predicciones_rutas.items():
-        errores_predicciones_rutas[key] = errores_predicciones_rutas[key]/len(routes);
-print ("Error : ", errores_predicciones_rutas);      
+                model = svm.SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
+                    kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
+                model.fit(X_train, y_train) 
+                y_pred = model.predict(X_test)
+                the_file.write("Máquina de Soporte Vectorial,: "+ str(','.join(map(str, y_pred))) + "\n")
+                y_test_sum = 0
+                for index, fila in travel_time_dataframe.iterrows():
+                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+                y_test_sum /= len(travel_time_dataframe);
+                errores_predicciones_intervalos["SVM"] += y_test_sum
+               
+                model =KNeighborsRegressor(n_neighbors=3)
+                model.fit(X_train, y_train) 
+                y_pred = model.predict(X_test)
+                the_file.write("KNN, "+  str(','.join(map(str, y_pred))) + "\n\n")
+                y_test_sum = 0
+                for index, fila in travel_time_dataframe.iterrows():
+                        y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
+                y_test_sum /= len(travel_time_dataframe);
+                errores_predicciones_intervalos["KNN"] += y_test_sum
+                lgb_train = lgb.Dataset(X_train, y_train)
+                lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
+                params = {
+                    'task': 'train',
+                    'boosting_type': 'gbdt',
+                    'objective': 'regression',
+                    'metric': {'l2', 'auc'},
+                    'num_leaves': 31,
+                    'learning_rate': 0.05,
+                    'feature_fraction': 0.9,
+                    'bagging_fraction': 0.8,
+                    'bagging_freq': 5,
+                    'verbose': 0
+                }
+                gbm = lgb.train(params,
+                                lgb_train,
+                                num_boost_round=20,
+                                valid_sets=lgb_eval,
+                                early_stopping_rounds=5)
+                y_pred = gbm.predict(X_test, num_iteration=gbm.best_iteration)
+                the_file.write("LightGBM,: "+ str(','.join(map(str, y_pred))) + "\n")
+             for key, value in errores_predicciones_rutas.items():
+                errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)
+                errores_predicciones_intervalos[key] = 0  
+        for key, value in errores_predicciones_rutas.items():
+                errores_predicciones_rutas[key] = errores_predicciones_rutas[key]/len(routes);
+        print ("Error : ", errores_predicciones_rutas);      
 

@@ -118,7 +118,7 @@ for route in routes:
               maximum_date = datetime.datetime(2016,10,int(day[8:10]),6,00,0)
               date_aux = minimum_date
               while (date_aux != maximum_date):
-               if (not((date_aux == df1['date']).any())):
+               if (not((date_aux == df1_aux['date']).any())):
                  valores_avg_travel = []
                  for row in df1_aux.values:
                         if (row[0].time() == date_aux.time()):

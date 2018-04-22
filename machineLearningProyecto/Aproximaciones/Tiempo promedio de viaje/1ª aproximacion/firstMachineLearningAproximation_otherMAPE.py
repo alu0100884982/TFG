@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 import math
+import matplotlib.pyplot as plt
 import numpy as np
 from pandas import read_csv
 from sklearn.metrics import mean_squared_error
@@ -165,7 +166,7 @@ errores_predicciones_rutas = {
 		"LightGBM":0
 	}
 	
-with open('predicciones.txt', 'a') as the_file:
+with open('predicciones2.txt', 'a') as the_file:
         for route in routes:
              suma_intervalos_tiempo = 0;
              for interval in time_intervals:
@@ -246,32 +247,36 @@ with open('predicciones.txt', 'a') as the_file:
                 errores_predicciones_intervalos["MLP"] += y_test_sum
                 
                 #SVR
-                model = svm.SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
-                    kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
+                model = svm.SVR(C=2000.0,epsilon=0.3, gamma=0.0001,
+                    kernel='rbf', verbose=False)
                 model.fit(X_train, y_train) 
                 y_pred = model.predict(X_test)
-                predicciones=[]
+                print("SVR : ", y_pred)
+                predicciones= [None] * 7
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
-                        predicciones.append(y_pred[fila['date'].day - 18])
+                        predicciones[fila['date'].day - 18] = (y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
                 the_file.write("Máquina de Soporte Vectorial,: "+ str(','.join(map(str, predicciones))) + "\n")
                 errores_predicciones_intervalos["SVR"] += y_test_sum
                
                 #KNN
-                model =KNeighborsRegressor(n_neighbors=3)
+                model =KNeighborsRegressor(n_neighbors=30)
                 model.fit(X_train, y_train) 
                 y_pred = model.predict(X_test)
                 predicciones=[]
                 y_test_sum = 0
+                for i in range(7):
+                        predicciones.append
                 for index, fila in travel_time_dataframe.iterrows():
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
                 errores_predicciones_intervalos["KNN"] += y_test_sum
-                the_file.write("KNN, "+  str(','.join(map(str, predicciones))) + "\n\n")
-                
+                the_file.write("KNN, "+  str(','.join(map(str, predicciones))) + "\n")
+                print("KNN predicciones: ", y_pred)
+                '''
                 #LightGBM
                 lgb_train = lgb.Dataset(X_train, y_train)
                 lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
@@ -299,7 +304,8 @@ with open('predicciones.txt', 'a') as the_file:
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
                 errores_predicciones_intervalos["LightGBM"] += y_test_sum
-                the_file.write("LightGBM,: "+ str(','.join(map(str, predicciones))) + "\n")
+                the_file.write("LightGBM, "+ str(','.join(map(str, predicciones))) + "\n\n")
+                '''
              for key, value in errores_predicciones_rutas.items():
                 errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)
                 errores_predicciones_intervalos[key] = 0  

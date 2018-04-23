@@ -59,7 +59,7 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
         '''
-        model = ARIMA(serie, order= (9,1,0))
+        model = ARIMA(serie, order= (6,1,0))
         model_fit = model.fit(disp=0)
         predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = model_fit.forecast(steps=6)[0]
 
@@ -97,7 +97,7 @@ for route in routes:
         cur.execute(query)
         rows = cur.fetchall()
         df1 = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
-        #df1 = df1[(df1.avg_travel_time > 50) & (df1.avg_travel_time < 150)]
+        df1 = df1[(df1.avg_travel_time > 50) & (df1.avg_travel_time < 150)]
         minimum_date = min(df1.date)
         maximum_date = max(df1.date)
         date_aux = minimum_date

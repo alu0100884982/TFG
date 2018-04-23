@@ -166,7 +166,7 @@ errores_predicciones_rutas = {
 		"LightGBM":0
 	}
 	
-with open('predicciones2.txt', 'a') as the_file:
+with open('predicciones.txt', 'a') as the_file:
         for route in routes:
              suma_intervalos_tiempo = 0;
              for interval in time_intervals:
@@ -275,8 +275,6 @@ with open('predicciones2.txt', 'a') as the_file:
                 y_test_sum /= len(travel_time_dataframe);
                 errores_predicciones_intervalos["KNN"] += y_test_sum
                 the_file.write("KNN, "+  str(','.join(map(str, predicciones))) + "\n")
-                print("KNN predicciones: ", y_pred)
-                '''
                 #LightGBM
                 lgb_train = lgb.Dataset(X_train, y_train)
                 lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
@@ -305,7 +303,6 @@ with open('predicciones2.txt', 'a') as the_file:
                 y_test_sum /= len(travel_time_dataframe);
                 errores_predicciones_intervalos["LightGBM"] += y_test_sum
                 the_file.write("LightGBM, "+ str(','.join(map(str, predicciones))) + "\n\n")
-                '''
              for key, value in errores_predicciones_rutas.items():
                 errores_predicciones_rutas[key] += errores_predicciones_intervalos[key]/len(time_intervals)
                 errores_predicciones_intervalos[key] = 0  

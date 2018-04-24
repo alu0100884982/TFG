@@ -18,6 +18,7 @@ from keras.layers import Dense
 from keras.layers import LSTM
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+from matplotlib import pyplot
 
 #############Funciones###################################
 
@@ -89,7 +90,7 @@ dates_traveltime = dates_traveltime.sort_index()
 dates_traveltime_difference = difference(dates_traveltime.values,1)
 dates_traveltime_difference = [element[1] for element in dates_traveltime_difference]
 dates = dates_traveltime['date'].iloc[1:]
-#dates_traveltime_differenced = pd.DataFrame(dates_traveltime_difference, index=dates, columns = ['avg_travel_time'])
+dates_traveltime_differenced = pd.DataFrame(dates_traveltime_difference, index=dates, columns = ['avg_travel_time'])
 
 #Comprobamos que se han realizado correctamente las diferencias
 inverted = []
@@ -99,7 +100,7 @@ for i in range(len(dates_traveltime_difference)):
 
 #Convertimos los valores de la serie temporal a una estructura de aprendizaje supervisado
 look_back = 5
-supervised_values= timeseries_to_supervised(dates_traveltime['avg_travel_time'].values, look_back)
+supervised_values= timeseries_to_supervised(dates_traveltime_differenced['avg_travel_time'].values, look_back)
 
 
 #Escalamos los valores de tiempo promedio de viaje al rango [-1,1] debido a que la función de activación para LSTM por defecto es tanh.
@@ -114,7 +115,7 @@ train_escalado, test_escalado = supervised_values[0:train_size], supervised_valu
 X, y = train_escalado[:, 0:-1], train_escalado[:, -1]
 print("Y: ", y)
 X = X.reshape(X.shape[0], 1, X.shape[1])
-nb_epoch = 50
+nb_epoch = 10
 batch_size = 1
 neurons = 4
 model = Sequential()
@@ -127,6 +128,7 @@ for i in range(nb_epoch):
 	
 #Predicciones
 predictions = list()
+expected_values = list()
 contador = 0
 suma = 0
 for i in range(len(test_escalado)):
@@ -136,13 +138,16 @@ for i in range(len(test_escalado)):
 	# invert scaling
 	yhat = invert_scale(scaler, X, yhat)
 	# invert differencing
-	#yhat = inverse_difference(dates_traveltime['avg_travel_time'].values, yhat, len(test_escalado)+1-i)
+	yhat = inverse_difference(dates_traveltime['avg_travel_time'].values, yhat, len(test_escalado)+1-i)
 	# store forecast
 	predictions.append(yhat)
 	expected = dates_traveltime['avg_travel_time'].values[len(train_escalado) + i + 1]
+	expected_values.append(expected)
 	print('Row=%d, Predicted=%f, Expected=%f' % (i+1, yhat, expected))
 	suma += abs(yhat-expected)/expected
 	contador += 1
 print("RESULTADO : ", (suma/contador))
-
+pyplot.plot(predictions)
+pyplot.plot(expected_values)
+pyplot.show()
 

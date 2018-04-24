@@ -22,12 +22,11 @@ from sklearn.metrics import mean_squared_error
 #############Funciones###################################
 
 def timeseries_to_supervised(dataset, look_back=1):
-    dataX, dataY = [], []
+    data = []
     for i in range(len(dataset)-look_back-1):
-        a = dataset[i:(i+look_back)]
-        dataX.append(a)
-        dataY.append(dataset[i + look_back])
-    return np.array(dataX), np.array(dataY)
+        a = dataset[i:(i+look_back+1)]
+        data.append(a)
+    return np.array(data)
 
 
 def difference(dataset, interval=1):
@@ -41,6 +40,18 @@ def difference(dataset, interval=1):
 def inverse_difference(history, yhat, interval=1):
 	return yhat + history[-interval]
 
+
+def forecast_lstm(model, batch_size, X):
+	X = X.reshape(1, 1, len(X))
+	yhat = model.predict(X)
+	return yhat[0,0]
+
+def invert_scale(scaler, X, value):
+	new_row = [x for x in X] + [value]
+	array = numpy.array(new_row)
+	array = array.reshape(1, len(array))
+	inverted = scaler.inverse_transform(array)
+	return inverted[0, -1]
 
 
 ###########Preparación de los datos##############################
@@ -78,7 +89,7 @@ dates_traveltime = dates_traveltime.sort_index()
 dates_traveltime_difference = difference(dates_traveltime.values,1)
 dates_traveltime_difference = [element[1] for element in dates_traveltime_difference]
 dates = dates_traveltime['date'].iloc[1:]
-dates_traveltime_differenced = pd.DataFrame(dates_traveltime_difference, index=dates, columns = ['avg_travel_time'])
+#dates_traveltime_differenced = pd.DataFrame(dates_traveltime_difference, index=dates, columns = ['avg_travel_time'])
 
 #Comprobamos que se han realizado correctamente las diferencias
 inverted = []
@@ -88,57 +99,50 @@ for i in range(len(dates_traveltime_difference)):
 
 #Convertimos los valores de la serie temporal a una estructura de aprendizaje supervisado
 look_back = 5
-supervised_values = timeseries_to_supervised(dates_traveltime_differenced['avg_travel_time'].values, look_back)
-for i in range(len(supervised_values)):
-      print("Supervised values : ", supervised_values[i])
+supervised_values= timeseries_to_supervised(dates_traveltime['avg_travel_time'].values, look_back)
+
 
 #Escalamos los valores de tiempo promedio de viaje al rango [-1,1] debido a que la función de activación para LSTM por defecto es tanh.
-train_size = int(len(dates_traveltime) * 0.67)
-test_size = len(dates_traveltime) - train_size
-train, test = supervised_values[0:train_size], supervised_values[train_size:len(supervised_values)]
 scaler = MinMaxScaler(feature_range=(-1, 1))
-train = pd.DataFrame(train, columns= ['1','2','3','4','5'])
-print("TRAIN : ", train)
-train = scaler.fit(train)
+supervised_values=scaler.fit_transform(supervised_values)
+train_size = int(len(supervised_values) * 0.67)
+test_size = len(supervised_values) - train_size
+train_escalado, test_escalado = supervised_values[0:train_size], supervised_values[train_size:len(supervised_values)]
 
 
-'''
-
-trainX, trainY = timeseries_to_supervised(train, look_back)
-testX, testY = timeseries_to_supervised(test, look_back)
-trainX = numpy.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
-testX = numpy.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
-
+#Ajustamos una red neuronal LSTM a los datos de entrenamiento
+X, y = train_escalado[:, 0:-1], train_escalado[:, -1]
+print("Y: ", y)
+X = X.reshape(X.shape[0], 1, X.shape[1])
+nb_epoch = 50
+batch_size = 1
+neurons = 4
 model = Sequential()
-model.add(LSTM(5, input_shape=(1, look_back)))
+model.add(LSTM(neurons, batch_input_shape=(1, X.shape[1], X.shape[2]), stateful=True))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
-for i in range(50):
-        model.fit(trainX, trainY, epochs=1, batch_size=20, verbose=0, shuffle=False)
-        model.reset_states()
+for i in range(nb_epoch):
+	model.fit(X, y, epochs=1, batch_size=batch_size, verbose=1, shuffle=False)
+	model.reset_states()
+	
+#Predicciones
+predictions = list()
+contador = 0
+suma = 0
+for i in range(len(test_escalado)):
+	# make one-step forecast
+	X, y = test_escalado[i, 0:-1], test_escalado[i, -1]
+	yhat = forecast_lstm(model, 1, X)
+	# invert scaling
+	yhat = invert_scale(scaler, X, yhat)
+	# invert differencing
+	#yhat = inverse_difference(dates_traveltime['avg_travel_time'].values, yhat, len(test_escalado)+1-i)
+	# store forecast
+	predictions.append(yhat)
+	expected = dates_traveltime['avg_travel_time'].values[len(train_escalado) + i + 1]
+	print('Row=%d, Predicted=%f, Expected=%f' % (i+1, yhat, expected))
+	suma += abs(yhat-expected)/expected
+	contador += 1
+print("RESULTADO : ", (suma/contador))
 
-trainPredict = model.predict(trainX)
-testPredict = model.predict(testX)
-# invert predictions
-trainPredict = scaler.inverse_transform(trainPredict)
-trainY = scaler.inverse_transform([trainY])
-testPredict = scaler.inverse_transform(testPredict)
-testY = scaler.inverse_transform([testY])
-trainScore = mean_squared_error(trainY[0], trainPredict[:,0])
-print('Train Score: %.2f RMSE' % (trainScore))
-testScore = mean_squared_error(testY[0], testPredict[:,0])
-print('Test Score: %.2f RMSE' % (testScore))
-trainPredictPlot = numpy.empty_like(dates_traveltime)
-trainPredictPlot[:, :] = numpy.nan
-trainPredictPlot[look_back:len(trainPredict)+look_back, :] = trainPredict
-# shift test predictions for plotting
-testPredictPlot = numpy.empty_like(dates_traveltime)
-testPredictPlot[:, :] = numpy.nan
-testPredictPlot[len(trainPredict)+(look_back*2)+1:len(dates_traveltime)-1, :] = testPredict
-# plot baseline and predictions
-plt.plot(scaler.inverse_transform(dates_traveltime))
-#plt.plot(trainPredictPlot)
-plt.plot(testPredictPlot)
-plt.show()
-'''
 

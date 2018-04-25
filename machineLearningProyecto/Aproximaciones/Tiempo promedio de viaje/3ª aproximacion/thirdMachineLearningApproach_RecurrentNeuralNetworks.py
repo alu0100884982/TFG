@@ -19,6 +19,7 @@ from keras.layers import LSTM
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 from matplotlib import pyplot
+from xgboost.sklearn import XGBRegressor
 
 #############Funciones###################################
 
@@ -100,22 +101,22 @@ for i in range(len(dates_traveltime_difference)):
 
 #Convertimos los valores de la serie temporal a una estructura de aprendizaje supervisado
 look_back = 5
-supervised_values= timeseries_to_supervised(dates_traveltime_differenced['avg_travel_time'].values, look_back)
+supervised_values= timeseries_to_supervised(dates_traveltime['avg_travel_time'].values, look_back)
 
 
 #Escalamos los valores de tiempo promedio de viaje al rango [-1,1] debido a que la función de activación para LSTM por defecto es tanh.
 scaler = MinMaxScaler(feature_range=(-1, 1))
-supervised_values=scaler.fit_transform(supervised_values)
-train_size = int(len(supervised_values) * 0.67)
-test_size = len(supervised_values) - train_size
-train_escalado, test_escalado = supervised_values[0:train_size], supervised_values[train_size:len(supervised_values)]
+supervised_values_=scaler.fit_transform(supervised_values)
+train_size = int(len(supervised_values_) * 0.90)
+test_size = len(supervised_values_) - train_size
+train_escalado, test_escalado = supervised_values_[0:train_size], supervised_values_[train_size:len(supervised_values)]
 
 
 #Ajustamos una red neuronal LSTM a los datos de entrenamiento
 X, y = train_escalado[:, 0:-1], train_escalado[:, -1]
 print("Y: ", y)
 X = X.reshape(X.shape[0], 1, X.shape[1])
-nb_epoch = 10
+nb_epoch = 1
 batch_size = 1
 neurons = 4
 model = Sequential()
@@ -125,12 +126,14 @@ model.compile(loss='mean_squared_error', optimizer='adam')
 for i in range(nb_epoch):
 	model.fit(X, y, epochs=1, batch_size=batch_size, verbose=1, shuffle=False)
 	model.reset_states()
-	
+
+
 #Predicciones
 predictions = list()
 expected_values = list()
 contador = 0
 suma = 0
+'''
 for i in range(len(test_escalado)):
 	# make one-step forecast
 	X, y = test_escalado[i, 0:-1], test_escalado[i, -1]
@@ -138,16 +141,34 @@ for i in range(len(test_escalado)):
 	# invert scaling
 	yhat = invert_scale(scaler, X, yhat)
 	# invert differencing
-	yhat = inverse_difference(dates_traveltime['avg_travel_time'].values, yhat, len(test_escalado)+1-i)
+	#yhat = inverse_difference(dates_traveltime['avg_travel_time'].values, yhat, len(test_escalado)-i+1)
 	# store forecast
 	predictions.append(yhat)
-	expected = dates_traveltime['avg_travel_time'].values[len(train_escalado) + i + 1]
+	expected = dates_traveltime['avg_travel_time'].values[len(train_escalado) + i]
 	expected_values.append(expected)
 	print('Row=%d, Predicted=%f, Expected=%f' % (i+1, yhat, expected))
 	suma += abs(yhat-expected)/expected
 	contador += 1
 print("RESULTADO : ", (suma/contador))
-pyplot.plot(predictions)
-pyplot.plot(expected_values)
+pyplot.plot(predictions, color="red")
+pyplot.plot(expected_values, color="blue")
 pyplot.show()
+'''
+##############################################################3
 
+train, test= supervised_values[0:train_size], supervised_values[train_size:len(supervised_values)]
+X_train, y_train = train[:,0:-1], train[:,-1]
+X_test, y_test = test[:,0:-1], test[:,-1]
+print("Y_TEST : ", test[:,-1])
+model = XGBRegressor()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+suma = 0
+for i in range(len(y_test)):
+     print("REAL : ", y_test[i], " PREDICTED: ", y_pred[i])
+     suma += abs(y_pred[i]-y_test[i])/y_test[i]
+
+print("ERROR : ", (suma/len(y_test)))
+pyplot.plot(y_pred, color="red")
+pyplot.plot(y_test, color="blue")
+pyplot.show()

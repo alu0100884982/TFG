@@ -1,6 +1,7 @@
 # DUDAS
 * Series temporales como Aprendizaje Supervisado (Machine Learning Mastery) -> ¿No se basa en el mismo principio que en el modelo ARIMA? ¿De tener en cuenta valores anteriores?
 * SVM -> Las predicciones del tiempo promedio de viaje se mantienen en un rango pequeño
+* Si diferenciamos la serie temporal, al predecir una serie de valores y volverlos a poner en el estado inicial, pueden salir numeros negativos.
 # SUGERENCIAS
 
 # COSAS QUE ARREGLAR

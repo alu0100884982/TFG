@@ -74,8 +74,8 @@ dates_traveltime = pd.DataFrame.from_records(rows, columns=['date','avg_travel_t
 minimum_date = min(dates_traveltime.date)
 maximum_date = max(dates_traveltime.date)
 date_aux = minimum_date
-dates_traveltime = dates_traveltime[(dates_traveltime['avg_travel_time'] > 30) & (dates_traveltime['avg_travel_time'] < 150)]
-
+#dates_traveltime = dates_traveltime[(dates_traveltime['avg_travel_time'] > 30) & (dates_traveltime['avg_travel_time'] < 150)]
+#dates_traveltime = dates_traveltime.reset_index(drop=True)
 while (date_aux != maximum_date): 
        if (not((date_aux == dates_traveltime['date']).any())):
          valores_avg_travel = []
@@ -107,7 +107,7 @@ supervised_values= timeseries_to_supervised(dates_traveltime['avg_travel_time'].
 #Escalamos los valores de tiempo promedio de viaje al rango [-1,1] debido a que la función de activación para LSTM por defecto es tanh.
 scaler = MinMaxScaler(feature_range=(-1, 1))
 supervised_values_=scaler.fit_transform(supervised_values)
-train_size = int(len(supervised_values_) * 0.90)
+train_size = int(len(supervised_values_) * 0.67)
 test_size = len(supervised_values_) - train_size
 train_escalado, test_escalado = supervised_values_[0:train_size], supervised_values_[train_size:len(supervised_values)]
 
@@ -171,4 +171,7 @@ for i in range(len(y_test)):
 print("ERROR : ", (suma/len(y_test)))
 pyplot.plot(y_pred, color="red")
 pyplot.plot(y_test, color="blue")
+
+
+
 pyplot.show()

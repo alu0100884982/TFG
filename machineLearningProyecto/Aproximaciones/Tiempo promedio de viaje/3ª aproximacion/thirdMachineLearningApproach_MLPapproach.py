@@ -69,7 +69,7 @@ days = list(range(18,25))
 intervals_2hours_previous = [(6,8),(15,17)]
 intervals_to_predict = ['08:00-10:00','17:00-19:00']
 number_intervals_to_predict = 6
-predictions = {}
+predictions = dict()
 for route in routes:
         try:
               conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
@@ -114,36 +114,95 @@ for route in routes:
                   series_dates_traveltime_filled = pd.Series(dates_traveltime_filled['avg_travel_time'].values, index=dates_traveltime_filled['date'])
                   dates_traveltime_supervised = pd.DataFrame()
                   number_time_steps_previous = 5
-                  for i in range(number_time_steps_previous + 1,0,-1):
+                  for i in range(number_time_steps_previous,0,-1):
                         dates_traveltime_supervised['t-'+str(i)] = series_dates_traveltime_filled.shift(i)
                   dates_traveltime_supervised['t'] = series_dates_traveltime_filled .values
                   print("SUPERVISED: ",  dates_traveltime_supervised)
-                  X_train = dates_traveltime_supervised.iloc[:,0:6]
-                  y_train = dates_traveltime_supervised.iloc[:,6]
-                  mlp = MLPRegressor(hidden_layer_sizes=(5,18,18),max_iter=4000)
+                  dates_traveltime_supervised.fillna(0, inplace=True)
+                  X_train = dates_traveltime_supervised.iloc[:,0:number_time_steps_previous]
+                  y_train = dates_traveltime_supervised.iloc[:,number_time_steps_previous]
+                  mlp = MLPRegressor(hidden_layer_sizes=(24,24,24),max_iter=4000)
                   mlp.fit(X_train,y_train)
-                  indexes = [i for i in range(len(X_test))]
                   
                   previous_row_prediction = dates_traveltime_supervised.iloc[-1].shift(-1).values[0:-1]
                   for j in range(number_intervals_to_predict):
-                      prediction = mlp.predict(previous_row_prediction)
+                      print("J: ", j)
+                      dataframe_input = pd.DataFrame(previous_row_prediction).T
+                      print("INPUT : ", ((route[0],route[1],day,intervals_to_predict[0]) not in predictions.keys()))
+                      prediction = mlp.predict(dataframe_input)
                       if (interval[0] == 6):
-                       if((route,day,intervals_to_predict[0]) not in predictions.keys()):
-                          predictions[(route,day,intervals_to_predict[0])] = prediction;
+                       if((route[0],route[1],day,intervals_to_predict[0]) not in predictions.keys()):
+                          predictions[route[0],route[1],day,intervals_to_predict[0]] = prediction;
                        else:
-                          predictions[(route,day,intervals_to_predict[0])].append(prediction)
+                           predictions[route[0],route[1],day,intervals_to_predict[0]] = np.append(predictions[(route[0],route[1],day,intervals_to_predict[0])], prediction);
                       else:
-                        if((route,day,intervals_to_predict[1]) not in predictions.keys()):
-                          predictions[(route,day,intervals_to_predict[1])] = prediction;
+                        if((route[0],route[1],day,intervals_to_predict[1]) not in predictions.keys()):
+                          predictions[(route[0],route[1],day,intervals_to_predict[1])] = prediction;
                         else:
-                          predictions[(route,day,intervals_to_predict[1])].append(prediction)
-                          previous_row_prediction = previous_row_prediction.append(prediction).shift(-1).values[0:-1]
-                  error =0;
-for i in range(len(predictions)):
- error += abs(y_test[i] - predictions[i])/y_test[i]
- print("PREDICTION: ", predictions[i], " REAL : ", y_test[i])
-print("ERROR : ", (error/len(predictions)))
+                          predictions[(route[0],route[1],day,intervals_to_predict[1])] = np.append(predictions[(route[0],route[1],day,intervals_to_predict[1])], prediction);
+                      previous_row_prediction = pd.DataFrame(np.append(previous_row_prediction, prediction)).shift(-1).values[0:-1]
+                           
+                  for key,val in predictions.items():
+                         print(key, "=>", val)
+
+
+
+#Obtención de los intervalos a predecir
+try:
+   conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
+except:
+   print("I am unable to connect to the database")
+
+cur = conn.cursor()
+cur.execute("""SELECT * FROM travel_time_intersection_to_tollgate_training2 WHERE (time_window[1].time BETWEEN TIME '08:00:00' AND TIME '09:40:00') OR (time_window[1].time BETWEEN TIME '17:00:00' AND TIME '18:40:00') ORDER BY intersection_id, tollgate_id, time_window """)
+rows = cur.fetchall()
+colnames = ['intersection_id', 'tollgate_id', 'time_window', 'avg_travel_time']
+dataframe = pd.DataFrame(rows, columns=colnames)
+time_intervals = np.array(dataframe.iloc[:,2].values.tolist())
+aux = np.array([])
+for time_interval in time_intervals:
+        aux = np.append(aux,time_interval[0]);
+time_intervals = sorted(set(aux))
+
+
+
+#Cálculo del error de las predicciones
          
+routes_sum = 0;   
+
+for route in routes:
+        suma_intervalos_tiempo = 0;
+        intervals_sum = 0;
+        for interval in time_intervals:
+           count = 0;
+           y_test_sum = 0
+           for day in days:
+                try:
+                   conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
+                except:
+                   print("I am unable to connect to the database")
+                query = "select time_window[1].date, avg_travel_time from travel_time_intersection_to_tollgate_training2 where intersection_id = '"+ str(route[0]) +"' AND tollgate_id = " + str(route[1]) + " AND (time_window[1].time = TIME '" + interval.strftime("%H:%M:%S") + "') AND (time_window[1].date = DATE '2016-10-"+str(day)+"') order by time_window;"
+                cur = conn.cursor()
+                cur.execute(query)
+                rows2 = cur.fetchall()
+                if (len(rows2) > 0):
+                        lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
+                        momento_del_dia = intervals_to_predict[0];
+                        if (interval.hour == 8 or interval.hour == 9):
+                           rhs = datetime.datetime(2018,1,1,8,0,0)
+                        else:
+                           momento_del_dia = intervals_to_predict[1]
+                           rhs = datetime.datetime(2018,1,1,17,0,0)
+                           print("FORECAST : ", predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
+                           print("ROWS2 : ",rows2[0][1])
+                        y_test_sum += abs((rows2[0][1] - predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
+                        count += 1
+           intervals_sum += y_test_sum/count;     
+        routes_sum += intervals_sum /len(time_intervals)
+print("Error MAPE : ", (routes_sum/len(routes)))
+
+
+
 
 
 

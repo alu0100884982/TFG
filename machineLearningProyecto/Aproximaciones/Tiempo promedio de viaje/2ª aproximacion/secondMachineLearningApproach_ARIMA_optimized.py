@@ -98,6 +98,7 @@ for route in routes:
         rows = cur.fetchall()
         df1 = pd.DataFrame.from_records(rows, columns=['date','avg_travel_time'])
         df1 = df1[(df1.avg_travel_time > 50) & (df1.avg_travel_time < 150)]
+        df1 = df1.reset_index(drop=True)
         minimum_date = min(df1.date)
         maximum_date = max(df1.date)
         date_aux = minimum_date

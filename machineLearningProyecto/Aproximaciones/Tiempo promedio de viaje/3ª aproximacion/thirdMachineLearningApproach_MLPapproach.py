@@ -70,6 +70,7 @@ intervals_2hours_previous = [(6,8),(15,17)]
 intervals_to_predict = ['08:00-10:00','17:00-19:00']
 number_intervals_to_predict = 6
 predictions = dict()
+
 for route in routes:
         try:
               conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
@@ -110,14 +111,14 @@ for route in routes:
                   row_2hoursintervals_before = cur.fetchall()
                   dates_traveltime_2hoursintervals_before = pd.DataFrame.from_records(row_2hoursintervals_before, columns=['date','avg_travel_time'])
                   dates_traveltime_filled = pd.concat([dates_traveltime_filled,dates_traveltime_2hoursintervals_before])
-                  print("DATES_TRAVELTIME: ", dates_traveltime_filled)
+                  #print("DATES_TRAVELTIME: ", dates_traveltime_filled)
                   series_dates_traveltime_filled = pd.Series(dates_traveltime_filled['avg_travel_time'].values, index=dates_traveltime_filled['date'])
                   dates_traveltime_supervised = pd.DataFrame()
                   number_time_steps_previous = 5
                   for i in range(number_time_steps_previous,0,-1):
                         dates_traveltime_supervised['t-'+str(i)] = series_dates_traveltime_filled.shift(i)
                   dates_traveltime_supervised['t'] = series_dates_traveltime_filled .values
-                  print("SUPERVISED: ",  dates_traveltime_supervised)
+                  #print("SUPERVISED: ",  dates_traveltime_supervised)
                   dates_traveltime_supervised.fillna(0, inplace=True)
                   X_train = dates_traveltime_supervised.iloc[:,0:number_time_steps_previous]
                   y_train = dates_traveltime_supervised.iloc[:,number_time_steps_previous]
@@ -128,7 +129,7 @@ for route in routes:
                   for j in range(number_intervals_to_predict):
                       print("J: ", j)
                       dataframe_input = pd.DataFrame(previous_row_prediction).T
-                      print("INPUT : ", ((route[0],route[1],day,intervals_to_predict[0]) not in predictions.keys()))
+                     # print("INPUT : ", ((route[0],route[1],day,intervals_to_predict[0]) not in predictions.keys()))
                       prediction = mlp.predict(dataframe_input)
                       if (interval[0] == 6):
                        if((route[0],route[1],day,intervals_to_predict[0]) not in predictions.keys()):
@@ -161,10 +162,9 @@ dataframe = pd.DataFrame(rows, columns=colnames)
 time_intervals = np.array(dataframe.iloc[:,2].values.tolist())
 aux = np.array([])
 for time_interval in time_intervals:
+        time_interval[0] = datetime.datetime(2016, 10,18, time_interval[0].hour, time_interval[0].minute)
         aux = np.append(aux,time_interval[0]);
 time_intervals = sorted(set(aux))
-
-
 
 #Cálculo del error de las predicciones
          

@@ -27,3 +27,36 @@ END second_block $$;
 
 
 ALTER TABLE travel_time_intersection_to_tollgate_training2 ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];
+
+
+
+CREATE TABLE traffic_volume_tollgates_training2 (tollgate_id smallint CONSTRAINT has_tollgate_id_value CHECK (tollgate_id  IN (1,2,3)),
+time_window varchar(50),
+direction smallint CONSTRAINT has_direction_value CHECK (direction IN (0,1)),
+volume int,
+proportion_hasetc_vehicles int);
+
+COPY traffic_volume_tollgates_training2 FROM '/home/javisunami/Escritorio/TFG/datasetsOriginales/dataSet_phase2/20min_avg_volume.csv' WITH CSV HEADER;
+
+
+DO $$
+<<block>>
+DECLARE
+   t_row traffic_volume_tollgates_training2%rowtype;
+   curs3 CURSOR FOR SELECT * FROM traffic_volume_tollgates_training2 FOR UPDATE;
+   interval_timestamps timestamp ARRAY[2];
+   
+BEGIN
+   OPEN curs3;
+   LOOP
+        FETCH curs3 INTO t_row;
+        t_row.time_window = regexp_replace( t_row.time_window, '\)|\[', '', 'g');
+        interval_timestamps := STRING_TO_ARRAY(t_row.time_window, ',');
+        EXIT WHEN t_row IS NULL;
+        UPDATE traffic_volume_tollgates_training2 SET time_window = interval_timestamps
+                WHERE CURRENT OF curs3;
+   END LOOP;
+   CLOSE curs3;
+END block $$;
+
+ALTER TABLE  traffic_volume_tollgates_training2 ALTER time_window type timestamp ARRAY[2] using time_window::timestamp ARRAY[2];

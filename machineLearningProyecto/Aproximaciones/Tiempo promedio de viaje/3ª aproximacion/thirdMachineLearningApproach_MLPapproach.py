@@ -11,14 +11,11 @@ import datetime
 import matplotlib.pyplot as plt
 
 '''
-
 # Prueba de MLP con las columnas date-avg_travel_time de entrenamiento
 try:
     conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
 except:
     print("I am unable to connect to the database")
-
-
 cur = conn.cursor()
 query = "select time_window[1], avg_travel_time from travel_time_intersection_to_tollgate_modified  where intersection_id = 'A' AND tollgate_id = 2 order by time_window;"
 cur.execute(query)
@@ -62,6 +59,7 @@ plt.plot(indexes,predictions, color='blue')
 plt.plot(indexes,y_test, color='black')
 plt.show()
 '''
+
 #################################################Prediction task#####################################
 
 routes = [('A',2),('A',3)]

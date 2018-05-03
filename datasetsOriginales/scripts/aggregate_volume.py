@@ -71,7 +71,7 @@ def avgVolume(in_file):
 
 def main():
 
-    in_file = 'volume(table 6)_test1'
+    in_file = 'volume(table 6)_training2'
     avgVolume(in_file)
 
 if __name__ == '__main__':

@@ -3,62 +3,17 @@ import pandas as pd
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
+from statsmodels.tsa.seasonal import seasonal_decompose
 import numpy as np
+from xgboost.sklearn import XGBRegressor
 from sklearn.svm import SVR
+import lightgbm as lgb
 import datetime
 import matplotlib.pyplot as plt
-# Prueba de SVR cogiendo como columnas la fecha y el volumen de tráfico y pasándolo a => Time Series to Supervised Learning.
-'''
-try:
-    conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
-except:
-    print("I am unable to connect to the database")
+from statsmodels.graphics.tsaplots import plot_acf
 
-cur = conn.cursor()
-query = "select time_window[1], volume from traffic_volume_tollgates_modified where tollgate_id = 3 and direction = 0 order by time_window;"
-cur.execute(query)
-rows = cur.fetchall()
-dates_trafficvolume = pd.DataFrame.from_records(rows, columns=['date','traffic_volume'])
 
-minimum_date = min(dates_trafficvolume.date)
-maximum_date = max(dates_trafficvolume.date)
-date_aux = minimum_date
-dates_trafficvolume_filled = pd.DataFrame(dates_trafficvolume)
-while (date_aux != maximum_date): 
-    if (not((date_aux == dates_trafficvolume_filled['date']).any())):
-      valores_avg_travel = []
-      for row in dates_trafficvolume_filled.values:
-        if (row[0].time() == date_aux.time() and row[0].weekday() == date_aux.weekday()):
-                valores_avg_travel.append(row[1])
-      dates_trafficvolume_filled.loc[len(dates_trafficvolume_filled)] = [date_aux, np.mean(valores_avg_travel)]
-    date_aux += datetime.timedelta(minutes=20)
-dates_trafficvolume_filled = dates_trafficvolume_filled.sort_index()
 
-series = pd.Series(dates_trafficvolume_filled['traffic_volume'].values, index=dates_trafficvolume_filled['date'])
-
-dataframe = pd.DataFrame()
-for i in range(5,0,-1):
-        dataframe['t-'+str(i)] = series.shift(i)
-dataframe['t'] = series.values
-dataframe = dataframe[6:]
-print("HEAD1 : ", dataframe.head())
-array = dataframe.values
-X = array[:,0:5]
-y = array[:,5]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.03, random_state=7)
-svr_rbf = SVR(kernel='rbf',C=70,gamma=0.00008)
-svr_rbf.fit(X_train, y_train)
-
-predictions = svr_rbf.predict(X_test)
-predictions = [round(prediction,0) for prediction in predictions]
-for i in range(len(predictions)):
-   print("PRED: ", predictions[i], " REAL : ", y_test[i])
-print("ERROR : ", mean_squared_error(predictions, y_test))
-indexes = [i for i in range(len(X_test))]
-plt.plot(indexes,predictions, color='blue')
-plt.plot(indexes,y_test, color='black')
-plt.show()
-'''
 ####Predicción del volumen de tráfico con la técnica de aprendizaje automático denominada SVR.
 pairs = [(1,0),(2,0),(3,0),(1,1), (3,1)]
 days = list(range(18,25))
@@ -66,7 +21,6 @@ intervals_2hours_previous = [(6,8),(15,17)]
 intervals_to_predict = ['08:00-10:00','17:00-19:00']
 number_intervals_to_predict = 6
 predictions = dict()
-
 for pair in pairs:
         try:
               conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
@@ -77,16 +31,25 @@ for pair in pairs:
         cur.execute(query)
         rows_training = cur.fetchall()
         dates_trafficvolume = pd.DataFrame.from_records(rows_training, columns=['date','traffic_volume'])
+     
+     
+        series_decomposition = pd.DataFrame(data= dates_trafficvolume['traffic_volume'].values, index =  dates_trafficvolume['date'].values);
+        #Gráfica de autocorrelación de la serie temporal
+        plot_acf(series_decomposition)
+        plt.show()
+        #Descomposición de la serie temporal en sus tres componentes
+        decomposition = seasonal_decompose(dates_trafficvolume,freq=72)
+        fig = decomposition.plot()  
+        plt.show()
+        plt.close()
         for day in days:
           for interval in intervals_2hours_previous:
                   minimum_date = min(dates_trafficvolume.date)
-                  
                   if (interval[0] == 6):
                    maximum_date = datetime.datetime(2016,10,day,6,0,0)
                   else:
                    maximum_date = datetime.datetime(2016,10,day,15,0,0)
                   date_aux = minimum_date
-                  dates_trafficvolume = trafficvolume[dates_traveltime['avg_travel_time'] < 150)]
                   dates_trafficvolume = dates_trafficvolume.reset_index(drop=True)
                   dates_trafficvolume_filled = pd.DataFrame(dates_trafficvolume, index = dates_trafficvolume.index)
                   
@@ -98,10 +61,8 @@ for pair in pairs:
                                 valores_avg_travel.append(row[1])
                       dates_trafficvolume_filled.loc[len(dates_trafficvolume_filled)] = [date_aux, np.mean(valores_avg_travel)]
                     date_aux += datetime.timedelta(minutes=20)
-                  
-                  print("antes: ", dates_trafficvolume_filled)
+
                   dates_trafficvolume_filled = dates_trafficvolume_filled.sort_values(by='date')
-                  print("despues: ", dates_trafficvolume_filled)
                   try:
                       conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
                   except:
@@ -125,12 +86,30 @@ for pair in pairs:
                   y_train = dates_trafficvolume_supervised.iloc[:,number_time_steps_previous]
                   svr_rbf = SVR(kernel='rbf',C=10000,gamma=0.00008)
                   svr_rbf.fit(X_train, y_train)
-                  
+                  '''
+                  lgb_train = lgb.Dataset(X_train, y_train)
+                  params = {
+                        'task': 'train',
+                        'boosting_type': 'gbdt',
+                        'objective': 'regression',
+                        'metric': {'l2', 'auc'},
+                        'num_leaves': 40,
+                        'num_iterations': 4000,
+                        'learning_rate': 0.01,
+                        'feature_fraction': 0.8,
+                        'bagging_fraction': 0.8,
+                        'bagging_freq': 5,
+                        'verbose': 0
+                           }
+                  lgbm = lgb.train(params,
+                                lgb_train)
+                  '''
                   previous_row_prediction = dates_trafficvolume_supervised.iloc[-1].shift(-1).values[0:-1]
+                  previous_row_prediction = [element for element in previous_row_prediction]
                   for j in range(number_intervals_to_predict):
                       dataframe_input = pd.DataFrame(previous_row_prediction).T
-                     # print("INPUT : ", ((pair[0],pair[1],day,intervals_to_predict[0]) not in predictions.keys()))
-                      prediction = round(svr_rbf.predict(dataframe_input)[0], 0)
+                      dataframe_input.columns = ['t-5','t-4','t-3','t-2', 't-1']
+                      prediction = round(svr_rbf.predict(dataframe_input)[0])
                       if (interval[0] == 6):
                        if((pair[0],pair[1],day,intervals_to_predict[0]) not in predictions.keys()):
                           predictions[pair[0],pair[1],day,intervals_to_predict[0]] = prediction;
@@ -145,6 +124,7 @@ for pair in pairs:
                            
                   for key,val in predictions.items():
                          print(key, "=>", val)
+                  print("\n")
 
 
 
@@ -166,17 +146,23 @@ for time_interval in time_intervals:
         aux = np.append(aux,time_interval[0]);
 time_intervals = sorted(set(aux))
 
+
 #Cálculo del error de las predicciones
          
 pairs_sum = 0;   
-
+cuenta = 0;
 for pair in pairs:
+        print("PAIR : ", pair)
         suma_intervalos_tiempo = 0;
         intervals_sum = 0;
         for interval in time_intervals:
+           print("INTERVAL: ", interval)
            count = 0;
            y_test_sum = 0
            for day in days:
+                cuenta+=1
+                print("CUENTA: ", cuenta)
+                print("DAY : ", day)
                 try:
                    conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
                 except:

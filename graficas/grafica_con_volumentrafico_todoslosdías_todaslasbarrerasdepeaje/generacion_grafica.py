@@ -27,12 +27,9 @@ for date in dates:
 counter = 0;
 for row in rows:
                 keys[(row[0], row[2], row[1][0].date().strftime('%Y-%m-%d') )].append([row[1][0].time(), row[3]])
-        
+                
 keys = coll.OrderedDict(sorted(keys.items()))
-fontP = FontProperties()
-fontP.set_size('small')
 counter = 1
-dates = dates[0:20]
 # Create the PdfPages object to which we will save the pages:
 # The with statement makes sure that the PdfPages object is closed properly at
 # the end of the block, even if an Exception occurs.
@@ -41,9 +38,14 @@ with PdfPages('graficas_pdf.pdf') as pdf:
         for date in dates:
                 hours = [element[0].strftime("%H:%M") for element in keys[(pair[0], pair[1], date)]]
                 values = [element[1] for element in keys[(pair[0], pair[1], date)]]
-                serie = pd.Series(values, index=hours)
-                serie.plot(label=date)
-                plt.legend(prop=fontP)
+                if (all(i <= 100 for i in values) and pair[0] == 1 and pair[1]==0):
+                      serie = pd.Series(values, index=hours)
+                      serie.plot(label=date)
+                      plt.legend(loc=2, prop={'size': 6})
+                elif (pair[0] !=1 and pair[1] != 0):
+                      serie = pd.Series(values, index=hours)
+                      serie.plot(label=date)
+                      plt.legend(loc=2, prop={'size': 6})
         plt.title(pair)
         plt.xlabel('Hours')
         plt.ylabel('Traffic volume')

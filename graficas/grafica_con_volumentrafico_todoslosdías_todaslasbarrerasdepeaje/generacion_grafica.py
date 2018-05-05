@@ -33,19 +33,40 @@ counter = 1
 # Create the PdfPages object to which we will save the pages:
 # The with statement makes sure that the PdfPages object is closed properly at
 # the end of the block, even if an Exception occurs.
+dates_out_1_0 = ['2016-09-21','2016-09-28','2016-09-30','2016-10-01', '2016-10-02','2016-10-03','2016-10-04','2016-10-05','2016-10-06', '2016-10-07']
+dates_out_1_1 = ['2016-10-01', '2016-10-02','2016-10-03','2016-10-04','2016-10-05','2016-10-06', '2016-10-07']
+dates_out_2_0 = ['2016-09-28', '2016-10-01', '2016-10-02','2016-10-03','2016-10-04','2016-10-05','2016-10-06', '2016-10-07']
 with PdfPages('graficas_pdf.pdf') as pdf:
       for pair in pairs:
         for date in dates:
+        
                 hours = [element[0].strftime("%H:%M") for element in keys[(pair[0], pair[1], date)]]
                 values = [element[1] for element in keys[(pair[0], pair[1], date)]]
-                if (all(i <= 100 for i in values) and pair[0] == 1 and pair[1]==0):
-                      serie = pd.Series(values, index=hours)
-                      serie.plot(label=date)
-                      plt.legend(loc=2, prop={'size': 6})
-                elif (pair[0] !=1 and pair[1] != 0):
-                      serie = pd.Series(values, index=hours)
-                      serie.plot(label=date)
-                      plt.legend(loc=2, prop={'size': 6})
+                if(pair[0] == 1 and pair[1] == 0):
+                    if(str(date) not in dates_out_1_0):
+                        serie = pd.Series(values, index=hours)
+                        serie.plot(label=date)
+                        plt.legend(loc=2, prop={'size': 6})
+                elif(pair[0] == 1 and pair[1] == 1):
+                    if(str(date) not in dates_out_1_1):
+                        serie = pd.Series(values, index=hours)
+                        serie.plot(label=date)
+                        plt.legend(loc=2, prop={'size': 6})
+                elif(pair[0] == 2 and pair[1] == 0):
+                    if(str(date) not in dates_out_2_0):
+                        serie = pd.Series(values, index=hours)
+                        serie.plot(label=date)
+                        plt.legend(loc=2, prop={'size': 6})
+                elif(pair[0] == 3 and pair[1] == 1):
+                    if(str(date) not in dates_out_1_1):
+                        serie = pd.Series(values, index=hours)
+                        serie.plot(label=date)
+                        plt.legend(loc=2, prop={'size': 6})
+                else:
+                    serie = pd.Series(values, index=hours)
+                    serie.plot(label=date)
+                    plt.legend(loc=2, prop={'size': 6})
+                
         plt.title(pair)
         plt.xlabel('Hours')
         plt.ylabel('Traffic volume')

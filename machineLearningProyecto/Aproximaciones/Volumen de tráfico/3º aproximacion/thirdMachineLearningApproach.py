@@ -10,17 +10,33 @@ from sklearn.svm import SVR
 import lightgbm as lgb
 import datetime
 import matplotlib.pyplot as plt
-from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from sklearn.neural_network import MLPRegressor
 
 
+#Función que crea una columna de booleanos para eliminar aquellas filas en las que se encuentren fechas con ruido.  
+def crearBooleanos(input_array):
+    booleanos = [] 
+    for element in  dates_trafficvolume.date:
+          if(str(element.date()) not in input_array):
+            booleanos.append(True)
+          else:
+            booleanos.append(False)
+    return pd.Series(booleanos)
 
-####Predicción del volumen de tráfico con la técnica de aprendizaje automático denominada SVR.
+
+####Predicción del volumen de tráfico: de series temporales a aprendizaje supervisado.
 pairs = [(1,0),(2,0),(3,0),(1,1), (3,1)]
 days = list(range(18,25))
 intervals_2hours_previous = [(6,8),(15,17)]
 intervals_to_predict = ['08:00-10:00','17:00-19:00']
 number_intervals_to_predict = 6
 predictions = dict()
+#Fechas a quitar de los datos debido a que son ruido.
+dates_out_1_0 = ['2016-09-21','2016-09-28','2016-09-30','2016-10-01', '2016-10-02','2016-10-03','2016-10-04','2016-10-05','2016-10-06', '2016-10-07']
+dates_out_1_1 = ['2016-10-01', '2016-10-02','2016-10-03','2016-10-04','2016-10-05','2016-10-06', '2016-10-07']
+dates_out_2_0 = ['2016-09-28', '2016-10-01', '2016-10-02','2016-10-03','2016-10-04','2016-10-05','2016-10-06', '2016-10-07']
+
 for pair in pairs:
         try:
               conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")
@@ -31,17 +47,33 @@ for pair in pairs:
         cur.execute(query)
         rows_training = cur.fetchall()
         dates_trafficvolume = pd.DataFrame.from_records(rows_training, columns=['date','traffic_volume'])
-     
+        
+        if (pair[0] == 1 and pair[1] == 0):
+         booleanos = crearBooleanos(dates_out_1_0)
+         dates_trafficvolume = dates_trafficvolume[booleanos]
+         print("DATA: ", dates_trafficvolume.head(160))
+        elif ((pair[0] == 1 and pair[1] == 1) or (pair[0] == 3 and pair[1] == 1)):
+         booleanos = crearBooleanos(dates_out_1_1)
+         dates_trafficvolume = dates_trafficvolume[booleanos]
+        elif (pair[0] == 2 and pair[1] == 0):
+         booleanos = crearBooleanos(dates_out_2_0)
+         dates_trafficvolume = dates_trafficvolume[booleanos]
+         
      
         series_decomposition = pd.DataFrame(data= dates_trafficvolume['traffic_volume'].values, index =  dates_trafficvolume['date'].values);
         #Gráfica de autocorrelación de la serie temporal
+        '''
         plot_acf(series_decomposition)
+        plot_pacf(series_decomposition)
         plt.show()
+        '''
         #Descomposición de la serie temporal en sus tres componentes
-        decomposition = seasonal_decompose(dates_trafficvolume,freq=72)
+        '''
+        decomposition = seasonal_decompose(series_decomposition,freq=72)
         fig = decomposition.plot()  
         plt.show()
         plt.close()
+        '''
         for day in days:
           for interval in intervals_2hours_previous:
                   minimum_date = min(dates_trafficvolume.date)
@@ -50,7 +82,7 @@ for pair in pairs:
                   else:
                    maximum_date = datetime.datetime(2016,10,day,15,0,0)
                   date_aux = minimum_date
-                  dates_trafficvolume = dates_trafficvolume.reset_index(drop=True)
+                  #dates_trafficvolume = dates_trafficvolume.reset_index(drop=True)
                   dates_trafficvolume_filled = pd.DataFrame(dates_trafficvolume, index = dates_trafficvolume.index)
                   
                   while (date_aux != maximum_date): 
@@ -84,8 +116,10 @@ for pair in pairs:
                   dates_trafficvolume_supervised = dates_trafficvolume_supervised[number_time_steps_previous:]
                   X_train = dates_trafficvolume_supervised.iloc[:,0:number_time_steps_previous]
                   y_train = dates_trafficvolume_supervised.iloc[:,number_time_steps_previous]
-                  svr_rbf = SVR(kernel='rbf',C=10000,gamma=0.00008)
-                  svr_rbf.fit(X_train, y_train)
+                  #svr_rbf = SVR(kernel='rbf',C=10000,gamma=0.00008)
+                  #svr_rbf.fit(X_train, y_train)
+                  mlp = MLPRegressor(hidden_layer_sizes=(18,12,15),max_iter=4000)
+                  mlp.fit(X_train,y_train)
                   '''
                   lgb_train = lgb.Dataset(X_train, y_train)
                   params = {
@@ -109,7 +143,7 @@ for pair in pairs:
                   for j in range(number_intervals_to_predict):
                       dataframe_input = pd.DataFrame(previous_row_prediction).T
                       dataframe_input.columns = ['t-5','t-4','t-3','t-2', 't-1']
-                      prediction = round(svr_rbf.predict(dataframe_input)[0])
+                      prediction = round(mlp.predict(dataframe_input)[0])
                       if (interval[0] == 6):
                        if((pair[0],pair[1],day,intervals_to_predict[0]) not in predictions.keys()):
                           predictions[pair[0],pair[1],day,intervals_to_predict[0]] = prediction;
@@ -149,20 +183,16 @@ time_intervals = sorted(set(aux))
 
 #Cálculo del error de las predicciones
          
-pairs_sum = 0;   
-cuenta = 0;
+pairs_sum = 0  
+forecasts = []
+real_values = []
 for pair in pairs:
-        print("PAIR : ", pair)
         suma_intervalos_tiempo = 0;
         intervals_sum = 0;
         for interval in time_intervals:
-           print("INTERVAL: ", interval)
            count = 0;
            y_test_sum = 0
            for day in days:
-                cuenta+=1
-                print("CUENTA: ", cuenta)
-                print("DAY : ", day)
                 try:
                    conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
                 except:
@@ -182,10 +212,15 @@ for pair in pairs:
                            rhs = datetime.datetime(2018,1,1,17,0,0)
                            print("FORECAST : ", predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
                            print("ROWS2 : ",rows2[0][1])
+                           forecasts.append(predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
+                           real_values.append(rows2[0][1])
                         y_test_sum += abs((rows2[0][1] - predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
                         count += 1
            intervals_sum += y_test_sum/count;     
         pairs_sum += intervals_sum /len(time_intervals)
 print("Error MAPE : ", (pairs_sum/len(pairs)))
 
-
+#indexes = [i for i in range(forecasts)]
+#plt.plot(indexes,forecasts, color='blue')
+#plt.plot(indexes,real_values, color='black')
+#plt.show()

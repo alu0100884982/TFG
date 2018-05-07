@@ -116,8 +116,8 @@ for route in routes:
                   for i in range(number_time_steps_previous,0,-1):
                         dates_traveltime_supervised['t-'+str(i)] = series_dates_traveltime_filled.shift(i)
                   dates_traveltime_supervised['t'] = series_dates_traveltime_filled .values
-                  #print("SUPERVISED: ",  dates_traveltime_supervised)
-                  dates_traveltime_supervised.fillna(0, inplace=True)
+                  dates_traveltime_supervised = dates_traveltime_supervised[number_time_steps_previous:]
+                  print(dates_traveltime_supervised.head(20).to_string(index=False))
                   X_train = dates_traveltime_supervised.iloc[:,0:number_time_steps_previous]
                   y_train = dates_traveltime_supervised.iloc[:,number_time_steps_previous]
                   mlp = MLPRegressor(hidden_layer_sizes=(24,24,24),max_iter=4000)

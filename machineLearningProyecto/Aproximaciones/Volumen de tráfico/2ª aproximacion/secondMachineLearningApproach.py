@@ -67,8 +67,11 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
         '''
-        
-        model = ARIMA(serie, order= (6,0,0))
+        #model = ARIMA(serie, order= (6,0,0))
+        if (hora_del_dia == 0): 
+          model = ARIMA(serie, order= (9,0,2))
+        else:
+          model = ARIMA(serie, order= (3,2,0))
         model_fit = model.fit(disp=0)
         predictions = model_fit.forecast(steps=6)[0]
         predictions = [round(element) for element in predictions]

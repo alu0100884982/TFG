@@ -208,7 +208,7 @@ with open('predicciones.txt', 'a') as the_file:
                 the_file.write("Valores reales, "+ str(','.join(map(str, travel_time_dataframe['volume'].tolist()))) + "\n")
                 
                 #XGBoost
-                model = XGBRegressor()
+                model = XGBRegressor(objective='reg:linear', max_depth = 6, subsample = 0.8, colsample_bytree = 0.8, silent = 1, eval_metric = 'rmse', booster = 'gbtree')
                 model.fit(X_train, y_train)
                 y_pred = model.predict(X_test)
                 predicciones=[]
@@ -238,7 +238,7 @@ with open('predicciones.txt', 'a') as the_file:
                 scaler.fit(X_train)
                 X_train = scaler.transform(X_train)
                 X_test = scaler.transform(X_test)
-                mlp = MLPRegressor(hidden_layer_sizes=(23,23,23),max_iter=10000)
+                mlp = MLPRegressor(hidden_layer_sizes=(13,13,13),max_iter=10000)
                 mlp.fit(X_train,y_train)
                 y_pred = mlp.predict(X_test)
                 predicciones=[]
@@ -267,7 +267,7 @@ with open('predicciones.txt', 'a') as the_file:
                 errores_predicciones_intervalos["SVR"] += y_test_sum
                
                 #KNN
-                model =KNeighborsRegressor(n_neighbors=19)
+                model =KNeighborsRegressor(n_neighbors=18)
                 model.fit(X_train, y_train) 
                 y_pred = model.predict(X_test)
                 predicciones=[]
@@ -287,9 +287,9 @@ with open('predicciones.txt', 'a') as the_file:
                 'boosting_type': 'gbdt',
                 'objective': 'regression',
                 'metric': {'l2', 'auc'},
-                'num_leaves': 50,
-                'num_iterations': 40000,
-                'learning_rate': 0.00001,
+                'num_leaves': 40,
+                'num_iterations': 400,
+                'learning_rate': 0.0001,
                 'feature_fraction': 0.8,
                 'bagging_fraction': 0.8,
                 'bagging_freq': 10,

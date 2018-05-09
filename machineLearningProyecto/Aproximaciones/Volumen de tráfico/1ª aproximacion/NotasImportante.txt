@@ -1,1 +1,0 @@
-- El coeficiente de relación de Pearson entre la variable de suma de proportion_hasetc_vehicles y la suma de volúmened de tráfico es de 0.84603392.

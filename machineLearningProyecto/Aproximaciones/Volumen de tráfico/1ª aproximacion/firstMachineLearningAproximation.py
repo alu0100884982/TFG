@@ -283,16 +283,18 @@ with open('predicciones.txt', 'a') as the_file:
                 #LightGBM
                 lgb_train = lgb.Dataset(X_train, y_train)
                 params = {
+                'application' : 'fair',
                 'task': 'train',
+                'max_depth' : 5,
+                'num_threads': 8,
                 'boosting_type': 'gbdt',
                 'objective': 'regression',
                 'metric': {'l2', 'auc'},
-                'num_leaves': 40,
-                'num_iterations': 400,
+                'num_leaves': 50,
                 'learning_rate': 0.0001,
-                'feature_fraction': 0.8,
-                'bagging_fraction': 0.8,
-                'bagging_freq': 10,
+                'feature_fraction': 0.5,
+                'bagging_fraction': 0.5,
+                'bagging_freq': 1,
                 'min_data':1,
                 'verbose': 0
                 }

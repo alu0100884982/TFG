@@ -79,17 +79,21 @@ lgb_train = lgb.Dataset(X_train, y_train)
 lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
 # specify your configurations as a dict
 params = {
-    'task': 'train',
-    'boosting_type': 'gbdt',
-    'objective': 'regression',
-    'metric': {'l2', 'auc'},
-    'num_leaves': 31,
-    'learning_rate': 0.05,
-    'feature_fraction': 0.9,
-    'bagging_fraction': 0.8,
-    'bagging_freq': 5,
-    'verbose': 0
-}
+                'application' : 'fair',
+                'task': 'train',
+                'max_depth' : 5,
+                'num_threads': 8,
+                'boosting_type': 'gbdt',
+                'objective': 'regression',
+                'metric': {'l2', 'auc'},
+                'num_leaves': 50,
+                'learning_rate': 0.0001,
+                'feature_fraction': 0.5,
+                'bagging_fraction': 0.5,
+                'bagging_freq': 1,
+                'min_data':1,
+                'verbose': 0
+                }
 gbm = lgb.train(params,
                 lgb_train,
                 num_boost_round=20,
@@ -107,7 +111,7 @@ mlp.fit(X_train,y_train)
 y_pred = mlp.predict(X_test)
 error4 = mean_squared_error(y_pred, y_test)
 
-model = svm.SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
+model = svm.SVR(C=20000, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma=0.0008,
     kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
 model.fit(X_train, y_train) 
 y_pred = model.predict(X_test)

@@ -215,10 +215,7 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
-                        nulos = ['-'] * 7
-                        nulos = [fila['avg_travel_time']] + nulos
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))] = nulos
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))][fila['date'].day - 18 + 1] = y_pred[fila['date'].day - 18]
+                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))] = [fila['avg_travel_time'], y_pred[fila['date'].day - 18]]
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -233,7 +230,7 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones=[]
                 for index, fila in travel_time_dataframe.iterrows():
                         print("KEY : ", route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))][fila['date'].day - 18 + 1] = y_pred[fila['date'].day - 18]
+                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))].append(y_pred[fila['date'].day - 18])
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -251,7 +248,7 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))][fila['date'].day - 18 + 1] = y_pred[fila['date'].day - 18]
+                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))].append(y_pred[fila['date'].day - 18])
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -267,7 +264,7 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones= [None] * 7
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))][fila['date'].day - 18 + 1] = y_pred[fila['date'].day - 18]
+                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))].append(y_pred[fila['date'].day - 18])
                         predicciones[fila['date'].day - 18] = (y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -281,7 +278,7 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))][fila['date'].day - 18 + 1] = y_pred[fila['date'].day - 18]
+                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))].append(y_pred[fila['date'].day - 18])
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -296,7 +293,7 @@ with open('predicciones.txt', 'a') as the_file:
                 'objective': 'regression',
                 'metric': {'l2', 'auc'},
                 'num_leaves': 80,
-                'num_iterations': 4000,
+                'num_iterations': 400,
                 'learning_rate': 0.001,
                 'feature_fraction': 0.8,
                 'bagging_fraction': 0.8,
@@ -310,7 +307,7 @@ with open('predicciones.txt', 'a') as the_file:
                 y_test_sum = 0
                 predicciones=[]
                 for index, fila in travel_time_dataframe.iterrows():
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))][fila['date'].day - 18 + 1] = y_pred[fila['date'].day - 18]
+                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))].append(y_pred[fila['date'].day - 18])
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -329,12 +326,15 @@ for route in routes:
      for interval in time_intervals:
         for day in days:
              fila = []
-             fila.append([(route[0], route[1]), day, (interval.strftime("%H:%M"), (interval+datetime.timedelta(minutes=20)).strftime("%H:%M"))])
-             if (valores_predichos[(route[0],route[1],day,interval.strftime("%H:%M"))]):
-                fila.append(valores_predichos[(route[0],route[1],day,interval.strftime("%H:%M"))])
+             fila = fila + ([(route[0], route[1]), day, (interval.strftime("%H:%M"), (interval+datetime.timedelta(minutes=20)).strftime("%H:%M"))])
+             if ((route[0],route[1],day,interval.strftime("%H:%M")) in valores_predichos):
+                fila = fila + valores_predichos[(route[0],route[1],day,interval.strftime("%H:%M"))]
              else:
-                fila.append(['-'] * 8)
-             datos_predicciones.append([fila])
-             
-             
+                fila = fila + (['-'] * 7)
+             datos_predicciones.append(fila)
+                       
+
+
 tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Intervalo de tiempo','Día' , 'Valor real', 'XGBoost', 'Linear Regression', 'LightGBM', 'MLP', 'SVR', 'KNN'])
+print("TABLA PREDICCIONES : ", tabla_predicciones)
+tabla_predicciones.to_csv("tabla_predicciones", sep=',', encoding='utf-8')

@@ -112,12 +112,13 @@ def knn(X_train, y_train):
    return modelo, "KNN"
    
 for j in range(6):
-        routes = [('A',2)]
-        days = list(range(18,19))
+        routes = [('A',2), ('A',3), ('B',1), ('B',3), ('C',1), ('C',3)]
+        days = list(range(18,25))
         intervals_2hours_previous = [(6,8),(15,17)]
         intervals_to_predict = ['08:00-10:00','17:00-19:00']
         number_intervals_to_predict = 6
         predictions = dict()
+
         for route in routes:
                 try:
                       conn = psycopg2.connect("dbname='tfgdatosmodificados' user='javisunami' host='localhost' password='javier123'")

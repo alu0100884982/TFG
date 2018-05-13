@@ -59,9 +59,12 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
         '''
+        best_cfg = (6,1,0)
         model = ARIMA(serie, order= (6,1,0))
         model_fit = model.fit(disp=0)
         predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = model_fit.forecast(steps=6)[0]
+        predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = np.append( predicciones_ruta_dia[route[0], route[1],day,hora_del_dia], '(6,1,0)')
+        print("PREDICCIONES : ", predicciones_ruta_dia)
 
 
 try:
@@ -152,7 +155,7 @@ for route in routes:
                 cur = conn.cursor()
                 cur.execute(query)
                 rows2 = cur.fetchall()
-                fila = [(route[0], route[1]), day,interval.strftime("%H:%M")]
+                fila = [(route[0], route[1]), day,(interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))]
                 if (len(rows2) > 0):
                         momento_del_dia = 0;
                         lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
@@ -163,17 +166,17 @@ for route in routes:
                            rhs = datetime.datetime(2018,1,1,17,0,0)
                            print("FORECAST : ", predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
                            print("ROWS2 : ",rows2[0][1])
-                        fila = fila + [rows2[0][1], predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]]
-                        
-                        y_test_sum += abs((rows2[0][1] - predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
+                        fila += [rows2[0][1], float(predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])]
+                        fila += [predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][-1]]
+                        y_test_sum += abs((rows2[0][1] - float(predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])) / rows2[0][1])
                         count += 1
                 else:
-                        fila = fila + (['-'] * 2)
+                        fila = fila + (['-'] * 3)
                 datos_predicciones.append(fila)
            intervals_sum += y_test_sum/count;     
         routes_sum += intervals_sum /len(time_intervals)
 print("Error MAPE : ", (routes_sum/len(routes)))
 
-tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'Predicho'])
+tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'Predicho', 'Modelo ARIMA'])
 print("TABLA PREDICCIONES : ", tabla_predicciones)
 tabla_predicciones.to_html("tabla_predicciones.html")

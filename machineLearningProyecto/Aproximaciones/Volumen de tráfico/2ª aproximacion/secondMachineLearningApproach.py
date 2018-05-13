@@ -23,13 +23,13 @@ def crearBooleanos(input_array):
             booleanos.append(False)
     return pd.Series(booleanos)
 
-def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_referencia,day,df1_aux,route):
+def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_referencia,day,df1_aux,pair):
         try:
            conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
         except:
            print("I am unable to connect to the database")
         cur = conn.cursor()
-        query = "select time_window[1], volume from traffic_volume_tollgates_test1 where tollgate_id = '"+ str(route[0]) +"' AND direction = " + str(route[1]) + " AND (time_window[1].time BETWEEN " + intervalo1 + ") AND (time_window[1].date = DATE '"+str(day)+"') order by time_window;"
+        query = "select time_window[1], volume from traffic_volume_tollgates_test1 where tollgate_id = '"+ str(pair[0]) +"' AND direction = " + str(pair[1]) + " AND (time_window[1].time BETWEEN " + intervalo1 + ") AND (time_window[1].date = DATE '"+str(day)+"') order by time_window;"
         cur.execute(query)
         rows = cur.fetchall()
         df2 = pd.DataFrame.from_records(rows, columns=['date','volume'])
@@ -38,7 +38,7 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
            conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
         except:
            print("I am unable to connect to the database")
-        query = "select time_window[1], volume from traffic_volume_tollgates_training2 where tollgate_id = '"+ str(route[0]) +"' AND direction = " + str(route[1]) +  "AND (time_window[1].date = DATE '"+str(day)+"') AND (time_window[1].time BETWEEN " + intervalo2 + ") order by time_window;"
+        query = "select time_window[1], volume from traffic_volume_tollgates_training2 where tollgate_id = '"+ str(pair[0]) +"' AND direction = " + str(pair[1]) +  "AND (time_window[1].date = DATE '"+str(day)+"') AND (time_window[1].time BETWEEN " + intervalo2 + ") order by time_window;"
         cur = conn.cursor()
         cur.execute(query)
         rows2 = cur.fetchall()
@@ -67,15 +67,12 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
         '''
-        #model = ARIMA(serie, order= (6,0,0))
-        if (hora_del_dia == 0): 
-          model = ARIMA(serie, order= (9,0,2))
-        else:
-          model = ARIMA(serie, order= (3,2,0))
+        model = ARIMA(serie, order= (6,0,0))
         model_fit = model.fit(disp=0)
         predictions = model_fit.forecast(steps=6)[0]
         predictions = [round(element) for element in predictions]
         predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia] = predictions
+        predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia] = np.append(predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia], str('(6,0,0)'))
 
 
 
@@ -161,7 +158,7 @@ for pair in pairs:
 #for key,val in predicciones_pair_dia.items():
  #  print (key, "=>", val)                
 pair_sum = 0;   
-
+datos_predicciones = []
 for pair in pairs:
         suma_intervalos_tiempo = 0;
         intervals_sum = 0;
@@ -177,6 +174,7 @@ for pair in pairs:
                 cur = conn.cursor()
                 cur.execute(query)
                 rows2 = cur.fetchall()
+                fila = [(pair[0], pair[1]), day,(interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))]
                 if (len(rows2) > 0):
                         lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
                         momento_del_dia = 0;
@@ -187,8 +185,17 @@ for pair in pairs:
                            rhs = datetime.datetime(2018,1,1,17,0,0)
                            print("FORECAST : ", predicciones_pair_dia[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
                            print("ROWS2 : ",rows2[0][1])
-                        y_test_sum += abs((rows2[0][1] - (predicciones_pair_dia[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])) / rows2[0][1])
+                        fila += [rows2[0][1], float(predicciones_pair_dia[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])]
+                        fila += [predicciones_pair_dia[pair[0], pair[1], day,momento_del_dia][-1]]
+                        y_test_sum += abs((rows2[0][1] - float(predicciones_pair_dia[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])) / rows2[0][1])
                         count += 1
+                else:
+                        fila = fila + (['-'] * 3)
+                datos_predicciones.append(fila) 
            intervals_sum += y_test_sum/count;     
         pair_sum += intervals_sum /len(time_intervals)
 print("Error MAPE : ", (pair_sum/len(pairs)))
+
+tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'Predicho', 'Modelo ARIMA'])
+print("TABLA PREDICCIONES : ", tabla_predicciones)
+tabla_predicciones.to_html("tabla_predicciones.html")

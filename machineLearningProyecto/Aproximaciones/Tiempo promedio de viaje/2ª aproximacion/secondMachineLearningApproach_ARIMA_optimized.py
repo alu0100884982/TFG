@@ -134,6 +134,9 @@ for key,val in predicciones_ruta_dia.items():
     print (key, "=>", val)                
 routes_sum = 0;   
 
+
+datos_predicciones = []
+
 for route in routes:
         suma_intervalos_tiempo = 0;
         intervals_sum = 0;
@@ -149,9 +152,10 @@ for route in routes:
                 cur = conn.cursor()
                 cur.execute(query)
                 rows2 = cur.fetchall()
+                fila = [(route[0], route[1]), day,interval.strftime("%H:%M")]
                 if (len(rows2) > 0):
-                        lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
                         momento_del_dia = 0;
+                        lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
                         if (interval.hour == 8 or interval.hour == 9):
                            rhs = datetime.datetime(2018,1,1,8,0,0)
                         else:
@@ -159,8 +163,17 @@ for route in routes:
                            rhs = datetime.datetime(2018,1,1,17,0,0)
                            print("FORECAST : ", predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
                            print("ROWS2 : ",rows2[0][1])
+                        fila = fila + [rows2[0][1], predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]]
+                        
                         y_test_sum += abs((rows2[0][1] - predicciones_ruta_dia[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
                         count += 1
+                else:
+                        fila = fila + (['-'] * 2)
+                datos_predicciones.append(fila)
            intervals_sum += y_test_sum/count;     
         routes_sum += intervals_sum /len(time_intervals)
 print("Error MAPE : ", (routes_sum/len(routes)))
+
+tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'Predicho'])
+print("TABLA PREDICCIONES : ", tabla_predicciones)
+tabla_predicciones.to_html("tabla_predicciones.html")

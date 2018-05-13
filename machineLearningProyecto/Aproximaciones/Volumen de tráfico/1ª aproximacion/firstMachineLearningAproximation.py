@@ -19,6 +19,7 @@ from sklearn import svm
 from sklearn.neighbors import KNeighborsRegressor
 import re
 import datetime
+import math 
 
 '''
 try:
@@ -169,6 +170,8 @@ errores_predicciones_rutas = {
 		"KNN" : 0,
 		"LightGBM":0
 	}
+
+valores_predichos = {}
 	
 with open('predicciones.txt', 'a') as the_file:
         for pair in pairs:
@@ -214,8 +217,9 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
+                        valores_predichos[(pair[0],pair[1],fila['date'].day,interval.strftime("%H:%M"))] = [fila['volume'],math.ceil(y_pred[fila['date'].day - 18])]
                         predicciones.append(y_pred[fila['date'].day - 18])
-                        y_test_sum += abs((fila['volume'] - y_pred[fila['date'].day - 18]) / fila['volume'])
+                        y_test_sum += abs((fila['volume'] - math.ceil(y_pred[fila['date'].day - 18])) / fila['volume'])
                 y_test_sum /= len(travel_time_dataframe);
                 errores_predicciones_intervalos["XGBoost"] += y_test_sum
                 the_file.write("XGBoost,"+ str(','.join(map(str, predicciones))) + "\n")
@@ -227,8 +231,9 @@ with open('predicciones.txt', 'a') as the_file:
                 y_test_sum = 0
                 predicciones=[]
                 for index, fila in travel_time_dataframe.iterrows():
+                        valores_predichos[(pair[0],pair[1],fila['date'].day,interval.strftime("%H:%M"))].append(math.ceil(y_pred[fila['date'].day - 18]))
                         predicciones.append(y_pred[fila['date'].day - 18])
-                        y_test_sum += abs((fila['volume'] - y_pred[fila['date'].day - 18]) / fila['volume'])
+                        y_test_sum += abs((fila['volume'] - math.ceil(y_pred[fila['date'].day - 18])) / fila['volume'])
                 y_test_sum /= len(travel_time_dataframe);
                 the_file.write("Regresión Lineal, "+  str(','.join(map(str, predicciones))) + "\n")
                 errores_predicciones_intervalos["Linear Regression"] += y_test_sum
@@ -238,14 +243,15 @@ with open('predicciones.txt', 'a') as the_file:
                 scaler.fit(X_train)
                 X_train = scaler.transform(X_train)
                 X_test = scaler.transform(X_test)
-                mlp = MLPRegressor(hidden_layer_sizes=(13,13,13),max_iter=10000)
+                mlp = MLPRegressor(hidden_layer_sizes=(13),max_iter=10000)
                 mlp.fit(X_train,y_train)
                 y_pred = mlp.predict(X_test)
                 predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
+                        valores_predichos[(pair[0],pair[1],fila['date'].day,interval.strftime("%H:%M"))].append(math.ceil(y_pred[fila['date'].day - 18]))
                         predicciones.append(y_pred[fila['date'].day - 18])
-                        y_test_sum += abs((fila['volume'] - y_pred[fila['date'].day - 18]) / fila['volume'])
+                        y_test_sum += abs((fila['volume'] - math.ceil(y_pred[fila['date'].day - 18])) / fila['volume'])
                 y_test_sum /= len(travel_time_dataframe);
                 the_file.write("Red Neuronal, "+  str(','.join(map(str, predicciones))) + "\n")
                 print("Predicciones : ", predicciones)
@@ -260,8 +266,9 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones= [None] * 7
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
+                        valores_predichos[(pair[0],pair[1],fila['date'].day,interval.strftime("%H:%M"))].append(math.ceil(y_pred[fila['date'].day - 18]))
                         predicciones[fila['date'].day - 18] = (y_pred[fila['date'].day - 18])
-                        y_test_sum += abs((fila['volume'] - y_pred[fila['date'].day - 18]) / fila['volume'])
+                        y_test_sum += abs((fila['volume'] - math.ceil(y_pred[fila['date'].day - 18])) / fila['volume'])
                 y_test_sum /= len(travel_time_dataframe);
                 the_file.write("Máquina de Soporte Vectorial,: "+ str(','.join(map(str, predicciones))) + "\n")
                 errores_predicciones_intervalos["SVR"] += y_test_sum
@@ -275,6 +282,7 @@ with open('predicciones.txt', 'a') as the_file:
                 for i in range(7):
                         predicciones.append
                 for index, fila in travel_time_dataframe.iterrows():
+                        valores_predichos[(pair[0],pair[1],fila['date'].day,interval.strftime("%H:%M"))].append(math.ceil(y_pred[fila['date'].day - 18]))
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['volume'] - y_pred[fila['date'].day - 18]) / fila['volume'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -303,6 +311,7 @@ with open('predicciones.txt', 'a') as the_file:
                 y_test_sum = 0
                 predicciones=[]
                 for index, fila in travel_time_dataframe.iterrows():
+                        valores_predichos[(pair[0],pair[1],fila['date'].day,interval.strftime("%H:%M"))].append(math.ceil(y_pred[fila['date'].day - 18]))
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['volume'] - y_pred[fila['date'].day - 18]) / fila['volume'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -313,5 +322,28 @@ with open('predicciones.txt', 'a') as the_file:
                 errores_predicciones_intervalos[key] = 0  
         for key, value in errores_predicciones_rutas.items():
                 errores_predicciones_rutas[key] = errores_predicciones_rutas[key]/len(pairs);
-        print ("Error : ", errores_predicciones_rutas);      
+        print ("Error : ", errores_predicciones_rutas);  
+
+days = [18,19,20,21,22,23,24]
+datos_predicciones = []
+for pair in pairs:
+     for interval in time_intervals:
+        for day in days:
+             fila = []
+             direccion = 'Entrada';
+             if (pair[1] == 1):
+              direccion = 'Salida'
+             fila = fila + ([(pair[0], direccion), day, (interval.strftime("%H:%M"), (interval+datetime.timedelta(minutes=20)).strftime("%H:%M"))])
+             if ((pair[0],pair[1],day,interval.strftime("%H:%M")) in valores_predichos):
+                fila = fila + valores_predichos[(pair[0],pair[1],day,interval.strftime("%H:%M"))]
+             else:
+                fila = fila + (['-'] * 7)
+             print("FILA : ", fila)
+             datos_predicciones.append(fila)
+                       
+
+
+tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Par','Intervalo de tiempo','Día' , 'Valor real', 'XGBoost', 'Linear Regression', 'LightGBM', 'MLP', 'SVR', 'KNN'])
+print("TABLA PREDICCIONES : ", tabla_predicciones)
+tabla_predicciones.to_html("tabla_predicciones")    
 

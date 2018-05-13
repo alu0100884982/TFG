@@ -215,7 +215,7 @@ with open('predicciones.txt', 'a') as the_file:
                 predicciones=[]
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
-                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))] = [fila['avg_travel_time'], y_pred[fila['date'].day - 18]]
+                        valores_predichos[(route[0],route[1],fila['date'].day,interval.strftime("%H:%M"))] = [fila['avg_travel_time'],y_pred[fila['date'].day - 18]]
                         predicciones.append(y_pred[fila['date'].day - 18])
                         y_test_sum += abs((fila['avg_travel_time'] - y_pred[fila['date'].day - 18]) / fila['avg_travel_time'])
                 y_test_sum /= len(travel_time_dataframe);
@@ -260,7 +260,6 @@ with open('predicciones.txt', 'a') as the_file:
                     kernel='rbf', verbose=False)
                 model.fit(X_train, y_train) 
                 y_pred = model.predict(X_test)
-                print("SVR : ", y_pred)
                 predicciones= [None] * 7
                 y_test_sum = 0
                 for index, fila in travel_time_dataframe.iterrows():
@@ -335,6 +334,6 @@ for route in routes:
                        
 
 
-tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Intervalo de tiempo','Día' , 'Valor real', 'XGBoost', 'Linear Regression', 'LightGBM', 'MLP', 'SVR', 'KNN'])
+tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'XGBoost', 'Linear Regression', 'LightGBM', 'MLP', 'SVR', 'KNN'])
 print("TABLA PREDICCIONES : ", tabla_predicciones)
-tabla_predicciones.to_csv("tabla_predicciones", sep=',', encoding='utf-8')
+tabla_predicciones.to_html("tabla_predicciones")

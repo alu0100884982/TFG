@@ -45,7 +45,7 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
         serie = pd.Series(result_dataframe['volume'].values, index=result_dataframe['date'])
         best_score, best_cfg = float("inf"), None
         valores_reales = [element[1] for element in rows2]
-        '''
+
         for p in range(3,10):
           for d in range(3):
             for q in range(5):   
@@ -66,13 +66,13 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                  except:
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
-        '''
-        model = ARIMA(serie, order= (6,0,0))
+        
+        model = ARIMA(serie, order= best_cfg)
         model_fit = model.fit(disp=0)
         predictions = model_fit.forecast(steps=6)[0]
         predictions = [round(element) for element in predictions]
         predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia] = predictions
-        predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia] = np.append(predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia], str('(6,0,0)'))
+        predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia] = np.append(predicciones_pair_dia[pair[0], pair[1],day,hora_del_dia], str(best_cfg))
 
 
 

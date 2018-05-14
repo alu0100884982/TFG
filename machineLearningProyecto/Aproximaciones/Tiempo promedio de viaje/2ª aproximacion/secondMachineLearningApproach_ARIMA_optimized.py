@@ -37,7 +37,6 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
         serie = pd.Series(result_dataframe['avg_travel_time'].values, index=result_dataframe['date'])
         best_score, best_cfg = float("inf"), None
         valores_reales = [element[1] for element in rows2]
-        '''
         for p in range(3,10):
           for d in range(3):
             for q in range(5):   
@@ -58,12 +57,10 @@ def creacionElementosDiccionario(intervalo1, intervalo2, hora_del_dia, hora_de_r
                  except:
                          continue
         print('Best ARIMA%s MSE=%.3f' % (best_cfg, best_score)) 
-        '''
-        best_cfg = (6,1,0)
-        model = ARIMA(serie, order= (6,1,0))
+        model = ARIMA(serie, order= best_cfg)
         model_fit = model.fit(disp=0)
         predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = model_fit.forecast(steps=6)[0]
-        predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = np.append( predicciones_ruta_dia[route[0], route[1],day,hora_del_dia], '(6,1,0)')
+        predicciones_ruta_dia[route[0], route[1],day,hora_del_dia] = np.append( predicciones_ruta_dia[route[0], route[1],day,hora_del_dia], str(best_cfg))
         print("PREDICCIONES : ", predicciones_ruta_dia)
 
 

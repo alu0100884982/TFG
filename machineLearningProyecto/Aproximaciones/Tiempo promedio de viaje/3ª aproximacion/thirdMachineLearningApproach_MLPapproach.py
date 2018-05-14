@@ -13,6 +13,7 @@ from sklearn.svm import SVR
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn import linear_model
 import lightgbm as lgb
+from sklearn.preprocessing import StandardScaler
 '''
 # Prueba de MLP con las columnas date-avg_travel_time de entrenamiento
 try:
@@ -110,10 +111,12 @@ def knn(X_train, y_train):
    modelo =KNeighborsRegressor(n_neighbors=20)
    modelo.fit(X_train, y_train)
    return modelo, "KNN"
+
+valores_predichos = {}
    
 for j in range(6):
-        routes = [('A',2), ('A',3), ('B',1), ('B',3), ('C',1), ('C',3)]
-        days = list(range(18,25))
+        routes = [('A',2)]
+        days = list(range(18,19))
         intervals_2hours_previous = [(6,8),(15,17)]
         intervals_to_predict = ['08:00-10:00','17:00-19:00']
         number_intervals_to_predict = 6
@@ -185,6 +188,8 @@ for j in range(6):
                                 modelo, nombre_algoritmo = svr(X_train, y_train)
                           elif (j == 4):
                                 modelo, nombre_algoritmo = knn(X_train, y_train)
+                          elif (j == 5):
+                                modelo, nombre_algoritmo = neuralnetworks(X_train, y_train)
                           
                           previous_row_prediction = dates_traveltime_supervised.iloc[-1].shift(-1).values[0:-1]
                           for k in range(number_intervals_to_predict):
@@ -204,12 +209,9 @@ for j in range(6):
                                   predictions[(route[0],route[1],day,intervals_to_predict[1])] = np.append(predictions[(route[0],route[1],day,intervals_to_predict[1])], prediction);
                               previous_row_prediction = pd.DataFrame(np.append(previous_row_prediction, prediction)).shift(-1).values[0:-1]
                                    
-                          for key,val in predictions.items():
-                                 print(key, "=>", val)
+                          #for key,val in predictions.items():
+                             #    print(key, "=>", val)
 
-
-
-        #Obtención de los intervalos a predecir
         try:
            conn = psycopg2.connect("dbname='tfgtraining2' user='javisunami' host='localhost' password='javier123'")
         except:
@@ -227,10 +229,9 @@ for j in range(6):
                 aux = np.append(aux,time_interval[0]);
         time_intervals = sorted(set(aux))
 
-        #Cálculo del error de las predicciones
                  
         routes_sum = 0;   
-
+        datos_predicciones = []
 
         for route in routes:
                 suma_intervalos_tiempo = 0;
@@ -247,6 +248,8 @@ for j in range(6):
                         cur = conn.cursor()
                         cur.execute(query)
                         rows2 = cur.fetchall()
+                        
+                        
                         if (len(rows2) > 0):
                                 lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
                                 momento_del_dia = intervals_to_predict[0];
@@ -257,12 +260,24 @@ for j in range(6):
                                    rhs = datetime.datetime(2018,1,1,17,0,0)
                                    print("FORECAST : ", predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
                                    print("ROWS2 : ",rows2[0][1])
+                                   
+                                if (j == 0):
+                                     valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] = [rows2[0][1], float(predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])]
+                                else:
+                                      valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] += [ float(predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])]
+                                      
                                 y_test_sum += abs((rows2[0][1] - predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
                                 count += 1
+
+                        elif ((route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M")) not in valores_predichos):
+                                valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] = (['-'] * 7)
                    intervals_sum += y_test_sum/count;     
                 routes_sum += intervals_sum /len(time_intervals)
         print("Error MAPE ", nombre_algoritmo, " :" , (routes_sum/len(routes)))
-
+        
+#tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'XGBoost', 'LightGBM', 'Linear Regression', 'SVR', 'KNN', 'MLP'])
+#print("TABLA PREDICCIONES : ", tabla_predicciones)
+#tabla_predicciones.to_html("tabla_predicciones.html")
 
 
 

@@ -100,9 +100,9 @@ def svr(X_train, y_train):
     return modelo, "SVR"
  
 def neuralnetworks(X_train, y_train):
-   scaler = StandardScaler()
-   scaler.fit(X_train)
-   X_train = scaler.transform(X_train)
+  # scaler = StandardScaler()
+  # scaler.fit(X_train)
+   #X_train = scaler.transform(X_train)
    modelo = MLPRegressor(hidden_layer_sizes=(24,24,24),max_iter=4000)
    modelo.fit(X_train,y_train)
    return modelo, "NN"
@@ -115,8 +115,8 @@ def knn(X_train, y_train):
 valores_predichos = {}
    
 for j in range(6):
-        routes = [('A',2)]
-        days = list(range(18,19))
+        routes = [ ('C', 1) ]
+        days = list(range(24,25))
         intervals_2hours_previous = [(6,8),(15,17)]
         intervals_to_predict = ['08:00-10:00','17:00-19:00']
         number_intervals_to_predict = 6
@@ -135,16 +135,35 @@ for j in range(6):
                 for day in days:
                   for interval in intervals_2hours_previous:
                           minimum_date = min(dates_traveltime.date)
+                          maximum_date = datetime.datetime(2016,10,17,23,40,0)
+                          dates_traveltime_original = pd.DataFrame(dates_traveltime)
+                          dates_traveltime = dates_traveltime[(dates_traveltime['avg_travel_time'] > 30) & (dates_traveltime['avg_travel_time'] < 150)]
+                          dates_traveltime = dates_traveltime.reset_index(drop=True) 
+                          date_aux = minimum_date
+
+                          
+                          while (date_aux != maximum_date): 
+                            if (not((date_aux == dates_traveltime['date']).any())):
+                              valores_avg_travel = []
+                              for row in  dates_traveltime_original.values:
+                                if (row[0].time() == date_aux.time()):
+                                        valores_avg_travel.append(row[1])
+                              dates_traveltime.loc[len(dates_traveltime)] = [date_aux, np.mean(valores_avg_travel)]
+                            date_aux += datetime.timedelta(minutes=20)
+                          dates_traveltime = dates_traveltime.sort_index()
+                          
+                          for row in dates_traveltime.values:
+                                print("ROW : ", row)
+                          
                           if (interval[0] == 6):
+                           minimum_date = datetime.datetime(2016,10,day,0,0,0)
                            maximum_date = datetime.datetime(2016,10,day,6,0,0)
                           else:
+                           minimum_date = datetime.datetime(2016,10,day,0,0,0)
                            maximum_date = datetime.datetime(2016,10,day,15,0,0)
+                          
                           date_aux = minimum_date
-                          dates_traveltime = dates_traveltime[(dates_traveltime['avg_travel_time'] > 30) & (dates_traveltime['avg_travel_time'] < 150)]
-                          dates_traveltime = dates_traveltime.reset_index(drop=True)
                           dates_traveltime_filled = pd.DataFrame(dates_traveltime)
-                          
-                          
       
                           
                           while (date_aux != maximum_date): 
@@ -153,6 +172,7 @@ for j in range(6):
                               for row in dates_traveltime_filled.values:
                                 if (row[0].time() == date_aux.time() and row[0].weekday() == date_aux.weekday()):
                                         valores_avg_travel.append(row[1])
+                              #print("VALORES : ", valores_avg_travel)
                               dates_traveltime_filled.loc[len(dates_traveltime_filled)] = [date_aux, np.mean(valores_avg_travel)]
                             date_aux += datetime.timedelta(minutes=20)
                           dates_traveltime_filled = dates_traveltime_filled.sort_index()
@@ -166,7 +186,7 @@ for j in range(6):
                           row_2hoursintervals_before = cur.fetchall()
                           dates_traveltime_2hoursintervals_before = pd.DataFrame.from_records(row_2hoursintervals_before, columns=['date','avg_travel_time'])
                           dates_traveltime_filled = pd.concat([dates_traveltime_filled,dates_traveltime_2hoursintervals_before])
-                          #print("DATES_TRAVELTIME: ", dates_traveltime_filled)
+                          print("DATES_TRAVELTIME: ", dates_traveltime_filled)
                           series_dates_traveltime_filled = pd.Series(dates_traveltime_filled['avg_travel_time'].values, index=dates_traveltime_filled['date'])
                           dates_traveltime_supervised = pd.DataFrame()
                           number_time_steps_previous = 5
@@ -177,6 +197,7 @@ for j in range(6):
                           print(dates_traveltime_supervised.head(20).to_string(index=False))
                           X_train = dates_traveltime_supervised.iloc[:,0:number_time_steps_previous]
                           y_train = dates_traveltime_supervised.iloc[:,number_time_steps_previous]
+                          print("X_train : ", X_train)
                            #Elegimos el modelo
                           if (j == 0):
                                 modelo, nombre_algoritmo = xgboost(X_train, y_train)
@@ -196,6 +217,11 @@ for j in range(6):
                               dataframe_input = pd.DataFrame(previous_row_prediction).T
                               dataframe_input.columns = ['t-5','t-4','t-3','t-2', 't-1']
                              # print("INPUT : ", ((route[0],route[1],day,intervals_to_predict[0]) not in predictions.keys()))
+                              original = 0   
+                              #if(j == 5):
+                                   # original = modelo.predict(dataframe_input)
+                                  #  prediction = scaler.inverse_transform(original) 
+                              #else:
                               prediction = modelo.predict(dataframe_input)
                               if (interval[0] == 6):
                                if((route[0],route[1],day,intervals_to_predict[0]) not in predictions.keys()):
@@ -207,6 +233,8 @@ for j in range(6):
                                   predictions[(route[0],route[1],day,intervals_to_predict[1])] = prediction;
                                 else:
                                   predictions[(route[0],route[1],day,intervals_to_predict[1])] = np.append(predictions[(route[0],route[1],day,intervals_to_predict[1])], prediction);
+                            #  if(j == 5):
+                             #   prediction = original
                               previous_row_prediction = pd.DataFrame(np.append(previous_row_prediction, prediction)).shift(-1).values[0:-1]
                                    
                           #for key,val in predictions.items():
@@ -249,8 +277,8 @@ for j in range(6):
                         cur.execute(query)
                         rows2 = cur.fetchall()
                         
-                        
                         if (len(rows2) > 0):
+                                print("HOLA")
                                 lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
                                 momento_del_dia = intervals_to_predict[0];
                                 if (interval.hour == 8 or interval.hour == 9):
@@ -268,6 +296,7 @@ for j in range(6):
                                       
                                 y_test_sum += abs((rows2[0][1] - predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
                                 count += 1
+                                print("COUNT : ", count)
 
                         elif ((route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M")) not in valores_predichos):
                                 valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] = (['-'] * 7)
@@ -275,9 +304,21 @@ for j in range(6):
                 routes_sum += intervals_sum /len(time_intervals)
         print("Error MAPE ", nombre_algoritmo, " :" , (routes_sum/len(routes)))
         
-#tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'XGBoost', 'LightGBM', 'Linear Regression', 'SVR', 'KNN', 'MLP'])
-#print("TABLA PREDICCIONES : ", tabla_predicciones)
-#tabla_predicciones.to_html("tabla_predicciones.html")
+
+datos_predicciones = []
+for route in routes:
+     for interval in time_intervals:
+        for day in days:
+             fila = []
+             fila += ([(route[0], route[1]), day, (interval.strftime("%H:%M"), (interval+datetime.timedelta(minutes=20)).strftime("%H:%M"))])
+             if ((route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M")) in valores_predichos):
+                 fila += valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))]
+             datos_predicciones.append(fila)
+               
+        
+tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'XGBoost', 'LightGBM', 'Linear Regression', 'SVR', 'KNN', 'MLP'])
+print("TABLA PREDICCIONES : ", tabla_predicciones)
+tabla_predicciones.to_html("tabla_predicciones.html")
 
 
 

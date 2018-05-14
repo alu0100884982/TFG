@@ -74,9 +74,9 @@ def svr(X_train, y_train):
     return modelo, "SVR"
  
 def neuralnetworks(X_train, y_train):
-   scaler = StandardScaler()
-   scaler.fit(X_train)
-   X_train = scaler.transform(X_train)
+   #scaler = StandardScaler()
+   #scaler.fit(X_train)
+  # X_train = scaler.transform(X_train)
    modelo = MLPRegressor(hidden_layer_sizes=(24,24,24),max_iter=4000)
    modelo.fit(X_train,y_train)
    return modelo, "NN"
@@ -149,28 +149,6 @@ for j in range(6):
                           dates_trafficvolume = dates_trafficvolume.reset_index(drop=True)
                           dates_trafficvolume_filled = pd.DataFrame(dates_trafficvolume, index = dates_trafficvolume.index)
                           series_dates_trafficvolume_filled = pd.Series(dates_trafficvolume_filled['traffic_volume'].values, index=dates_trafficvolume_filled['date'])
-                          dates_trafficvolume_supervised = pd.DataFrame()
-                          number_time_steps_previous = 5
-                          for i in range(number_time_steps_previous,0,-1):
-                                dates_trafficvolume_supervised['t-'+str(i)] = series_dates_trafficvolume_filled.shift(i)
-                          dates_trafficvolume_supervised['t'] = series_dates_trafficvolume_filled.values
-
-                          dates_trafficvolume_supervised = dates_trafficvolume_supervised[number_time_steps_previous:]
-                          X_train = dates_trafficvolume_supervised.iloc[:,0:number_time_steps_previous]
-                          y_train = dates_trafficvolume_supervised.iloc[:,number_time_steps_previous]
-                          
-                          #Elegimos el modelo
-                          if (j == 0):
-                                modelo, nombre_algoritmo = xgboost(X_train, y_train)
-                          elif (j == 1):
-                                modelo, nombre_algoritmo = lightgbm(X_train, y_train) 
-                          elif (j == 2):
-                                modelo, nombre_algoritmo = linearregression(X_train, y_train)
-                          elif (j == 3):
-                                modelo, nombre_algoritmo = svr(X_train, y_train)
-                          elif (j == 4):
-                                modelo, nombre_algoritmo = knn(X_train, y_train)
-                               
                           
                           while (date_aux != maximum_date): 
                             if (not((date_aux == dates_trafficvolume_filled['date']).any())):
@@ -193,18 +171,40 @@ for j in range(6):
                           dates_trafficvolume_2hoursintervals_before = pd.DataFrame.from_records(row_2hoursintervals_before, columns=['date','traffic_volume'])
                           dates_trafficvolume_filled = pd.concat([dates_trafficvolume_filled,dates_trafficvolume_2hoursintervals_before])
                           
-                          #Guardamos los valores de la serie un día antes para poder volver a obtener el valor real de las predicciones realizadas.
-                          #real_values = dates_trafficvolume_filled['traffic_volume'].values[-72:-66]
-                          #series_dates_trafficvolume_filled = difference(dates_trafficvolume_filled,72)
-                          
                           series_dates_trafficvolume_filled = pd.Series(dates_trafficvolume_filled['traffic_volume'].values, index=dates_trafficvolume_filled['date'])
                           dates_trafficvolume_supervised = pd.DataFrame()
                           number_time_steps_previous = 5
                           for i in range(number_time_steps_previous,0,-1):
                                 dates_trafficvolume_supervised['t-'+str(i)] = series_dates_trafficvolume_filled.shift(i)
                           dates_trafficvolume_supervised['t'] = series_dates_trafficvolume_filled.values
+                          
 
                           dates_trafficvolume_supervised = dates_trafficvolume_supervised[number_time_steps_previous:]
+                          X_train = dates_trafficvolume_supervised.iloc[:,0:number_time_steps_previous]
+                          y_train = dates_trafficvolume_supervised.iloc[:,number_time_steps_previous]
+                           
+      
+                          #Elegimos el modelo
+                          if (j == 0):
+                                modelo, nombre_algoritmo = xgboost(X_train, y_train)
+                          elif (j == 1):
+                                modelo, nombre_algoritmo = lightgbm(X_train, y_train) 
+                          elif (j == 2):
+                                modelo, nombre_algoritmo = linearregression(X_train, y_train)
+                          elif (j == 3):
+                                modelo, nombre_algoritmo = svr(X_train, y_train)
+                          elif (j == 4):
+                                modelo, nombre_algoritmo = knn(X_train, y_train)
+                          elif (j == 5):
+                                modelo, nombre_algoritmo = neuralnetworks(X_train, y_train)
+
+            
+                          
+                          #Guardamos los valores de la serie un día antes para poder volver a obtener el valor real de las predicciones realizadas.
+                          #real_values = dates_trafficvolume_filled['traffic_volume'].values[-72:-66]
+                          #series_dates_trafficvolume_filled = difference(dates_trafficvolume_filled,72)
+                          
+
                           previous_row_prediction = dates_trafficvolume_supervised.iloc[-1].shift(-1).values[0:-1]
                           previous_row_prediction = [element for element in previous_row_prediction]
                           for j in range(number_intervals_to_predict):
@@ -225,7 +225,7 @@ for j in range(6):
                               previous_row_prediction = pd.DataFrame(np.append(previous_row_prediction, prediction)).shift(-1).values[0:-1]
                                    
                          # for key,val in predictions.items():
-                                 print(key, "=>", val)
+                                # print(key, "=>", val)
                          # print("\n")
 
 

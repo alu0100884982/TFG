@@ -115,8 +115,8 @@ def knn(X_train, y_train):
 valores_predichos = {}
    
 for j in range(6):
-        routes = [ ('C', 1) ]
-        days = list(range(24,25))
+        routes = [('A',2), ('A', 3), ('B', 1), ('B', 3), ('C', 1), ('C',3)]
+        days = list(range(18,25))
         intervals_2hours_previous = [(6,8),(15,17)]
         intervals_to_predict = ['08:00-10:00','17:00-19:00']
         number_intervals_to_predict = 6
@@ -152,8 +152,7 @@ for j in range(6):
                             date_aux += datetime.timedelta(minutes=20)
                           dates_traveltime = dates_traveltime.sort_index()
                           
-                          for row in dates_traveltime.values:
-                                print("ROW : ", row)
+                          
                           
                           if (interval[0] == 6):
                            minimum_date = datetime.datetime(2016,10,day,0,0,0)
@@ -186,7 +185,7 @@ for j in range(6):
                           row_2hoursintervals_before = cur.fetchall()
                           dates_traveltime_2hoursintervals_before = pd.DataFrame.from_records(row_2hoursintervals_before, columns=['date','avg_travel_time'])
                           dates_traveltime_filled = pd.concat([dates_traveltime_filled,dates_traveltime_2hoursintervals_before])
-                          print("DATES_TRAVELTIME: ", dates_traveltime_filled)
+                          
                           series_dates_traveltime_filled = pd.Series(dates_traveltime_filled['avg_travel_time'].values, index=dates_traveltime_filled['date'])
                           dates_traveltime_supervised = pd.DataFrame()
                           number_time_steps_previous = 5
@@ -194,7 +193,7 @@ for j in range(6):
                                 dates_traveltime_supervised['t-'+str(i)] = series_dates_traveltime_filled.shift(i)
                           dates_traveltime_supervised['t'] = series_dates_traveltime_filled .values
                           dates_traveltime_supervised = dates_traveltime_supervised[number_time_steps_previous:]
-                          print(dates_traveltime_supervised.head(20).to_string(index=False))
+                          
                           X_train = dates_traveltime_supervised.iloc[:,0:number_time_steps_previous]
                           y_train = dates_traveltime_supervised.iloc[:,number_time_steps_previous]
                           print("X_train : ", X_train)
@@ -278,7 +277,7 @@ for j in range(6):
                         rows2 = cur.fetchall()
                         
                         if (len(rows2) > 0):
-                                print("HOLA")
+                                
                                 lhs = datetime.datetime(2018,1,1,interval.hour,interval.minute,0)
                                 momento_del_dia = intervals_to_predict[0];
                                 if (interval.hour == 8 or interval.hour == 9):
@@ -286,8 +285,7 @@ for j in range(6):
                                 else:
                                    momento_del_dia = intervals_to_predict[1]
                                    rhs = datetime.datetime(2018,1,1,17,0,0)
-                                   print("FORECAST : ", predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
-                                   print("ROWS2 : ",rows2[0][1])
+                                   
                                    
                                 if (j == 0):
                                      valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] = [rows2[0][1], float(predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])]
@@ -296,10 +294,11 @@ for j in range(6):
                                       
                                 y_test_sum += abs((rows2[0][1] - predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
                                 count += 1
-                                print("COUNT : ", count)
+                                
 
                         elif ((route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M")) not in valores_predichos):
                                 valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] = (['-'] * 7)
+                  
                    intervals_sum += y_test_sum/count;     
                 routes_sum += intervals_sum /len(time_intervals)
         print("Error MAPE ", nombre_algoritmo, " :" , (routes_sum/len(routes)))
@@ -318,7 +317,7 @@ for route in routes:
         
 tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'XGBoost', 'LightGBM', 'Linear Regression', 'SVR', 'KNN', 'MLP'])
 print("TABLA PREDICCIONES : ", tabla_predicciones)
-tabla_predicciones.to_html("tabla_predicciones.html")
+tabla_predicciones.to_html("tabla_prediccions.html")
 
 
 

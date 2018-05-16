@@ -90,8 +90,10 @@ def knn(X_train, y_train):
 
 
 ####Predicción del volumen de tráfico: de series temporales a aprendizaje supervisado.
-for j in range(6):
-        pairs = [(1,0),(2,0),(3,0),(1,1), (3,1)]
+
+valores_predichos = {}
+for j in [0,4,5]:
+        pairs = [(1,0),(1,1), (2,0),(3,0), (3,1)]
         days = list(range(18,25))
         intervals_2hours_previous = [(6,8),(15,17)]
         intervals_to_predict = ['08:00-10:00','17:00-19:00']
@@ -138,28 +140,49 @@ for j in range(6):
                 plt.show()
                 plt.close()
                 '''
+
                 for day in days:
                   for interval in intervals_2hours_previous:
+
                           minimum_date = min(dates_trafficvolume.date)
+                          maximum_date = datetime.datetime(2016,10,17,0,0,0)
+                          dates_traveltime_original = pd.DataFrame(dates_trafficvolume)
+                          dates_trafficvolume = dates_trafficvolume.reset_index(drop=True) 
+                          date_aux = minimum_date
+                  
+                          while (date_aux != maximum_date): 
+                            if (not((date_aux == dates_trafficvolume['date']).any())):
+                              valores_volume = []
+                              for row in dates_traveltime_original.values:
+                                if (row[0].time() == date_aux.time()):
+                                        valores_volume.append(row[1])
+                            
+                              dates_trafficvolume.loc[len(dates_trafficvolume)] = [date_aux, np.mean(valores_volume)]
+                            date_aux += datetime.timedelta(minutes=20)
+                          dates_trafficvolume = dates_trafficvolume.sort_values(by='date')
+                          
+                                
                           if (interval[0] == 6):
+                           minimum_date = datetime.datetime(2016,10,day,0,0,0)
                            maximum_date = datetime.datetime(2016,10,day,6,0,0)
                           else:
+                           minimum_date = datetime.datetime(2016,10,day,0,0,0)
                            maximum_date = datetime.datetime(2016,10,day,15,0,0)
+                           
                           date_aux = minimum_date
-                          dates_trafficvolume = dates_trafficvolume.reset_index(drop=True)
                           dates_trafficvolume_filled = pd.DataFrame(dates_trafficvolume, index = dates_trafficvolume.index)
-                          series_dates_trafficvolume_filled = pd.Series(dates_trafficvolume_filled['traffic_volume'].values, index=dates_trafficvolume_filled['date'])
                           
                           while (date_aux != maximum_date): 
                             if (not((date_aux == dates_trafficvolume_filled['date']).any())):
                               valores_avg_travel = []
-                              for row in dates_trafficvolume_filled.values:
+                              for row in dates_traveltime_original.values:
                                 if (row[0].time() == date_aux.time() ):
                                         valores_avg_travel.append(row[1])
                               dates_trafficvolume_filled.loc[len(dates_trafficvolume_filled)] = [date_aux, np.mean(valores_avg_travel)]
                             date_aux += datetime.timedelta(minutes=20)
 
                           dates_trafficvolume_filled = dates_trafficvolume_filled.sort_values(by='date')
+                          
                           try:
                               conn = psycopg2.connect("dbname='tfgtest1' user='javisunami' host='localhost' password='javier123'")
                           except:
@@ -182,8 +205,8 @@ for j in range(6):
                           dates_trafficvolume_supervised = dates_trafficvolume_supervised[number_time_steps_previous:]
                           X_train = dates_trafficvolume_supervised.iloc[:,0:number_time_steps_previous]
                           y_train = dates_trafficvolume_supervised.iloc[:,number_time_steps_previous]
-                           
-      
+ 
+
                           #Elegimos el modelo
                           if (j == 0):
                                 modelo, nombre_algoritmo = xgboost(X_train, y_train)
@@ -204,10 +227,9 @@ for j in range(6):
                           #real_values = dates_trafficvolume_filled['traffic_volume'].values[-72:-66]
                           #series_dates_trafficvolume_filled = difference(dates_trafficvolume_filled,72)
                           
-
                           previous_row_prediction = dates_trafficvolume_supervised.iloc[-1].shift(-1).values[0:-1]
                           previous_row_prediction = [element for element in previous_row_prediction]
-                          for j in range(number_intervals_to_predict):
+                          for k in range(number_intervals_to_predict):
                               dataframe_input = pd.DataFrame(previous_row_prediction).T
                               dataframe_input.columns = ['t-5','t-4','t-3','t-2', 't-1']
                               prediction = round(modelo.predict(dataframe_input)[0])
@@ -222,8 +244,7 @@ for j in range(6):
                                   predictions[(pair[0],pair[1],day,intervals_to_predict[1])] = prediction;
                                 else:
                                   predictions[(pair[0],pair[1],day,intervals_to_predict[1])] = np.append(predictions[(pair[0],pair[1],day,intervals_to_predict[1])], prediction);
-                              previous_row_prediction = pd.DataFrame(np.append(previous_row_prediction, prediction)).shift(-1).values[0:-1]
-                                   
+                              previous_row_prediction = pd.DataFrame(np.append(previous_row_prediction, prediction)).shift(-1).values[0:-1]       
                          # for key,val in predictions.items():
                                 # print(key, "=>", val)
                          # print("\n")
@@ -279,8 +300,12 @@ for j in range(6):
                                    rhs = datetime.datetime(2018,1,1,17,0,0)
                                    #print("FORECAST : ", predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
                                    #print("ROWS2 : ",rows2[0][1])
-                                   forecasts.append(predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])
-                                   real_values.append(rows2[0][1])
+                                if (j == 0):
+                                 valores_predichos[(pair[0], pair[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] = [rows2[0][1], round(float(predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]))]
+                                else:
+                                 valores_predichos[(pair[0], pair[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] += [ round(float(predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]))]
+                                forecasts.append(round(predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]))
+                                real_values.append(rows2[0][1])
                                 y_test_sum += abs((rows2[0][1] - predictions[pair[0], pair[1], day,momento_del_dia][((lhs-rhs)/1200).seconds]) / rows2[0][1])
                                 count += 1
                    intervals_sum += y_test_sum/count;     
@@ -291,3 +316,19 @@ for j in range(6):
         #plt.plot(indexes,forecasts, color='blue')
         #plt.plot(indexes,real_values, color='black')
         #plt.show()
+        
+datos_predicciones = []
+for pair in pairs:
+     for interval in time_intervals:
+        for day in days:
+             fila = []
+             fila += ([(pair[0], pair[1]), day, (interval.strftime("%H:%M"), (interval+datetime.timedelta(minutes=20)).strftime("%H:%M"))])
+             if ((pair[0], pair[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M")) in valores_predichos):
+                 fila += valores_predichos[(pair[0], pair[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))]
+             datos_predicciones.append(fila)
+               
+        
+tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Ruta','Día', 'Intervalo de tiempo' , 'Valor real', 'XGBoost', 'LightGBM', 'Linear Regression', 'SVR', 'KNN', 'MLP'])
+#print("TABLA PREDICCIONES : ", tabla_predicciones)
+tabla_predicciones.to_html("tabla_predicciones.html")
+

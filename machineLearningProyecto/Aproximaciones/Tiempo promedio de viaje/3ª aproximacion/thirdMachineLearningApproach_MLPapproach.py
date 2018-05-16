@@ -112,9 +112,10 @@ def knn(X_train, y_train):
    modelo.fit(X_train, y_train)
    return modelo, "KNN"
 
-valores_predichos = {}
+
    
-for j in range(6):
+for j in [0,4,5]:
+        valores_predichos = {}
         routes = [('A',2), ('A', 3), ('B', 1), ('B', 3), ('C', 1), ('C',3)]
         days = list(range(18,25))
         intervals_2hours_previous = [(6,8),(15,17)]
@@ -196,7 +197,7 @@ for j in range(6):
                           
                           X_train = dates_traveltime_supervised.iloc[:,0:number_time_steps_previous]
                           y_train = dates_traveltime_supervised.iloc[:,number_time_steps_previous]
-                          print("X_train : ", X_train)
+                          
                            #Elegimos el modelo
                           if (j == 0):
                                 modelo, nombre_algoritmo = xgboost(X_train, y_train)
@@ -288,6 +289,7 @@ for j in range(6):
                                    
                                    
                                 if (j == 0):
+                                     print("HOLA")
                                      valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] = [rows2[0][1], float(predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])]
                                 else:
                                       valores_predichos[(route[0], route[1], day,interval.strftime("%H:%M"), (interval + datetime.timedelta(minutes=20)).strftime("%H:%M"))] += [ float(predictions[route[0], route[1], day,momento_del_dia][((lhs-rhs)/1200).seconds])]
@@ -302,6 +304,7 @@ for j in range(6):
                    intervals_sum += y_test_sum/count;     
                 routes_sum += intervals_sum /len(time_intervals)
         print("Error MAPE ", nombre_algoritmo, " :" , (routes_sum/len(routes)))
+        print("VALORES PREDICHOS : ", valores_predichos)
         
 
 datos_predicciones = []

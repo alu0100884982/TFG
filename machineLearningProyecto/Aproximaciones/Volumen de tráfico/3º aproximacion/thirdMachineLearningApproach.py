@@ -92,7 +92,7 @@ def knn(X_train, y_train):
 ####Predicción del volumen de tráfico: de series temporales a aprendizaje supervisado.
 
 valores_predichos = {}
-for j in [0,4,5]:
+for j in range(6):
         pairs = [(1,0),(1,1), (2,0),(3,0), (3,1)]
         days = list(range(18,25))
         intervals_2hours_previous = [(6,8),(15,17)]
@@ -114,7 +114,7 @@ for j in [0,4,5]:
                 cur.execute(query)
                 rows_training = cur.fetchall()
                 dates_trafficvolume = pd.DataFrame.from_records(rows_training, columns=['date','traffic_volume'])
-                
+                dates_trafficvolume_original = pd.DataFrame.from_records(rows_training, columns=['date','traffic_volume'])
                 if (pair[0] == 1 and pair[1] == 0):
                  booleanos = crearBooleanos(dates_out_1_0)
                  dates_trafficvolume = dates_trafficvolume[booleanos]
@@ -125,8 +125,9 @@ for j in [0,4,5]:
                  booleanos = crearBooleanos(dates_out_2_0)
                  dates_trafficvolume = dates_trafficvolume[booleanos]
                  
-             
-                series_decomposition = pd.DataFrame(data= dates_trafficvolume['traffic_volume'].values, index =  dates_trafficvolume['date'].values);
+                dates_trafficvolume = dates_trafficvolume.reset_index(drop=True)
+
+              
                 #Gráfica de autocorrelación de la serie temporal
                 '''
                 plot_acf(series_decomposition)
@@ -141,26 +142,24 @@ for j in [0,4,5]:
                 plt.close()
                 '''
 
+                minimum_date = min(dates_trafficvolume.date)
+                maximum_date = datetime.datetime(2016,10,17,0,0,0)
+                date_aux = minimum_date
+          
+                while (date_aux != maximum_date): 
+                    if (not((date_aux == dates_trafficvolume['date']).any())):
+                      valores_volume = []
+                      for row in dates_trafficvolume_original.values:
+                        if (row[0].time() == date_aux.time()):
+                                valores_volume.append(row[1])
+                     # print(" PAIR : ", pair , " ", date_aux, "-> VALORES : ", valores_volume)
+                      dates_trafficvolume.loc[len(dates_trafficvolume)] = [date_aux, np.mean(valores_volume)]
+                    date_aux += datetime.timedelta(minutes=20)
+                dates_trafficvolume = dates_trafficvolume.sort_values(by='date')
+
+                  
                 for day in days:
                   for interval in intervals_2hours_previous:
-
-                          minimum_date = min(dates_trafficvolume.date)
-                          maximum_date = datetime.datetime(2016,10,17,0,0,0)
-                          dates_traveltime_original = pd.DataFrame(dates_trafficvolume)
-                          dates_trafficvolume = dates_trafficvolume.reset_index(drop=True) 
-                          date_aux = minimum_date
-                  
-                          while (date_aux != maximum_date): 
-                            if (not((date_aux == dates_trafficvolume['date']).any())):
-                              valores_volume = []
-                              for row in dates_traveltime_original.values:
-                                if (row[0].time() == date_aux.time()):
-                                        valores_volume.append(row[1])
-                            
-                              dates_trafficvolume.loc[len(dates_trafficvolume)] = [date_aux, np.mean(valores_volume)]
-                            date_aux += datetime.timedelta(minutes=20)
-                          dates_trafficvolume = dates_trafficvolume.sort_values(by='date')
-                          
                                 
                           if (interval[0] == 6):
                            minimum_date = datetime.datetime(2016,10,day,0,0,0)
@@ -175,7 +174,7 @@ for j in [0,4,5]:
                           while (date_aux != maximum_date): 
                             if (not((date_aux == dates_trafficvolume_filled['date']).any())):
                               valores_avg_travel = []
-                              for row in dates_traveltime_original.values:
+                              for row in dates_trafficvolume_original.values:
                                 if (row[0].time() == date_aux.time() ):
                                         valores_avg_travel.append(row[1])
                               dates_trafficvolume_filled.loc[len(dates_trafficvolume_filled)] = [date_aux, np.mean(valores_avg_travel)]

@@ -1,3 +1,3 @@
-#Utilizando un modelo ARIMA para cada ruta, día y grupo de intervalos de tiempo.
+#Utilizando un modelo ARIMA para cada barrera de peaje, direccion y grupo de intervalos de tiempo.
 Error MAPE :  0.1520476523979678
 

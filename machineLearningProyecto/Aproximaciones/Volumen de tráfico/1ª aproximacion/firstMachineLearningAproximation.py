@@ -227,7 +227,11 @@ with open('predicciones.txt', 'a') as the_file:
                 #Linear Regression
                 model = linear_model.LinearRegression()
                 model.fit(X_train, y_train)
+                
+                print("X_train : ",X_train)
+                print("y_train : ",y_train)
                 y_pred = model.predict(X_test)
+                print("PREDICCIONES : ", y_pred)
                 y_test_sum = 0
                 predicciones=[]
                 for index, fila in travel_time_dataframe.iterrows():

@@ -1,0 +1,15 @@
+Error MAPE  XGBoost  : 0.21206426370317877
+Error MAPE  LightGBM  : 0.2205810045728296
+Error MAPE  Linear Regression  : 0.21194358441784536
+Error MAPE  SVR  : 0.2544252937007974
+Error MAPE  NN  : 0.22027708086082987
+
+
+
+[1]Y. Yin and P. Shang, "Forecasting traffic time series with multivariate predicting method",  Applied Mathematics and Computation, vol. 291 , pp.  266-278, 2016. [Online]. Disponible en:  https://goo.gl/5gkEfP
+[2]P. Yuan and X. Lin , "How long will the traffic flow time series keep efficacious to forecast the future?",  Physica A: Statistical Mechanics and its Applications, vol. 467 , pp.  419-437, 2017. [Online]. Disponible en:  https://drive.google.com/open?id=1r4ZF2wughH4nZcRUsQqqn_hmrSSR6mw8
+[3]H. A. Sevilla, "Predicción de tráfico en las carreteras de la red de la Generalitat Valenciana",  Trabajo fin de carrera, Dep. De Sistemas Informáticos y Computación, Escola Tècnica Superiord’Enginyeria Informàtica, Universitat Politècnica de València, Valencia, 2015. [Online]. Disponible en: https://drive.google.com/open?id=1usrXMdc7c-J3-1Rt2CjzAHLvZII3eeEO
+[4]M. Goletz, I. Feige and D. Heinrichs, "What Drives Mobility Trends: Results from Case Studiesin Paris, Santiago de Chile, Singapore and Vienna",  Transportation Research Procedia, vol. 13 , pp.  49-60, 2016. [Online]. Disponible en:  https://drive.google.com/open?id=1590qIrBgZvJjANFsTvHYZlLkWRz9vfFN
+[5]C. Gloves, R. North, R. Johnston and G. Fletcher, "Short Term Traffic Prediction on the UK Motorway Network Using Neural Networks",  Transportation Research Procedia, vol. 13 , pp.  184-195, 2016. [Online]. Disponible en:  https://drive.google.com/open?id=1rDz5GfONXSf7ZFhLcgQv_FFfSnrmj55F
+[0] https://dev.mysql.com/doc/workbench/en/wb-sql-editor-query-panel.html
+[0] https://docs.oracle.com/cd/E11882_01/appdev.112/e12137/introduction.htm#TDPJD106

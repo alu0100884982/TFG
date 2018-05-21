@@ -295,10 +295,13 @@ with open('predicciones.txt', 'a') as the_file:
                 'task': 'train',
                 'max_depth' : 5,
                 'num_threads': 8,
+                'boosting_type': 'gbdt',
                 'objective': 'regression',
                 'metric': {'l2', 'auc'},
                 'num_leaves': 50,
                 'learning_rate': 0.01,
+                'feature_fraction': 0.5,
+                'bagging_fraction': 0.5,
                 'bagging_freq': 1,
                 'min_data':1,
                 'verbose': 0

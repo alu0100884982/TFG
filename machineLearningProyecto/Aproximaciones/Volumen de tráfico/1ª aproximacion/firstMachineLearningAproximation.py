@@ -3,7 +3,7 @@ import pandas as pd
 from pandas import set_option
 from numpy import loadtxt
 from xgboost.sklearn import XGBRegressor
-from sklearn import linear_model
+import statsmodels.api as sm
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
@@ -225,11 +225,7 @@ with open('predicciones.txt', 'a') as the_file:
                 the_file.write("XGBoost,"+ str(','.join(map(str, predicciones))) + "\n")
                 
                 #Linear Regression
-                model = linear_model.LinearRegression()
-                model.fit(X_train, y_train)
-                
-                print("X_train : ",X_train)
-                print("y_train : ",y_train)
+                model = sm.OLS(y_train, X_train).fit_regularized()
                 y_pred = model.predict(X_test)
                 print("PREDICCIONES : ", y_pred)
                 y_test_sum = 0
@@ -278,7 +274,7 @@ with open('predicciones.txt', 'a') as the_file:
                 errores_predicciones_intervalos["SVR"] += y_test_sum
                
                 #KNN
-                model =KNeighborsRegressor(n_neighbors=18)
+                model =KNeighborsRegressor(n_neighbors=10)
                 model.fit(X_train, y_train) 
                 y_pred = model.predict(X_test)
                 predicciones=[]
@@ -299,13 +295,10 @@ with open('predicciones.txt', 'a') as the_file:
                 'task': 'train',
                 'max_depth' : 5,
                 'num_threads': 8,
-                'boosting_type': 'gbdt',
                 'objective': 'regression',
                 'metric': {'l2', 'auc'},
                 'num_leaves': 50,
-                'learning_rate': 0.0001,
-                'feature_fraction': 0.5,
-                'bagging_fraction': 0.5,
+                'learning_rate': 0.01,
                 'bagging_freq': 1,
                 'min_data':1,
                 'verbose': 0
@@ -349,5 +342,5 @@ for pair in pairs:
 
 tabla_predicciones = pd.DataFrame(datos_predicciones, columns=['Par','Intervalo de tiempo','Día' , 'Valor real', 'XGBoost', 'Linear Regression', 'LightGBM', 'MLP', 'SVR', 'KNN'])
 print("TABLA PREDICCIONES : ", tabla_predicciones)
-tabla_predicciones.to_html("tabla_predicciones")    
+tabla_predicciones.to_html("tabla_predicciones.html")    
 

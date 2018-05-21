@@ -113,9 +113,8 @@ def knn(X_train, y_train):
    return modelo, "KNN"
 
 
-   
-for j in [0,4,5]:
-        valores_predichos = {}
+valores_predichos = {}
+for j in range(6):
         routes = [('A',2), ('A', 3), ('B', 1), ('B', 3), ('C', 1), ('C',3)]
         days = list(range(18,25))
         intervals_2hours_previous = [(6,8),(15,17)]

@@ -50,9 +50,8 @@ with PdfPages('graficas_pdf.pdf') as pdf:
         x = np.array(range(len(dates)))
         length = len(x)        
         for idx, pair in enumerate(pairs):
-          values_aux = values[idx][:int(length / 2)] 
-          plt.plot(x[:int(length / 2)],values[idx][:int(length / 2)], label = str(pair))
-          plt.xticks(x[:int(length / 2)], dates[:int(length / 2)], rotation="vertical")
+          plt.plot(x[:int((length / 2) - 1)],values[idx][:int((length / 2) - 1)], label = str(pair))
+          plt.xticks(x[:int((length / 2) - 1)], dates[:int((length / 2) - 1)], rotation="vertical")
           fig = plt.gcf()
           fig.subplots_adjust(bottom=0.3)
           plt.legend(prop=fontP)
@@ -62,9 +61,8 @@ with PdfPages('graficas_pdf.pdf') as pdf:
         plt.close()
         
         for idx, pair in enumerate(pairs):
-          values_aux = values[idx][int(length / 2):] 
-          plt.plot(x[int(length / 2):],values[idx][int(length / 2):], label = str(pair))
-          plt.xticks(x[int(length / 2):], dates[int(length / 2):], rotation="vertical")
+          plt.plot(x[int((length / 2) - 1):],values[idx][int((length / 2) - 1):], label = str(pair))
+          plt.xticks(x[int((length / 2) - 1):], dates[int((length / 2) - 1):], rotation="vertical")
           fig = plt.gcf()
           fig.subplots_adjust(bottom=0.3)
           plt.legend(prop=fontP)

@@ -239,10 +239,6 @@ with open('predicciones.txt', 'a') as the_file:
                 errores_predicciones_intervalos["Linear Regression"] += y_test_sum
                 
                 #MLP
-                scaler = StandardScaler()
-                scaler.fit(X_train)
-                X_train = scaler.transform(X_train)
-                X_test = scaler.transform(X_test)
                 mlp = MLPRegressor(hidden_layer_sizes=(13),max_iter=10000)
                 mlp.fit(X_train,y_train)
                 y_pred = mlp.predict(X_test)
@@ -291,20 +287,22 @@ with open('predicciones.txt', 'a') as the_file:
                 #LightGBM
                 lgb_train = lgb.Dataset(X_train, y_train)
                 params = {
-                'application' : 'fair',
+                'application' : 'regression',
                 'task': 'train',
                 'num_threads': 8,
                 'boosting_type': 'rf',
                 'objective': 'regression',
-                'metric': {'l2', 'auc'},
+                'metric': 'fair',
                 'num_leaves': 50,
                 'learning_rate': 0.001,
                 'feature_fraction': 0.3,
                 'bagging_fraction': 0.3,
                 'bagging_freq': 1,
                 'min_data':1,
+                'min_data_in_bin':1,
                 'verbose': 0
                 }
+                print("X_train : ", X_train)
                 gbm = lgb.train(params, lgb_train)
                 y_pred = gbm.predict(X_test, num_iteration=gbm.best_iteration)
                 y_test_sum = 0

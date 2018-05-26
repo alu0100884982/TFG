@@ -225,7 +225,7 @@ with open('predicciones.txt', 'a') as the_file:
                 the_file.write("XGBoost,"+ str(','.join(map(str, predicciones))) + "\n")
                 
                 #Linear Regression
-                model = sm.OLS(y_train, X_train).fit_regularized()
+                model = sm.OLS(y_train, X_train).fit_regularized(alpha=0.2)
                 y_pred = model.predict(X_test)
                 print("PREDICCIONES : ", y_pred)
                 y_test_sum = 0
